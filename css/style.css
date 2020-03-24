@@ -1,0 +1,167 @@
+@font-face {
+  font-family: "VFMagmatic";
+  src: url("../fonts/MagmaticGX.ttf");
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "VFMagmatic";
+  font-variation-settings: "wght" 500, "wdth" 600;
+}
+
+main {
+  display: flex;
+  font-size: 16px;
+}
+
+h1, h2 {
+  font-weight: normal;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin-top: 2rem;
+}
+
+/* -----------
+ CONTROLS SIDEBAR
+ ------------ */
+#sidebar {
+  padding: 1rem;
+  flex: 1;
+  align-items: top;
+  border-left: 1px solid grey;
+}
+
+form {
+  margin: 1rem 0;
+}
+form label {
+  font-size: 1rem;
+  color: grey;
+  margin-bottom: 0.5rem;
+}
+
+.field {
+  margin-top: 1rem;
+}
+
+label[for=editor] {
+  display: block;
+}
+
+.axes .field {
+  display: inline-block;
+}
+
+#editor {
+  width: 100%;
+  height: 5.5rem;
+  font-size: 5rem;
+  font-family: "VFMagmatic";
+}
+#editor:focus {
+  outline: none;
+}
+
+/* -----------
+ VISUALIZER GRID
+ ------------ */
+#visualizer {
+  padding: 2rem;
+  height: 100vh;
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+  font-size: 5rem;
+  position: relative;
+}
+
+.row {
+  flex: 1;
+  display: flex;
+}
+.row .item {
+  flex: 1;
+}
+
+#coords {
+  position: absolute;
+  color: blue;
+  font-size: 0.8rem;
+  padding: 0.5rem;
+  border: 1px solid black;
+  margin: -20px 0 0 -20px;
+}
+
+#horizontal-line {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px dashed blue;
+  display: none;
+}
+
+#vertical-line {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 1px;
+  height: 100vh;
+  border-left: 1px dashed blue;
+  display: none;
+}
+
+.segment {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  border: 1px solid red;
+  z-index: 10;
+}
+.segment.active {
+  background: rgba(0, 0, 255, 0.5);
+}
+
+.leaf:hover {
+  background: rgba(0, 0, 255, 0.5);
+}
+
+/* -----------
+ VISUALIZER GRID
+ ------------ */
+#sub-selector {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 2rem;
+  border: 1px solid black;
+  background: white;
+  z-index: 100;
+}
+#sub-selector.show {
+  display: block;
+}
+
+.alt {
+  padding: 0.5rem 1rem;
+}
+.alt:hover {
+  background: blue;
+  color: white;
+}
+
+.feature-active.ss20 {
+  font-feature-settings: "ss20";
+}
+
+/*# sourceMappingURL=style.css.map */
