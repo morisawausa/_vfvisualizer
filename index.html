@@ -7,70 +7,115 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
         <script src="js/script.js"></script>
         <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
     <body>
         <main>
             <section id="visualizer">
-
-                <div class="segment leaf">
+                <div id="grid">
+                    <!-- This is where the visualizer grid will populate -->
                 </div>
 
-                <div id="vertical-line">
-                </div>
-                <div id="horizontal-line">
-                </div>
-                <div id="coords">
-                    <span id="x-coord"></span>,&nbsp;<span id="y-coord"></span>
+                <div class="whole segment leaf" data-glyph="default">
                 </div>
 
-                <div id="sub-selector">
+                <div id="info">
+                    <div id="vertical-line">
+                    </div>
+                    
+                    <div id="horizontal-line">
+                    </div>
+
+                    <div id="coords">
+                        <span id="x-coord"></span>,&nbsp;<span id="y-coord"></span>
+                    </div>
+                </div>
+
+                <div id="alt-selector" data-status="hidden">
                     <div class="alt default" id="default">
                     </div>
-                    <div class="alt feature-active ss20" id="ss20">
+                    <div class="alt feature-active ss20" id="ss20" data-glyph="ss20">
                     </div>
                 </div>
+
             </section>
+
             <nav id="sidebar">
-                <h1>OCC Design Space Visualizer</h1>
+                <h1>Design Space Visualizer</h1>
                 <form>
                     <div class="field">
                         <label for="editor">Enter glyph(s)</label>
-                        <input type="text" id="editor" name="editor" value="Q">
+                        <input type="text" id="editor" name="editor" value="Q" data-glyph="default">
                     </div>
-                    <div class="axes">
+
+
+                    <div class="axes" id="x-axis-settings">
                         <div class="field">
-                            <label for="x-axis">X-axis</label>
+                           <h2>X-axis</h2>
                             <select id="x-axis" name="x-axis">
-                              <option value="width" selected>Width</option>
-                              <option value="weight">Weight</option>
+                              <option value="wdth" selected>Width</option>
+                              <option value="wght">Weight</option>
                             </select>
                         </div>
                         <div class="field">
-                            <label for="x-axis-inc">@</label>
-                            <select id="x-axis-inc" name="x-axis-inc">
-                              <option value=".25" selected>1:1:1:1</option>
-                              <option value=".33">1:1:1</option>
+                            <label for="x-formula">Formula</label>
+                            <select id="x-formula" name="formula">
+                              <option value="linear" selected>Linear</option>
+                            
+                              <option value="lucas">Luc(as) de Groot</option>
+
+                              <option value="impallari">Impallari</option>
                             </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="steps">Steps</label>
+                            <input type="number" id="x-steps" name="steps" value="6">
+                        </div>
+
+                        <div class="field inc-control">
+                          <!--   <label for="incs" id="x-incs">Increments</label> -->
+                            <div id="x-increments">
+                                
+                            </div>
                         </div>
                     </div>
-                    <div class="axes">
-                        <div class="field">
-                            <label for="y-axis">Y-axis</label>
-                            <select id="y-axis" name="y-axis">
-                              <option value="width">Width</option>
-                              <option value="weight" selected>Weight</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label for="y-axis-inc">@</label>
-                            <select id="y-axis-inc" name="y-axis-inc">
-                              <option value=".25">1:1:1:1</option>
-                              <option value=".33" selected>1:1:1</option>
-                            </select>
-                        </div>
+                    <div class="axes" id="y-axis-settings">
+                       <div class="field">
+                            <h2>Y-axis</h2>
+                           <select id="y-axis" name="y-axis">
+                             <option value="wdth">Width</option>
+                             <option value="wght" selected>Weight</option>
+                           </select>
+                       </div>
+                       <div class="field">
+                           <label for="y-formula">Formula</label>
+                           <select id="y-formula" name="formula">
+                             <option value="linear" selected>Linear</option>
+                           
+                             <option value="lucas">Luc(as) de Groot</option>
+
+                             <option value="impallari">Impallari</option>
+                           </select>
+                       </div>
+
+                       <div class="field">
+                           <label for="steps">Steps</label>
+                           <input type="number" id="y-steps" name="steps" value="4">
+                       </div>
+
+                       <div class="field inc-control">
+                          <!--  <label for="incs" id="y-incs">Increments</label> -->
+                           <div id="y-increments">
+                               
+                           </div>
+                       </div>
                     </div>
+
 
                     <h2>Breakpoints</h2>
                     <div class="segmentation">
@@ -86,14 +131,29 @@
                             </label>
                         </div>
                         <div class="field">  
+                            <input type="radio" name="segmentation" id="resize">
+                            <label for="resize">
+                                resize
+                            </label>
+                        </div>
+                        <div class="field">  
                             <input type="radio" name="segmentation" id="clear">
-                            <label for="y-break">
+                            <label for="clear">
                                 remove
+                            </label>
+                        </div>
+
+                        <div class="field">  
+                            <input type="radio" name="segmentation" id="clearall">
+                            <label for="clearall">
+                                clear all
                             </label>
                         </div>
                     </div>
                 </form>
+
             </nav>
+
         </main>
     </body>	
 </html>
