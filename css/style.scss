@@ -4,8 +4,8 @@
 }
 
 @font-face {
-   font-family: 'Antenna';
-   src: url(../fonts/Antenna-Medium.woff2?#iefix) format('woff2'), url(../fonts/Antenna-Medium.woff) format('woff'), url(../fonts/Antenna-Medium.eot?#iefix) format('embedded-opentype');
+   font-family: 'Dispatch Mono';
+   src: url(../fonts/DispatchMono-Regular.woff2?#iefix) format('woff2'), url(../fonts/DispatchMono-Regular.woff) format('woff'), url(../fonts/DispatchMono-Regular.eot?#iefix) format('embedded-opentype');
 }
 
 @mixin demo-font {
@@ -20,15 +20,14 @@
 }
 
 :root{
-   --captionFontSize: .85rem;
-   --highlightcolor: 255,220,0;
+   --highlightcolor: 233,233,233;
    --grey: rgb(200,200,200);
    --black: 0,0,0;
-   --selection: 0,144,158;
+   --selection: 0,0,255;
 }
+
 body{
-	font-family: 'Antenna', sans-serif;
-  font-weight: 500;
+	font-family: 'Dispatch Mono', sans-serif;
   color: rgb(var(--black));
 }
 
@@ -202,7 +201,7 @@ input[type=number]::-webkit-outer-spin-button {
   top: -11px;
   left: -5px;
   font-size: 14px;
-  font-family: 'Antenna';
+  font-family: 'Dispatch Mono';
   color: var(--grey);
 }
 
