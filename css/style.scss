@@ -21,11 +21,15 @@
 
 :root{
    --captionFontSize: .85rem;
-   --grey: #b3b3b3;
+   --highlightcolor: 255,220,0;
+   --grey: rgb(200,200,200);
+   --black: 0,0,0;
+   --selection: 0,144,158;
 }
 body{
 	font-family: 'SalvoSans', sans-serif;
    font-weight: 600;
+   color: rgb(var(--black));
 }
 
 main{
@@ -38,7 +42,7 @@ h1, h2, h3{
 }
 
 h1{
-   font-size: 1.4rem;
+   font-size: 1.2rem;
    line-height: 1.1;
 }
 h2{
@@ -55,9 +59,8 @@ h2{
    padding: 1rem;
    flex: 1;
    border-left: 1px solid var(--grey);
-   background: #f2f2f2;
+   background: rgb(var(--highlightcolor));
 }
-
 #editor{
    @include demo-font;
    height: 5.5rem;
@@ -76,7 +79,7 @@ form{
    margin: 1rem 0;
    label{
       font-size: var(--captionFontSize);
-      color: #6f6f6f;
+      color: rgba(var(--black),0.8);
       margin-bottom: .5rem;
    }
    input{
@@ -139,10 +142,16 @@ input[type=number]::-webkit-outer-spin-button {
  input[type=radio]{
     width: auto;
     height: auto;
-    margin-right: .5rem;
     display: inline-block;
+    margin-right: 5px;
 }
 
+.segmentation {
+   .field{
+      display: inline-block;
+      margin-right: 15px;
+   }
+}
 /* -----------
  VISUALIZER GRID
  ------------ */
@@ -173,6 +182,12 @@ input[type=number]::-webkit-outer-spin-button {
    display: flex;
 }
 
+.rows + .row{
+  border-top: 1px solid var(--grey);
+} 
+.items + .item{
+  border-left: 1px solid var(--grey);
+}
 .items{
   display: flex;
   flex: 1;
@@ -183,7 +198,7 @@ input[type=number]::-webkit-outer-spin-button {
 .item::before{
   content:"+";
   position: absolute;
-  top: -7px;
+  top: -11px;
   left: -5px;
   font-size: 14px;
   font-family: 'SalvoSans';
@@ -193,14 +208,17 @@ input[type=number]::-webkit-outer-spin-button {
 /* -----------
  GRID DIVIDER
  ------------ */
-
+#info {
+  //info wrapper
+  pointer-events: none;
+}
 #coords{
    position: absolute;
    background: white;
-   border: 1px solid blue;
+   border: 1px solid rgb(var(--selection));
    left: 0px;
    top: 0px;
-   color: blue;
+   color: rgb(var(--selection));
    font-size: var(--captionFontSize);
    padding: .5rem;
    display: none;
@@ -212,7 +230,7 @@ input[type=number]::-webkit-outer-spin-button {
    top: 0px;
    width: 100%;
    height: 1px;
-   border-bottom: 1px dashed blue;
+   border-bottom: 1px dashed rgb(var(--selection));
    display: none;
 }
 
@@ -222,7 +240,7 @@ input[type=number]::-webkit-outer-spin-button {
    top: 0px;
    width: 1px;
    height: 100vh;
-   border-left: 1px dashed blue;
+   border-left: 1px dashed rgb(var(--selection));
    display: none;
 }
 
@@ -231,9 +249,6 @@ input[type=number]::-webkit-outer-spin-button {
    border: 1px dotted var(--grey);
    display: flex;
    flex: 1;
-   &.active{
-      background: rgba(0,0,255,0.5);
-   }
 }
 
 .stack{
@@ -256,26 +271,23 @@ input[type=number]::-webkit-outer-spin-button {
    flex: 1;
    overflow: auto;
 }
-.resizable.enabled{
+.resizable{
    position: relative;
-   resize: horizontal;
-   &::after {
-    content: "";
+   // resize: horizontal; 
+}
+.dragbar{
+  position: absolute;
+  cursor: col-resize;
+  z-index: 500;
+  background: var(--grey);
+  &.x{
     width: 5px;
-    height: 30px;
+    height: 50px;
     top: 50%;
     right: 0;
-    position: absolute;
-    cursor: ew-resize;
-    z-index: 500;
-    background: var(--grey)
-   }
-}
-.stack .resizable.enabled{
-   resize: vertical;
-   &::after {
-    content: "";
-    width: 30px;
+  }
+  &.y{
+    width: 50px;
     height: 5px;
     left: 50%;
     right: auto;
@@ -283,12 +295,15 @@ input[type=number]::-webkit-outer-spin-button {
     bottom: 0;
     position: absolute;
     cursor: ns-resize;
-    z-index: 500;
-    background: var(--grey)
-   }
+  } 
 }
-.leaf:hover{
-   background: rgba(0,0,255,0.5);
+
+
+.leaf:hover, .item:hover{
+   background: rgba(var(--selection), 0.2);
+}
+.active, .selected, .selected:hover, .active:hover{
+   background: rgba(var(--selection), 0.5);
 }
 .leaf.no-hover:hover{
    background: none;
@@ -315,11 +330,13 @@ input[type=number]::-webkit-outer-spin-button {
 .alt{
    padding: .5rem 1rem;
    &:hover{
-      background: blue;
-      color: white;
+      background: rgba(var(--selection), 0.2);
    }
 }
 
+// .item[data-glyph^="ss"]{
+//   background: rgba(var(--highlightcolor), 0.3);
+// }
 [data-glyph=ss20]{
    font-feature-settings: "ss20";
 }

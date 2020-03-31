@@ -62,7 +62,9 @@
                             </select>
                         </div>
                         <div class="field">
-                            <label for="x-formula">Formula</label>
+                            <label for="steps">
+                            <input type="number" id="x-steps" name="steps" value="6"> steps</label>
+                            
                             <select id="x-formula" name="formula">
                               <option value="linear" selected>Linear</option>
                             
@@ -70,12 +72,10 @@
 
                               <option value="impallari">Impallari</option>
                             </select>
+                            
                         </div>
 
-                        <div class="field">
-                            <label for="steps">Steps</label>
-                            <input type="number" id="x-steps" name="steps" value="6">
-                        </div>
+  
 
                         <div class="field inc-control">
                           <!--   <label for="incs" id="x-incs">Increments</label> -->
@@ -92,20 +92,18 @@
                              <option value="wght" selected>Weight</option>
                            </select>
                        </div>
+
                        <div class="field">
-                           <label for="y-formula">Formula</label>
-                           <select id="y-formula" name="formula">
+                           <label for="steps"> 
+                           <input type="number" id="y-steps" name="steps" value="4"> steps </label>
+
+                            <select id="y-formula" name="formula">
                              <option value="linear" selected>Linear</option>
                            
                              <option value="lucas">Luc(as) de Groot</option>
 
                              <option value="impallari">Impallari</option>
                            </select>
-                       </div>
-
-                       <div class="field">
-                           <label for="steps">Steps</label>
-                           <input type="number" id="y-steps" name="steps" value="4">
                        </div>
 
                        <div class="field inc-control">
@@ -116,11 +114,16 @@
                        </div>
                     </div>
 
-
+                     
                     <h2>Breakpoints</h2>
                     <div class="segmentation">
+                      <!--  <div class="field">   
+                            <input type="radio" name="segmentation" id="selection" checked><label for="selection">
+                                select
+                            </label>
+                        </div> -->
                         <div class="field">   
-                            <input type="radio" name="segmentation" id="x-break" checked><label for="x-break">
+                            <input type="radio" name="segmentation" id="x-break"><label for="x-break">
                                 x-axis
                             </label>
                         </div>
@@ -129,13 +132,13 @@
                             <label for="y-break">
                                 y-axis
                             </label>
-                        </div>
-                        <div class="field">  
+                        </div> 
+                      <div class="field">  
                             <input type="radio" name="segmentation" id="resize">
                             <label for="resize">
                                 resize
                             </label>
-                        </div>
+                        </div> 
                         <div class="field">  
                             <input type="radio" name="segmentation" id="clear">
                             <label for="clear">
@@ -150,10 +153,19 @@
                             </label>
                         </div>
                     </div>
+                 
                 </form>
 
-            </nav>
+                <div id="output">
+                  <h2>Output</h2>
+                  <div class="condition">
+                    
+                  </div>
 
+                </div>
+                
+            </nav>
+           
         </main>
     </body>	
 </html>

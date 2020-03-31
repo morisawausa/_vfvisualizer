@@ -1,4 +1,5 @@
 let gridToggle = true;
+let dragging = false;
 
 $(document).ready(function() {
 	
@@ -74,21 +75,24 @@ $(document).ready(function() {
 		stepsY.forEach(function(unitY, i){      
 		// loop across vertical axis  
 			let h = 0; //height of row
+			let nextY = 0; // y-axis gridunit
 
 			if( i == stepsY.length-1 ){
-				h = marginH;
+				h = marginH + 'px';
 				// last row, constant height
-				html += '</div><div class="row last" style="height:'+ h +'px;">'
+				html += '</div>'
 			}else{
 				nextY = unitY - stepsY[i+1];
-				h = 100*( nextY / dimensions['y']['range'] );
-				html += '<div class="row" style="height:'+ h +'%;">'
+				h = 100*( nextY / dimensions['y']['range'] ) + '%';
 			}
+
+			html += '<div class="row" style="height:'+ h +'">'
 
 			stepsX.forEach(function(unitX, j){
 			  // loop across horizontal axis
 
 			  let w = 0 // width of column;
+			  let nextX = 0; // x-axis gridunit
 
 			  let style = ""; // vf css settings
 			  style += "'" + axisY + "' " + unitY + ", '" + axisX + "' " + unitX;
@@ -98,13 +102,15 @@ $(document).ready(function() {
 			  }
 			  if( j == stepsX.length-1 ){
 			  	// last grid
-			  	w = marginW;
-			  	html += '</div> <div class="item last" style="width:' + w + 'px; font-variation-settings: ' + style + '">' + text + '</div>';
+			  	w = marginW + "px";
+			  	html += '</div>';
 			  }else{
-			  	let nextX = stepsX[j+1] - unitX;
-			  	w = 100*( nextX / dimensions['x']['range'] ); 
-			  	html += '<div class="item" style="width:' + w + '%; font-variation-settings: ' + style + '">' + text + '</div>';
-			  }			 
+			  	nextX = stepsX[j+1] - unitX;
+			  	w = 100*( nextX / dimensions['x']['range'] ) + "%"; 		  	
+			  }
+
+			  // define grid item
+			  html += '<div class="item" data-coordX = "' + unitX + '" data-coordY = "' + unitY + '" data-width= "' + nextX + '" data-height= "' + nextY + '" style="width: ' + w + '; font-variation-settings: ' + style + '" data-glyph = "default" >' + text + '</div>';		 
 			});
 
 			html += '</div>' // close row
@@ -121,6 +127,8 @@ $(document).ready(function() {
 	GRID SEGMENTATION
 	------------ */
 	let gridLock = { 'x': false, 'y': false};
+	let coordX = 0;
+	let coordY = 0;
 
 	function viewInfo(dimensions){
 		$('#visualizer').on('mousemove', function(e){
@@ -130,8 +138,8 @@ $(document).ready(function() {
 			let relY = (e.pageY - $('#grid').offset().top ) / gridHeight;
 
 			let gridRange = dimensions;
-			let coordX = Math.round(gridRange['x']['range'] * relX) + gridRange['x']['min']; // substitute with max value from font
-			let coordY = Math.round(gridRange['y']['range'] * (1 - relY) ) + gridRange['y']['min']; // substitute with max value from font
+			coordX = Math.round(gridRange['x']['range'] * relX) + gridRange['x']['min']; 
+			coordY = Math.round(gridRange['y']['range'] * (1 - relY) ) + gridRange['y']['min']; 
 			
 			// restrict coords to handle edges
 
@@ -201,86 +209,252 @@ $(document).ready(function() {
 	
 
 
+
+
+
+		
+
+
   /* -----------
 	SELECT SUBSTITUTION AREA
-	------------ */
+	------------ */	
+	let lasso = false;
+	let ctrlOn = false;
 
-	$('.leaf').click(function(e){
-		gridToggle = false;
-		let $target = $(e.target);
-		let $parent = $target.parent();
+	if( $('#selection').is(':checked') ){
+		lasso = true;
+		$('.whole').css('pointer-events', 'none');
+	 	
+	 	let rectangleCoords  = [];
 
-		let mouseX = e.pageX - $target.offset().left;
-		let mouseY = e.pageY - $target.offset().top;
-		let segmentWidth = $target.width();
-		let segmentHeight = $target.height();
+		$('#grid').on('click', '.item', function(e){
+			console.log('lasso');
 
-
-		let glyphState = $(this).attr('data-glyph');
-		// divide up segments at mouse cursor
-
-		if( $('#x-break').is(':checked') ){
-			// add horizontal breakpoint
-
-			let breakX = Math.round(100*(mouseX/segmentWidth));
-			$target.removeClass('leaf');
-			$target.append('<div class="segment leaf resizable" style="flex: none; width:' + breakX + '%" data-glyph="' + glyphState +'"></div><div class="segment leaf" data-glyph="' + glyphState +'"></div>');
+			// add rectangles for selection
 			
-		}else if( $('#y-break').is(':checked') ){
-			// add vertical breakpoint
 
-			let breakY = Math.round(100*(mouseY/segmentHeight));
-			$target.removeClass('leaf');
-			$target.addClass('stack');
-			$target.append( '<div class="segment leaf resizable" style="flex: none; height:' + breakY + '%" data-glyph="' + glyphState +'"></div><div class="segment leaf" data-glyph="' + glyphState +'"></div>');
-		
-		}else if( $('#resize').is(':checked')){
-			// update applied areas upon leaf resizing
+			if (e.metaKey){
 
-			let $resizeLeaf = $('.resizable', $(this));
-			let resizeGlyphState = $resizeLeaf.attr('data-glyph');
-			let updateArea = $resizeLeaf[0].getBoundingClientRect();
-			updateInstances(updateArea, resizeGlyphState);
+				$('.selected').each(function(i){
+					let rect = {};
 
-			let $nextLeaf = $('.leaf:nth-child(2)', $(this));
-			let nextGlyphState = $nextLeaf.attr('data-glyph');
-			let nextUpdateArea = $nextLeaf[0].getBoundingClientRect();
-			updateInstances(nextUpdateArea, nextGlyphState);
+					rect['x'] = parseInt( $(this).attr('data-coordX') );
+					rect['y'] = parseInt( $(this).attr('data-coordY') );
+					rect['width'] = parseInt( $(this).attr('data-width') );
+					rect['height'] = parseInt( $(this).attr('data-height') );
+					
+					rectangleCoords.push(rect);
+										
+				});
 
 
-		}else if( $('#clear').is(':checked') ){
-			// remove breakpoints
+				// console.log(sets);
 
-			if($('.segment').length > 1){
-
-				// merge leaves
-				$parent.empty(); 
+				let mergedRows = [];
+				mergedRows.push(rectangleCoords[0]);
+				let counter = 0;
 				
-				// return alts to default
-				let clearArea = $parent[0].getBoundingClientRect();
-				updateInstances(clearArea, 'default');
+				let newRect = {}
+				let sumWidth = rectangleCoords[0]['width'];
 
-				// setup as merged as leaf
-				$parent.addClass('leaf');
-			}
-		}else{
-			// select substitutions
-			if( $('#alt-selector').attr('data-status') == 'visible' ){
-				// remove modal if click outside of options
-				hideSelector();
+				// merge rectangles	in X
+				for( var i = 0; i < rectangleCoords.length-1; i++){
+					// for every row of items
+					thisRect = rectangleCoords[i]; 
+					nextRect = rectangleCoords[i+1];
+
+					if( (thisRect['y'] == nextRect['y']) && (thisRect['height'] == nextRect['height']) ){
+						// if next rectangle is at the same y coord
+						sumWidth = sumWidth + nextRect['width']; // merge widths
+						mergedRows[counter]['width'] = sumWidth;
+					}else{
+						counter++; // don't merge; 
+						sumWidth = rectangleCoords[i]['width']; // reset sumWidth 
+						mergedRows[counter] = nextRect; // store new rect info
+					}
+				};
+
+				// merge rectangles	in Y
+				let merged = [];
+				merged.push(mergedRows[0]);
+				let sumHeight = mergedRows[0]['height'];
+				let counterY = 0;
+
+				for( var j = 0; j<mergedRows.length - 1; j++){
+					thisRow = mergedRows[j];
+					nextRow = mergedRows[j+1];
+
+					if( (thisRow['x'] == nextRow['x']) && (thisRow['width'] == nextRow['width']) ){
+						// if next rectangle is at the same x coord
+						sumHeight = sumHeight + nextRect['height']; // merge heights
+						merged[counterY]['height'] = sumHeight;
+					}else{
+						counterY++;
+						sumHeight = mergedRows[j]['height']; // reset sumWidth 
+						merged[counterY] = nextRow; // store new rect info
+					}
+				};
+				
+				
+
+				console.log(mergedRows);
+				console.log(merged);
+
+
+				// pullUpSubs($(e.target), e.pageX, e.pageY);
+
+				$('#alt-selector').css({
+					'transform': 'translate(' + e.pageX +'px, ' + e.pageY +'px)'
+				});
+				$('#alt-selector').attr('data-status','visible');
+
+				$('.alt').click(function(){
+					let glyphStyle = $(this).attr('id');
+
+					$('.selected').attr('data-glyph', glyphStyle);
+					$('.selected').removeClass('selected');
+					$('#alt-selector').attr('data-status','hidden');
+				});
+				
 			}else{
-				// pull up alternate substitution menu
-				pullUpSubs( $target, e.pageX, e.pageY );	
+				$(this).toggleClass('selected');
+
 			}
+			
+		});
+	}
+	
+	leafSegmentation();
+
+	function leafSegmentation(){
+		$('.leaf').on('click', function(e){
+			if( !lasso ) {
+				console.log('leaf');
+				gridToggle = false;
+
+				let $target = $(e.target);
+				let $parent = $target.parent();
+
+				let mouseX = e.pageX - $target.offset().left;
+				let mouseY = e.pageY - $target.offset().top;
+				let segmentWidth = $target.width();
+				let segmentHeight = $target.height();
+
+
+				let glyphState = $(this).attr('data-glyph');
+				// divide up segments at mouse cursor
+
+				if( dragging ){
+					e.stopPropagation();
+					return false;						
+				}else if( $('#x-break').is(':checked') ){
+					// add horizontal breakpoint
+					let breakX = Math.round(100*(mouseX/segmentWidth));
+					addBreakpoint('x', $target, breakX, glyphState);
+
+				}else if( $('#y-break').is(':checked') ){
+					// add vertical breakpoint
+					let breakY = Math.round(100*(mouseY/segmentHeight));
+					addBreakpoint('y', $target, breakY, glyphState);
+
+				}else if( $('#resize').is(':checked')){
+					// update applied areas upon leaf resizing
+
+					// let $resizeLeaf = $('.resizable', $(this));
+					// let resizeGlyphState = $resizeLeaf.attr('data-glyph');
+					// let updateArea = $resizeLeaf[0].getBoundingClientRect();
+					// updateInstances(updateArea, resizeGlyphState);
+
+					// let $nextLeaf = $('.leaf:nth-child(2)', $(this));
+					// let nextGlyphState = $nextLeaf.attr('data-glyph');
+					// let nextUpdateArea = $nextLeaf[0].getBoundingClientRect();
+					// updateInstances(nextUpdateArea, nextGlyphState);
+
+
+				}else if( $('#clear').is(':checked') ){
+					// remove breakpoints
+
+					if($('.segment').length > 1){
+
+						// merge leaves
+						$parent.empty(); 
+						
+						// return alts to default
+						let clearArea = $parent[0].getBoundingClientRect();
+						updateInstances(clearArea, 'default');
+
+						// setup as merged as leaf
+						$parent.addClass('leaf');
+					}
+				}else{
+					// select substitutions
+					if( $('#alt-selector').attr('data-status') == 'visible' ){
+						// remove modal if click outside of options
+						hideSelector();
+					}else{
+						// pull up alternate substitution menu
+						pullUpSubs( $target, e.pageX, e.pageY);	
+					}
+				}
+
+				deactivateTool();
+			}
+		});
+	
+			
+	}
+
+	function addBreakpoint(axis, element, position, glyph){
+		element.removeClass('leaf');
+		if (axis == 'x'){
+			element.append('<div class="segment leaf resizable" style="flex: none; width:' + position + '%" data-glyph="' + glyph +'"><div class="dragbar x"></div></div><div class="segment leaf" data-glyph="' + glyph +'"></div>');
+			breakName = controls['x-axis'];
+			breakTo = coordX;
+		}else{
+			element.addClass('stack');
+			element.append( '<div class="segment leaf resizable" style="flex: none; height:' + position + '%" data-glyph="' + glyph +'"><div class="dragbar y"></div></div><div class="segment leaf" data-glyph="' + glyph +'"></div>');
+			breakTo = coordY;
 		}
 
-		deactivateTool();
+		// let breakpointHtml =
+		// `<div class="condition axisName">
+		// 	<div class="axisName">` + breakName +`</div>
+		// 	<div class="from">` + 0 +`</div>
+		// 	<div class="to">` + coordX +`</div>
+		// </div>`;
 
-	});
+		// console.log(breakpointHtml)
+		// $('#output').append(breakpointHtml);
+
+	}
+	
+
+	// resize if dragging
+	// $(".leaf").on('mousedown', '.dragbar', function(e) {
+	//     console.log('dragging');
+	// 	dragging = true;
+	// 	let thisLeaf = $(this).parent();
+	// 	let parentWidth = thisLeaf.parent().width();
+	// 	$(document).mousemove(function(e){
+	// 		thisLeaf.css('width', 100*(e.pageX/parentWidth) + '%');
+	// 	}).mouseup(function(e){
+	// 		thisLeaf.css('width', 100*(e.pageX/parentWidth) + '%');
+	// 		$(document).unbind('mousemove');
+	// 		setTimeOut(function(){
+	// 			dragging = false;
+	// 		}, 100);			
+	// 	});
+
+	// });
+
+
+
 
 	function deactivateTool( ){
 		// deactivates breakpoint tool
 		$('#x-break, #y-break').prop('checked', false);
+
+		$('#vertical-line, #horizontal-line').hide();
 	}
 
 	function hideSelector(){
@@ -290,6 +464,16 @@ $(document).ready(function() {
 
 	// toggle grid view on when breakpoint tool is active
 	$('input[type=radio][name=segmentation]').on('change', function() {
+	   
+	    if ( $(this).attr('id') !== 'selection' ){
+	    	lasso = false;
+	    	$('.whole').css('pointer-events', 'auto');
+	    }else{
+	    	lasso = true;
+	    	$('.whole').css('pointer-events', 'none');
+	    }
+
+
 	    if ($(this).attr('id') == 'x-break'){
 	        gridToggle = true;
 	    }
@@ -298,37 +482,44 @@ $(document).ready(function() {
 	    }
 	    else if ($(this).attr('id') == 'resize'){
 			$('.leaf').addClass('no-hover');
-			$('.resizable').addClass('enabled');
+			// $('.resizable').addClass('enabled');
+			
 		}else if ($(this).attr('id') == 'clearall'){
-			$('.leaf').remove();
+			$('.leaf, .resizable').remove();
 			$('.whole').addClass('leaf');
-			$('#x-break').prop('checked', true);
+			// $('#x-break').prop('checked', true);
+			$('.item').attr('data-glyph', 'default');
+
 		}
 	});
 
 	function pullUpSubs(el, x, y){
 		// pull up substitution options at cursor position
-		el.addClass('active'); // flag active segment
+		el.addClass('active');
+		// flag active segment
 
 		// position and show sub-selector
 		$('#alt-selector').css({
 			'transform': 'translate(' + x +'px, ' + y +'px)'
 		});
 		$('#alt-selector').attr('data-status','visible');
+
+
+		// select alternate glyph
+		$('.alt').click(function(){
+			let glyphStyle = $(this).attr('id');
+
+			let leafArea = $('.leaf.active')[0].getBoundingClientRect();
+			updateInstances(leafArea, glyphStyle);
+
+		});
 	}
+
 
   /* -----------
 	SELECT SUBSTITUTION GLYPHS
 	------------ */
 
-	// select alternate glyph
-	$('.alt').click(function(){
-		let glyphStyle = $(this).attr('id');
-
-		let leafArea = $('.leaf.active')[0].getBoundingClientRect();
-		updateInstances(leafArea, glyphStyle);
-
-	});
 
 
 	function updateInstances(activeArea, glyph){
@@ -485,6 +676,8 @@ $(document).ready(function() {
 
 		$('#'+ xy + '-increments').html(stepsHTML);
 	}
+
+ 
 
 
   /* -----------
