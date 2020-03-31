@@ -1,0 +1,44 @@
+0: (2) ["100", "1000"]
+1: (2) ["280", "1000"]
+2: (2) ["100", "700"]
+3: (2) ["280", "700"]
+
+||
+ v
+
+0: (2) ["100", "1000"]
+1: (2) ["280", "1000"]
+
+{"1000": ["100", "280"],
+ "700":  ["100", "280"]}
+
+
+
+
+function f(rects) {
+
+	dict = {}
+
+	rects.forEach(function( rect ) {
+
+		let y = rect[1];
+		
+		if ( typeof dict[y] == 'undefined') {
+
+		relevant = rects.filter( function(otherRect) { return y == otherRect[1]; } );	
+		// Now contains 
+		// 0: (2) ["100", "1000"]
+		// 1: (2) ["280", "1000"]
+
+		dict[y] = relevant.map( function(otherOther) { return otherRect[0]; } );
+		// [["100"], ["280"]] // Then flatten this to get [100, 280]
+		// You might have duplicates tho. Maybe there's a JS set or something.
+		// Otherwise google "array unique elements javascript"
+
+		}
+
+		
+
+	});
+
+}

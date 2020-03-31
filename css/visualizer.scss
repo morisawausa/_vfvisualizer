@@ -21,10 +21,10 @@
 
 :root{
    --captionFontSize: .85rem;
-   --highlightcolor: 255,220,0;
+   --highlightcolor: 233,233,233;
    --grey: rgb(200,200,200);
    --black: 0,0,0;
-   --selection: 0,144,158;
+   --selection: 0,0,255;
 }
 body{
 	font-family: 'Antenna', sans-serif;
@@ -82,10 +82,16 @@ form{
       font-size: var(--captionFontSize);
       color: rgba(var(--black),0.8);
       margin-bottom: .5rem;
+      display: inline-block;
    }
    input{
       width: 100%;
    }
+}
+.coords {
+  label[for=mouseY]{
+    margin-left: 1rem;
+  }
 }
 
 label[for=editor]{
@@ -112,7 +118,7 @@ label[for=editor]{
    }
 }
 
-input[name=steps]{
+input[type="number"]{
    width: 40px;
 }
 
@@ -135,6 +141,10 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
   margin: 0; 
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
 }
 
 /* -----------
@@ -213,17 +223,18 @@ input[type=number]::-webkit-outer-spin-button {
   //info wrapper
   pointer-events: none;
 }
-#coords{
-   position: absolute;
-   background: white;
-   border: 1px solid rgb(var(--selection));
-   left: 0px;
-   top: 0px;
-   color: rgb(var(--selection));
-   font-size: var(--captionFontSize);
-   padding: .5rem;
-   display: none;
-}
+
+// #coords{
+//    position: absolute;
+//    background: white;
+//    border: 1px solid rgb(var(--selection));
+//    left: 0px;
+//    top: 0px;
+//    color: rgb(var(--selection));
+//    font-size: var(--captionFontSize);
+//    padding: .5rem;
+//    display: none;
+// }
 
 #horizontal-line{
    position: absolute;
@@ -335,9 +346,35 @@ input[type=number]::-webkit-outer-spin-button {
    }
 }
 
-// .item[data-glyph^="ss"]{
-//   background: rgba(var(--highlightcolor), 0.3);
-// }
+.item[data-glyph^="ss"]{
+  background: rgba(var(--selection), 0.1);
+}
 [data-glyph=ss20]{
    font-feature-settings: "ss20";
 }
+
+/* -----------
+ OUTPUT
+ ------------ */
+
+.conditions{
+  font-size: var(--captionFontSize);
+  background: white;
+  padding: .5rem;
+}
+.header{
+  color: rgba(var(--black),0.8);
+}
+.header, .condition{
+  display: flex;
+}
+
+.set{
+  padding: .25rem 0;
+  border-top: 1px solid var(--grey);
+}
+
+.name, .min, .max{
+  flex: 1;
+}
+

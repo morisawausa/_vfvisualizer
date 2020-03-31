@@ -10,29 +10,14 @@
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-        <script src="js/script.js"></script>
-        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script src="js/designspace.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/visualizer.css">
     </head>
     <body>
         <main>
             <section id="visualizer">
                 <div id="grid">
                     <!-- This is where the visualizer grid will populate -->
-                </div>
-
-                <div class="whole segment leaf" data-glyph="default">
-                </div>
-
-                <div id="info">
-                    <div id="vertical-line">
-                    </div>
-                    
-                    <div id="horizontal-line">
-                    </div>
-
-                    <div id="coords">
-                        <span id="x-coord"></span>,&nbsp;<span id="y-coord"></span>
-                    </div>
                 </div>
 
                 <div id="alt-selector" data-status="hidden">
@@ -50,6 +35,12 @@
                     <div class="field">
                         <label for="editor">Enter glyph(s)</label>
                         <input type="text" id="editor" name="editor" value="Q" data-glyph="default">
+                    </div>
+                    <div class="field coords">
+                        <label for="mouseX">Width:</label>
+                        <input type="number" id="mouseX" name="mouseX">
+                        <label for="mouseY">Weight:</label>
+                        <input type="number" id="mouseY" name="mouseY">
                     </div>
 
 
@@ -115,51 +106,25 @@
                     </div>
 
                      
-                    <h2>Breakpoints</h2>
-                    <div class="segmentation">
-                      <!--  <div class="field">   
-                            <input type="radio" name="segmentation" id="selection" checked><label for="selection">
-                                select
-                            </label>
-                        </div> -->
-                        <div class="field">   
-                            <input type="radio" name="segmentation" id="x-break"><label for="x-break">
-                                x-axis
-                            </label>
-                        </div>
-                        <div class="field">  
-                            <input type="radio" name="segmentation" id="y-break">
-                            <label for="y-break">
-                                y-axis
-                            </label>
-                        </div> 
-                      <div class="field">  
-                            <input type="radio" name="segmentation" id="resize">
-                            <label for="resize">
-                                resize
-                            </label>
-                        </div> 
-                        <div class="field">  
-                            <input type="radio" name="segmentation" id="clear">
-                            <label for="clear">
-                                remove
-                            </label>
-                        </div>
-
-                        <div class="field">  
-                            <input type="radio" name="segmentation" id="clearall">
-                            <label for="clearall">
-                                clear all
-                            </label>
-                        </div>
-                    </div>
                  
                 </form>
 
                 <div id="output">
-                  <h2>Output</h2>
-                  <div class="condition">
-                    
+                  <h2>Substitution Rules</h2>
+                  <div class="conditions">
+                    <div class="header">
+                      <div class="name">
+                        name
+                      </div>
+                      <div class="min">
+                        min
+                      </div>
+                      <div class="max">
+                        max
+                      </div>
+                    </div>
+                    <div id="rules">
+                    </div>
                   </div>
 
                 </div>

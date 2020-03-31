@@ -145,317 +145,184 @@ $(document).ready(function() {
 
 			if( coordX < gridRange['x']['min']){
 				coordX = gridRange['x']['min'];
-				gridLock['x'] = true; // lock('x', $('#grid').offset().left );
 			}else if ( coordX > gridRange['x']['max'] ){
 				coordX = gridRange['x']['max'];
-				gridLock['x'] = true; // lock('x', $('#grid').offset().right );
-			}else{
-				gridLock['x'] = false;
 			}
 
 			if( coordY < gridRange['y']['min']){
 				coordY = gridRange['y']['min'];
-				gridLock['y'] = true; // lock('y', $('#grid').offset().bottom );
 			}else if ( coordY > gridRange['y']['max'] ){
 				coordY = gridRange['y']['max'];
-				gridLock['y'] = true; // lock('y', $('#grid').offset().top );
-			}else{
-				gridLock['y'] = false;
 			}
-
-			// hide if cursor moves to sidebar
-			if ( e.pageX > $(this).outerWidth() ){
-				gridToggle = false;
-			}else{
-				gridToggle = true;
-			}
-
 
 
 			let altState = $target.attr('data-glyph');
 			// update sample letter
 			$('#editor').css('font-variation-settings', "'wght' " + coordY + ", 'wdth' " + coordX);
 			$('#editor').attr('data-glyph', altState);
+			$("#mouseX").val(coordX);
+			$("#mouseY").val(coordY);
 
 			// move grid lines
-			if( gridToggle ){
-
-				$('#coords').show();
-
-				if( $('#x-break').is(':checked') ){
-					$('#vertical-line').show();
-					if (!gridLock['x']){
-						$('#vertical-line').css('transform', 'translateX(' + e.pageX + 'px)');
-					}	
-				}else if( $('#y-break').is(':checked') ){
-					$('#horizontal-line').show();
-					if (!gridLock['y']){
-						$('#horizontal-line').css('transform', 'translateY(' + e.pageY + 'px)');
-					}
-				}
-
-				// move around coordinate box			
-				$('#coords').css({
-					'transform': 'translate(' + e.pageX +'px, ' + e.pageY +'px)'
-				});
-				$("#x-coord").text(coordX);
-				$("#y-coord").text(coordY);
-			}else{
-				$('#vertical-line, #horizontal-line, #coords').hide();
-			}
 			
 		});
 	}
 	
-
-
-
-
-
-		
 
 
   /* -----------
 	SELECT SUBSTITUTION AREA
 	------------ */	
-	let lasso = false;
+
+	let conditions = [];
+	function viewOutput(rules){
+		console.log(rules);
+		rules.forEach(function(rule){
+			glyph = rule[0];
+			recs = rule[1];
+			// [name, min, max]
+
+			recs.forEach(function(r){
+				
+				let nameY = controls['y-axis'];
+				let nameX = controls['x-axis'];
+				let maxY = axes[nameY]['max'];
+				let maxX = axes[nameX]['max'];
+
+				// substract one for intermediate areas
+				// to avoid overlapping rectangles
+				if (r['y'] != maxY){
+					maxY = r['y']-1; 
+				}
+				if (r['X'] != maxX){
+					maxx = r['x'] + r['width']-1;
+				}
+				
+				let set = [
+					[ nameY, r['y'] - r['height'], maxY],
+					[ nameX, r['x'], maxX]
+				];
+				console.log(set);
+				conditions.push(set);
+			});			
+		});
+
+		let outputHtml = "";
+
+		conditions.forEach(function(set){
+			outputHtml += '<div class="set">'
+			set.forEach(function(r){
+				outputHtml += `<div class="condition">
+					<div class="name">` + r[0] +`</div>
+					<div class="min">` + r[1] +`</div>
+					<div class="max">` + r[2] +`</div>
+				</div>`
+			});
+			outputHtml += '</div>'
+		});
+
+		$('#rules').append(outputHtml);
+	}
+
 	let ctrlOn = false;
 
-	if( $('#selection').is(':checked') ){
-		lasso = true;
-		$('.whole').css('pointer-events', 'none');
-	 	
-	 	let rectangleCoords  = [];
+	let rules = [];
 
-		$('#grid').on('click', '.item', function(e){
-			console.log('lasso');
+ 	function mergeRecs(rectangleCoords){
 
-			// add rectangles for selection
-			
+ 		let mergedRows = [];
+ 		mergedRows.push(rectangleCoords[0]);
+ 		let counter = 0;
+ 		
+ 		let newRect = {}
+ 		let sumWidth = rectangleCoords[0]['width'];
 
-			if (e.metaKey){
+ 		// merge rectangles	in X
+ 		for( var i = 0; i < rectangleCoords.length-1; i++){
+ 			// for every row of items
+ 			thisRect = rectangleCoords[i]; 
+ 			nextRect = rectangleCoords[i+1];
 
-				$('.selected').each(function(i){
-					let rect = {};
+ 			if( (thisRect['y'] == nextRect['y']) && (thisRect['height'] == nextRect['height']) ){
+ 				// if next rectangle is at the same y coord
+ 				sumWidth = sumWidth + nextRect['width']; // merge widths
+ 				mergedRows[counter]['width'] = sumWidth;
+ 			}else{
+ 				counter++; // don't merge; 
+ 				sumWidth = rectangleCoords[i]['width']; // reset sumWidth 
+ 				mergedRows[counter] = nextRect; // store new rect info
+ 			}
+ 		};
 
-					rect['x'] = parseInt( $(this).attr('data-coordX') );
-					rect['y'] = parseInt( $(this).attr('data-coordY') );
-					rect['width'] = parseInt( $(this).attr('data-width') );
-					rect['height'] = parseInt( $(this).attr('data-height') );
-					
-					rectangleCoords.push(rect);
-										
-				});
+ 		// merge rectangles	in Y
+ 		let merged = [];
+ 		merged.push(mergedRows[0]);
+ 		let sumHeight = mergedRows[0]['height'];
+ 		let counterY = 0;
+
+ 		for( var j = 0; j<mergedRows.length - 1; j++){
+ 			thisRow = mergedRows[j];
+ 			nextRow = mergedRows[j+1];
+
+ 			if( (thisRow['x'] == nextRow['x']) && (thisRow['width'] == nextRow['width']) ){
+ 				// if next rectangle is at the same x coord
+ 				sumHeight = sumHeight + nextRect['height']; // merge heights
+ 				merged[counterY]['height'] = sumHeight;
+ 			}else{
+ 				counterY++;
+ 				sumHeight = mergedRows[j]['height']; // reset sumWidth 
+ 				merged[counterY] = nextRow; // store new rect info
+ 			}
+ 		};
+ 		return merged;
+ 	}
 
 
-				// console.log(sets);
+	$('#grid').on('click', '.item', function(e){
 
-				let mergedRows = [];
-				mergedRows.push(rectangleCoords[0]);
-				let counter = 0;
+		// add rectangles for selection
+
+		if (e.metaKey){
+			let rectangleCoords  = [];
+
+			$('.selected').each(function(i){
+				let rect = {};
+
+				rect['x'] = parseInt( $(this).attr('data-coordX') );
+				rect['y'] = parseInt( $(this).attr('data-coordY') );
+				rect['width'] = parseInt( $(this).attr('data-width') );
+				rect['height'] = parseInt( $(this).attr('data-height') );
 				
-				let newRect = {}
-				let sumWidth = rectangleCoords[0]['width'];
+				rectangleCoords.push(rect);
+									
+			});
 
-				// merge rectangles	in X
-				for( var i = 0; i < rectangleCoords.length-1; i++){
-					// for every row of items
-					thisRect = rectangleCoords[i]; 
-					nextRect = rectangleCoords[i+1];
+			let ruleSet = mergeRecs(rectangleCoords);			
 
-					if( (thisRect['y'] == nextRect['y']) && (thisRect['height'] == nextRect['height']) ){
-						// if next rectangle is at the same y coord
-						sumWidth = sumWidth + nextRect['width']; // merge widths
-						mergedRows[counter]['width'] = sumWidth;
-					}else{
-						counter++; // don't merge; 
-						sumWidth = rectangleCoords[i]['width']; // reset sumWidth 
-						mergedRows[counter] = nextRect; // store new rect info
-					}
-				};
+			$('#alt-selector').css({
+				'transform': 'translate(' + e.pageX +'px, ' + e.pageY +'px)'
+			});
+			$('#alt-selector').attr('data-status','visible');
 
-				// merge rectangles	in Y
-				let merged = [];
-				merged.push(mergedRows[0]);
-				let sumHeight = mergedRows[0]['height'];
-				let counterY = 0;
+			$('.alt').click(function(){
+				let glyphStyle = $(this).attr('id');
 
-				for( var j = 0; j<mergedRows.length - 1; j++){
-					thisRow = mergedRows[j];
-					nextRow = mergedRows[j+1];
+				$('.selected').attr('data-glyph', glyphStyle); 
+				$('.selected').removeClass('selected'); 
+				$('#alt-selector').attr('data-status','hidden');
+				rules.push([glyphStyle, ruleSet]);
 
-					if( (thisRow['x'] == nextRow['x']) && (thisRow['width'] == nextRow['width']) ){
-						// if next rectangle is at the same x coord
-						sumHeight = sumHeight + nextRect['height']; // merge heights
-						merged[counterY]['height'] = sumHeight;
-					}else{
-						counterY++;
-						sumHeight = mergedRows[j]['height']; // reset sumWidth 
-						merged[counterY] = nextRow; // store new rect info
-					}
-				};
-				
-				
+				viewOutput(rules);
+			});
 
-				console.log(mergedRows);
-				console.log(merged);
-
-
-				// pullUpSubs($(e.target), e.pageX, e.pageY);
-
-				$('#alt-selector').css({
-					'transform': 'translate(' + e.pageX +'px, ' + e.pageY +'px)'
-				});
-				$('#alt-selector').attr('data-status','visible');
-
-				$('.alt').click(function(){
-					let glyphStyle = $(this).attr('id');
-
-					$('.selected').attr('data-glyph', glyphStyle);
-					$('.selected').removeClass('selected');
-					$('#alt-selector').attr('data-status','hidden');
-				});
-				
-			}else{
-				$(this).toggleClass('selected');
-
-			}
-			
-		});
-	}
-	
-	leafSegmentation();
-
-	function leafSegmentation(){
-		$('.leaf').on('click', function(e){
-			if( !lasso ) {
-				console.log('leaf');
-				gridToggle = false;
-
-				let $target = $(e.target);
-				let $parent = $target.parent();
-
-				let mouseX = e.pageX - $target.offset().left;
-				let mouseY = e.pageY - $target.offset().top;
-				let segmentWidth = $target.width();
-				let segmentHeight = $target.height();
-
-
-				let glyphState = $(this).attr('data-glyph');
-				// divide up segments at mouse cursor
-
-				if( dragging ){
-					e.stopPropagation();
-					return false;						
-				}else if( $('#x-break').is(':checked') ){
-					// add horizontal breakpoint
-					let breakX = Math.round(100*(mouseX/segmentWidth));
-					addBreakpoint('x', $target, breakX, glyphState);
-
-				}else if( $('#y-break').is(':checked') ){
-					// add vertical breakpoint
-					let breakY = Math.round(100*(mouseY/segmentHeight));
-					addBreakpoint('y', $target, breakY, glyphState);
-
-				}else if( $('#resize').is(':checked')){
-					// update applied areas upon leaf resizing
-
-					// let $resizeLeaf = $('.resizable', $(this));
-					// let resizeGlyphState = $resizeLeaf.attr('data-glyph');
-					// let updateArea = $resizeLeaf[0].getBoundingClientRect();
-					// updateInstances(updateArea, resizeGlyphState);
-
-					// let $nextLeaf = $('.leaf:nth-child(2)', $(this));
-					// let nextGlyphState = $nextLeaf.attr('data-glyph');
-					// let nextUpdateArea = $nextLeaf[0].getBoundingClientRect();
-					// updateInstances(nextUpdateArea, nextGlyphState);
-
-
-				}else if( $('#clear').is(':checked') ){
-					// remove breakpoints
-
-					if($('.segment').length > 1){
-
-						// merge leaves
-						$parent.empty(); 
-						
-						// return alts to default
-						let clearArea = $parent[0].getBoundingClientRect();
-						updateInstances(clearArea, 'default');
-
-						// setup as merged as leaf
-						$parent.addClass('leaf');
-					}
-				}else{
-					// select substitutions
-					if( $('#alt-selector').attr('data-status') == 'visible' ){
-						// remove modal if click outside of options
-						hideSelector();
-					}else{
-						// pull up alternate substitution menu
-						pullUpSubs( $target, e.pageX, e.pageY);	
-					}
-				}
-
-				deactivateTool();
-			}
-		});
-	
-			
-	}
-
-	function addBreakpoint(axis, element, position, glyph){
-		element.removeClass('leaf');
-		if (axis == 'x'){
-			element.append('<div class="segment leaf resizable" style="flex: none; width:' + position + '%" data-glyph="' + glyph +'"><div class="dragbar x"></div></div><div class="segment leaf" data-glyph="' + glyph +'"></div>');
-			breakName = controls['x-axis'];
-			breakTo = coordX;
 		}else{
-			element.addClass('stack');
-			element.append( '<div class="segment leaf resizable" style="flex: none; height:' + position + '%" data-glyph="' + glyph +'"><div class="dragbar y"></div></div><div class="segment leaf" data-glyph="' + glyph +'"></div>');
-			breakTo = coordY;
+			// add to selection
+			$(this).toggleClass('selected');
 		}
-
-		// let breakpointHtml =
-		// `<div class="condition axisName">
-		// 	<div class="axisName">` + breakName +`</div>
-		// 	<div class="from">` + 0 +`</div>
-		// 	<div class="to">` + coordX +`</div>
-		// </div>`;
-
-		// console.log(breakpointHtml)
-		// $('#output').append(breakpointHtml);
-
-	}
-	
-
-	// resize if dragging
-	// $(".leaf").on('mousedown', '.dragbar', function(e) {
-	//     console.log('dragging');
-	// 	dragging = true;
-	// 	let thisLeaf = $(this).parent();
-	// 	let parentWidth = thisLeaf.parent().width();
-	// 	$(document).mousemove(function(e){
-	// 		thisLeaf.css('width', 100*(e.pageX/parentWidth) + '%');
-	// 	}).mouseup(function(e){
-	// 		thisLeaf.css('width', 100*(e.pageX/parentWidth) + '%');
-	// 		$(document).unbind('mousemove');
-	// 		setTimeOut(function(){
-	// 			dragging = false;
-	// 		}, 100);			
-	// 	});
-
-	// });
+	});
 
 
 
-
-	function deactivateTool( ){
-		// deactivates breakpoint tool
-		$('#x-break, #y-break').prop('checked', false);
-
-		$('#vertical-line, #horizontal-line').hide();
-	}
 
 	function hideSelector(){
 		$('#alt-selector').attr('data-status','hidden');

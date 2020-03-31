@@ -14,10 +14,10 @@
 
 :root {
   --captionFontSize: .85rem;
-  --highlightcolor: 255,220,0;
+  --highlightcolor: 233,233,233;
   --grey: rgb(200,200,200);
   --black: 0,0,0;
-  --selection: 0,144,158;
+  --selection: 0,0,255;
 }
 
 body {
@@ -79,9 +79,14 @@ form label {
   font-size: var(--captionFontSize);
   color: rgba(var(--black), 0.8);
   margin-bottom: 0.5rem;
+  display: inline-block;
 }
 form input {
   width: 100%;
+}
+
+.coords label[for=mouseY] {
+  margin-left: 1rem;
 }
 
 label[for=editor] {
@@ -107,7 +112,7 @@ label[for=editor] {
   display: inline-block;
 }
 
-input[name=steps] {
+input[type=number] {
   width: 40px;
 }
 
@@ -126,6 +131,10 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 /* -----------
@@ -205,18 +214,6 @@ input[type=radio] {
  ------------ */
 #info {
   pointer-events: none;
-}
-
-#coords {
-  position: absolute;
-  background: white;
-  border: 1px solid rgb(var(--selection));
-  left: 0px;
-  top: 0px;
-  color: rgb(var(--selection));
-  font-size: var(--captionFontSize);
-  padding: 0.5rem;
-  display: none;
 }
 
 #horizontal-line {
@@ -332,8 +329,38 @@ input[type=radio] {
   background: rgba(var(--selection), 0.2);
 }
 
+.item[data-glyph^=ss] {
+  background: rgba(var(--selection), 0.1);
+}
+
 [data-glyph=ss20] {
   font-feature-settings: "ss20";
 }
 
-/*# sourceMappingURL=style.css.map */
+/* -----------
+ OUTPUT
+ ------------ */
+.conditions {
+  font-size: var(--captionFontSize);
+  background: white;
+  padding: 0.5rem;
+}
+
+.header {
+  color: rgba(var(--black), 0.8);
+}
+
+.header, .condition {
+  display: flex;
+}
+
+.set {
+  padding: 0.25rem 0;
+  border-top: 1px solid var(--grey);
+}
+
+.name, .min, .max {
+  flex: 1;
+}
+
+/*# sourceMappingURL=visualizer.css.map */
