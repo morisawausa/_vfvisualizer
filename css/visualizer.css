@@ -3,8 +3,8 @@
   src: url(../fonts/MagmaticGX.ttf);
 }
 @font-face {
-  font-family: "Antenna";
-  src: url(../fonts/Antenna-Medium.woff2?#iefix) format("woff2"), url(../fonts/Antenna-Medium.woff) format("woff"), url(../fonts/Antenna-Medium.eot?#iefix) format("embedded-opentype");
+  font-family: "Dispatch Mono";
+  src: url(../fonts/DispatchMono-Regular.woff2?#iefix) format("woff2"), url(../fonts/DispatchMono-Regular.woff) format("woff"), url(../fonts/DispatchMono-Regular.eot?#iefix) format("embedded-opentype");
 }
 * {
   margin: 0;
@@ -13,7 +13,6 @@
 }
 
 :root {
-  --captionFontSize: .85rem;
   --highlightcolor: 233,233,233;
   --grey: rgb(200,200,200);
   --black: 0,0,0;
@@ -21,18 +20,17 @@
 }
 
 body {
-  font-family: "Antenna", sans-serif;
-  font-weight: 500;
+  font-family: "Dispatch Mono";
   color: rgb(var(--black));
 }
 
 main {
   display: flex;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 h1, h2, h3 {
-  font-weight: 500;
+  font-weight: normal;
 }
 
 h1 {
@@ -44,7 +42,6 @@ h2 {
   font-size: 1rem;
   text-transform: uppercase;
   margin: 2rem 0 1rem;
-  letter-spacing: 0.5px;
 }
 
 /* -----------
@@ -68,16 +65,17 @@ h2 {
 }
 
 input, select {
+  font-family: "Dispatch Mono";
   height: 30px;
   padding: 0.25rem;
+  font-size: 0.85rem;
 }
 
 form {
   margin: 1rem 0;
 }
 form label {
-  font-size: var(--captionFontSize);
-  color: rgba(var(--black), 0.8);
+  color: rgba(var(--black), 0.6);
   margin-bottom: 0.5rem;
   display: inline-block;
 }
@@ -100,20 +98,17 @@ label[for=editor] {
 /* -----------
  AXIS SETTINGS
  ------------ */
-.axes {
-  margin-top: 1rem;
-}
 .axes label, .axes h2 {
-  width: 49%;
+  width: 40%;
   display: inline-block;
 }
 .axes input, .axes select {
-  width: 49%;
+  width: 40%;
   display: inline-block;
 }
 
 input[type=number] {
-  width: 40px;
+  width: 50px;
 }
 
 .inc-control label {
@@ -122,9 +117,6 @@ input[type=number] {
 .inc-control #increments {
   display: flex;
   flex-wrap: wrap;
-}
-.inc-control input.step {
-  width: 40px;
 }
 
 input[type=number]::-webkit-inner-spin-button,
@@ -138,8 +130,13 @@ input[type=number] {
 }
 
 /* -----------
- BREAKPOINT SETTINGS
+ SELECTION  TOOL
  ------------ */
+.caption {
+  color: rgba(var(--black), 0.6);
+  margin-bottom: 0.5rem;
+}
+
 input[type=radio] {
   width: auto;
   height: auto;
@@ -147,9 +144,9 @@ input[type=radio] {
   margin-right: 5px;
 }
 
-.segmentation .field {
+.selection .field {
   display: inline-block;
-  margin-right: 15px;
+  margin-right: 5px;
 }
 
 /* -----------
@@ -341,9 +338,11 @@ input[type=radio] {
  OUTPUT
  ------------ */
 .conditions {
-  font-size: var(--captionFontSize);
+  font-size: 12px;
   background: white;
   padding: 0.5rem;
+  max-height: 120px;
+  overflow: scroll;
 }
 
 .header {

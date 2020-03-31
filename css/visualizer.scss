@@ -4,8 +4,8 @@
 }
 
 @font-face {
-   font-family: 'Antenna';
-   src: url(../fonts/Antenna-Medium.woff2?#iefix) format('woff2'), url(../fonts/Antenna-Medium.woff) format('woff'), url(../fonts/Antenna-Medium.eot?#iefix) format('embedded-opentype');
+   font-family: 'Dispatch Mono';
+   src: url(../fonts/DispatchMono-Regular.woff2?#iefix) format('woff2'), url(../fonts/DispatchMono-Regular.woff) format('woff'), url(../fonts/DispatchMono-Regular.eot?#iefix) format('embedded-opentype');
 }
 
 @mixin demo-font {
@@ -20,25 +20,24 @@
 }
 
 :root{
-   --captionFontSize: .85rem;
    --highlightcolor: 233,233,233;
    --grey: rgb(200,200,200);
    --black: 0,0,0;
    --selection: 0,0,255;
 }
 body{
-	font-family: 'Antenna', sans-serif;
-  font-weight: 500;
+  // font-weight: 500;
+  font-family: "Dispatch Mono";
   color: rgb(var(--black));
 }
 
 main{
   display: flex;
-	font-size: 16px;
+	font-size: 14px;
 }
 
 h1, h2, h3{
-  font-weight: 500;
+  font-weight: normal;
 }
 
 h1{
@@ -49,7 +48,6 @@ h2{
    font-size: 1rem;
    text-transform: uppercase;
    margin: 2rem 0 1rem;
-   letter-spacing: .5px;
 }
 
 /* -----------
@@ -73,14 +71,15 @@ h2{
 }
 
 input, select{
-   height: 30px;
-   padding: .25rem;
+  font-family: "Dispatch Mono";
+  height: 30px;
+  padding: .25rem;
+  font-size: .85rem;
 }
 form{
    margin: 1rem 0;
    label{
-      font-size: var(--captionFontSize);
-      color: rgba(var(--black),0.8);
+      color: rgba(var(--black),0.6);
       margin-bottom: .5rem;
       display: inline-block;
    }
@@ -107,19 +106,18 @@ label[for=editor]{
  ------------ */
 
 .axes{
-   margin-top: 1rem;
    label, h2 {
-      width: 49%;
+      width: 40%;
       display: inline-block;
    }
    input, select{
-      width: 49%;
+      width: 40%;
       display: inline-block;
    }
 }
 
 input[type="number"]{
-   width: 40px;
+   width: 50px;
 }
 
 .inc-control{
@@ -130,10 +128,6 @@ input[type="number"]{
       display: flex;
       flex-wrap: wrap;
    }
-   input.step{
-      width: 40px;
-   }
-
 }
 
 //turn off arrows on number inputs
@@ -148,8 +142,12 @@ input[type=number] {
 }
 
 /* -----------
- BREAKPOINT SETTINGS
+ SELECTION  TOOL
  ------------ */
+ .caption {
+  color: rgba(var(--black),0.6);
+  margin-bottom: .5rem;
+ }
  input[type=radio]{
     width: auto;
     height: auto;
@@ -157,10 +155,10 @@ input[type=number] {
     margin-right: 5px;
 }
 
-.segmentation {
+.selection {
    .field{
       display: inline-block;
-      margin-right: 15px;
+      margin-right: 5px;
    }
 }
 /* -----------
@@ -230,8 +228,7 @@ input[type=number] {
 //    border: 1px solid rgb(var(--selection));
 //    left: 0px;
 //    top: 0px;
-//    color: rgb(var(--selection));
-//    font-size: var(--captionFontSize);
+//    color: rgb(var(--selection));f
 //    padding: .5rem;
 //    display: none;
 // }
@@ -358,9 +355,11 @@ input[type=number] {
  ------------ */
 
 .conditions{
-  font-size: var(--captionFontSize);
+  font-size: 12px;
   background: white;
   padding: .5rem;
+  max-height: 120px;
+  overflow: scroll;
 }
 .header{
   color: rgba(var(--black),0.8);

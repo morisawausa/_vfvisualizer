@@ -1,6 +1,5 @@
-let gridToggle = true;
-let dragging = false;
-
+let selectToggle = false;
+let clickCount = 0;
 $(document).ready(function() {
 	
 
@@ -115,7 +114,6 @@ $(document).ready(function() {
 
 			html += '</div>' // close row
 
-
 		});
 
 		$('#grid').html(html);
@@ -171,12 +169,11 @@ $(document).ready(function() {
 
 
   /* -----------
-	SELECT SUBSTITUTION AREA
-	------------ */	
-
-	let conditions = [];
+	WRITE SUBSTITUTION RULES
+	------------ */
+	
 	function viewOutput(rules){
-		console.log(rules);
+		let conditions = [];
 		rules.forEach(function(rule){
 			glyph = rule[0];
 			recs = rule[1];
@@ -195,14 +192,14 @@ $(document).ready(function() {
 					maxY = r['y']-1; 
 				}
 				if (r['X'] != maxX){
-					maxx = r['x'] + r['width']-1;
+					maxX = r['x'] + r['width'] - 1;
 				}
 				
 				let set = [
 					[ nameY, r['y'] - r['height'], maxY],
 					[ nameX, r['x'], maxX]
 				];
-				console.log(set);
+				
 				conditions.push(set);
 			});			
 		});
@@ -221,12 +218,12 @@ $(document).ready(function() {
 			outputHtml += '</div>'
 		});
 
-		$('#rules').append(outputHtml);
+		$('#rules').html(outputHtml);
 	}
 
 	let ctrlOn = false;
 
-	let rules = [];
+	
 
  	function mergeRecs(rectangleCoords){
 
@@ -277,134 +274,119 @@ $(document).ready(function() {
  		return merged;
  	}
 
+ 	$("#grid").on('mouseenter', '.item', function(){
+
+ 		if(selectToggle){
+ 			let item = $(this);
+	 	   	let timer = setTimeout(function(){
+	 	        item.addClass('selected');
+	 	    }, 100);
+	 	    $(this).on('mouseleave', '.item', function() {
+	 	   	    clearTimeout(timer);
+	 	     });
+	 	}
+ 	});
+
 
 	$('#grid').on('click', '.item', function(e){
-
 		// add rectangles for selection
 
-		if (e.metaKey){
-			let rectangleCoords  = [];
-
-			$('.selected').each(function(i){
-				let rect = {};
-
-				rect['x'] = parseInt( $(this).attr('data-coordX') );
-				rect['y'] = parseInt( $(this).attr('data-coordY') );
-				rect['width'] = parseInt( $(this).attr('data-width') );
-				rect['height'] = parseInt( $(this).attr('data-height') );
-				
-				rectangleCoords.push(rect);
-									
-			});
-
-			let ruleSet = mergeRecs(rectangleCoords);			
-
-			$('#alt-selector').css({
-				'transform': 'translate(' + e.pageX +'px, ' + e.pageY +'px)'
-			});
-			$('#alt-selector').attr('data-status','visible');
-
-			$('.alt').click(function(){
-				let glyphStyle = $(this).attr('id');
-
-				$('.selected').attr('data-glyph', glyphStyle); 
-				$('.selected').removeClass('selected'); 
-				$('#alt-selector').attr('data-status','hidden');
-				rules.push([glyphStyle, ruleSet]);
-
-				viewOutput(rules);
-			});
-
+		if ( $('#substitute').is(':checked') ){
+			processSelection(e);
 		}else{
 			// add to selection
-			$(this).toggleClass('selected');
+			let itemActive = $(this).hasClass('selected');
+
+			if (itemActive && selectToggle){
+				//end selection
+				selectToggle = false;
+			}else if(itemActive && !selectToggle){
+				$(this).removeClass('selected');
+				$(this).attr('data-glyph', 'default');
+			}
+			else if (!itemActive && !selectToggle){
+				//start selection
+				$(this).addClass('selected');
+				selectToggle = true;
+			}			
 		}
 	});
 
-
-
-
-	function hideSelector(){
-		$('#alt-selector').attr('data-status','hidden');
-		$('.leaf.active').removeClass('active');
-	}
-
-	// toggle grid view on when breakpoint tool is active
-	$('input[type=radio][name=segmentation]').on('change', function() {
-	   
-	    if ( $(this).attr('id') !== 'selection' ){
-	    	lasso = false;
-	    	$('.whole').css('pointer-events', 'auto');
-	    }else{
-	    	lasso = true;
-	    	$('.whole').css('pointer-events', 'none');
-	    }
-
-
-	    if ($(this).attr('id') == 'x-break'){
-	        gridToggle = true;
-	    }
-	    else if ($(this).attr('id') == 'y-break'){
-	        gridToggle = true;
-	    }
-	    else if ($(this).attr('id') == 'resize'){
-			$('.leaf').addClass('no-hover');
-			// $('.resizable').addClass('enabled');
-			
-		}else if ($(this).attr('id') == 'clearall'){
-			$('.leaf, .resizable').remove();
-			$('.whole').addClass('leaf');
-			// $('#x-break').prop('checked', true);
-			$('.item').attr('data-glyph', 'default');
-
-		}
-	});
-
-	function pullUpSubs(el, x, y){
-		// pull up substitution options at cursor position
-		el.addClass('active');
-		// flag active segment
-
-		// position and show sub-selector
-		$('#alt-selector').css({
-			'transform': 'translate(' + x +'px, ' + y +'px)'
-		});
-		$('#alt-selector').attr('data-status','visible');
-
-
-		// select alternate glyph
-		$('.alt').click(function(){
-			let glyphStyle = $(this).attr('id');
-
-			let leafArea = $('.leaf.active')[0].getBoundingClientRect();
-			updateInstances(leafArea, glyphStyle);
-
-		});
-	}
-
-
-  /* -----------
+	 /* -----------
 	SELECT SUBSTITUTION GLYPHS
 	------------ */
 
+	function processSelection(e){
+		// takes selected grid items
+		// activates substitution selection
+		// generates rules
 
+		let rectangleCoords = [];
 
-	function updateInstances(activeArea, glyph){
-		// updates visualizer items within the specified activeArea (leaf)
+		$('.selected').each(function(i){
+			let rect = {};
 
-		$('.item').each(function(){
-			let itemArea = $(this)[0].getBoundingClientRect();
-			if( itemArea.left >= activeArea.left && itemArea.left <= activeArea.right && itemArea.top >= activeArea.top && itemArea.top <= activeArea.bottom){
-				$(this).attr('data-glyph', glyph);
-			}
+			rect['x'] = parseInt( $(this).attr('data-coordX') );
+			rect['y'] = parseInt( $(this).attr('data-coordY') );
+			rect['width'] = parseInt( $(this).attr('data-width') );
+			rect['height'] = parseInt( $(this).attr('data-height') );
+			
+			rectangleCoords.push(rect);
+								
 		});
 
-		// deactivate and hide elements
-		$('.leaf.active').attr('data-glyph', glyph);
-		$('.leaf.active').removeClass('active');
-		$('#alt-selector').attr('data-status','hidden');
+		let ruleSet = mergeRecs(rectangleCoords);			
+
+		pullUpAlts(e, ruleSet); // pull up 
 	}
+ 
+	function pullUpAlts(e, area){
+		let rules = []; // reset rules;
+
+		// position substitution options at cursor
+		$('#alt-selector').css({
+			'transform': 'translate(' + e.pageX +'px, ' + e.pageY +'px)'
+		});
+		$('#alt-selector').attr('data-status','visible');
+
+		// setup rules when selecting glyph style
+		$('.alt').click(function(){
+			let glyphStyle = $(this).attr('id');
+			$('.selected').attr('data-glyph', glyphStyle);
+			$('#select').prop('checked', true); 
+			// $('.selected').removeClass('selected'); 
+			$('#alt-selector').attr('data-status','hidden');
+			rules.push([glyphStyle, area]);
+
+			viewOutput(rules);
+		});
+	}
+
+	$(document).on('keydown', function(e){
+		if (e.metaKey ){
+			console.log('metakey');
+			$('#substitute').prop('checked', true);
+		}
+	}).on('keyup', function(){
+		$('#substitute').prop('checked', false);
+		$('#select').prop('checked', true);
+	});
 	
+
+	$('input[type=radio][name=selection]').on('change', function() {
+		let button = $(this).attr('id');
+
+	    if ( button == 'select'){
+	        selectToggle = true;
+	    }else if (button == 'substitute'){
+	        selectToggle = false;
+		}else if (button == 'clearall'){
+			$('.selected').removeClass('selected');
+			$('#select').prop('checked', true);
+			$('.item').attr('data-glyph', 'default');
+			$('#rules').text('');
+		}
+	});
 
   /* -----------
 	CALCULATE INCREMENTS TO VISUALIZE
@@ -544,12 +526,6 @@ $(document).ready(function() {
 		$('#'+ xy + '-increments').html(stepsHTML);
 	}
 
- 
-
-
-  /* -----------
-	WRITE SUBSTITUTION RULES
-	------------ */
 
 
 

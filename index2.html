@@ -43,13 +43,39 @@
                         <input type="number" id="mouseY" name="mouseY">
                     </div>
 
+                    <div class="caption">
+                      Click a letter to start / end the area selection, then ⌘ + Click to substitute.
+                    </div>
+                    <div class="selection">
+                        <div class="field">  
+                            <input type="radio" checked name="selection" id="select">
+                            <label for="clear">
+                                select
+                            </label>
+                        </div>
+
+                        <div class="field">  
+                            <input type="radio" name="selection" id="substitute">
+                            <label for="substitute">
+                                substitute
+                            </label>
+                        </div>
+
+                        <div class="field">  
+                            <input type="radio" name="selection" id="clearall">
+                            <label for="clearall">
+                                clear all
+                            </label>
+                        </div>
+                    </div> 
+
 
                     <div class="axes" id="x-axis-settings">
                         <div class="field">
                            <h2>X-axis</h2>
                             <select id="x-axis" name="x-axis">
                               <option value="wdth" selected>Width</option>
-                              <option value="wght">Weight</option>
+                              <!-- <option value="wght">Weight</option> -->
                             </select>
                         </div>
                         <div class="field">
@@ -79,7 +105,7 @@
                        <div class="field">
                             <h2>Y-axis</h2>
                            <select id="y-axis" name="y-axis">
-                             <option value="wdth">Width</option>
+                             <!-- <option value="wdth">Width</option> -->
                              <option value="wght" selected>Weight</option>
                            </select>
                        </div>
@@ -103,9 +129,7 @@
                                
                            </div>
                        </div>
-                    </div>
-
-                     
+                    </div>                    
                  
                 </form>
 
