@@ -218,79 +218,191 @@ $(document).ready(function() {
   /* -----------
 	SELECT SUBSTITUTION AREA
 	------------ */	
+	let lasso = false;
+	let ctrlOn = false;
 
-	$('.leaf').on('click', function(e){
+	if( $('#selection').is(':checked') ){
+		lasso = true;
+		$('.whole').css('pointer-events', 'none');
+	 	
+	 	let rectangleCoords  = [];
 
-			console.log('leaf');
-			gridToggle = false;
+		$('#grid').on('click', '.item', function(e){
+			console.log('lasso');
 
-			let $target = $(e.target);
-			let $parent = $target.parent();
+			// add rectangles for selection
+			
 
-			let mouseX = e.pageX - $target.offset().left;
-			let mouseY = e.pageY - $target.offset().top;
-			let segmentWidth = $target.width();
-			let segmentHeight = $target.height();
+			if (e.metaKey){
 
+				$('.selected').each(function(i){
+					let rect = {};
 
-			let glyphState = $(this).attr('data-glyph');
-			// divide up segments at mouse cursor
-
-			if( dragging ){
-				e.stopPropagation();
-				return false;						
-			}else if( $('#x-break').is(':checked') ){
-				// add horizontal breakpoint
-				let breakX = Math.round(100*(mouseX/segmentWidth));
-				addBreakpoint('x', $target, breakX, glyphState);
-
-			}else if( $('#y-break').is(':checked') ){
-				// add vertical breakpoint
-				let breakY = Math.round(100*(mouseY/segmentHeight));
-				addBreakpoint('y', $target, breakY, glyphState);
-
-			}else if( $('#resize').is(':checked')){
-				// update applied areas upon leaf resizing
-
-				// let $resizeLeaf = $('.resizable', $(this));
-				// let resizeGlyphState = $resizeLeaf.attr('data-glyph');
-				// let updateArea = $resizeLeaf[0].getBoundingClientRect();
-				// updateInstances(updateArea, resizeGlyphState);
-
-				// let $nextLeaf = $('.leaf:nth-child(2)', $(this));
-				// let nextGlyphState = $nextLeaf.attr('data-glyph');
-				// let nextUpdateArea = $nextLeaf[0].getBoundingClientRect();
-				// updateInstances(nextUpdateArea, nextGlyphState);
-
-
-			}else if( $('#clear').is(':checked') ){
-				// remove breakpoints
-
-				if($('.segment').length > 1){
-
-					// merge leaves
-					$parent.empty(); 
+					rect['x'] = parseInt( $(this).attr('data-coordX') );
+					rect['y'] = parseInt( $(this).attr('data-coordY') );
+					rect['width'] = parseInt( $(this).attr('data-width') );
+					rect['height'] = parseInt( $(this).attr('data-height') );
 					
-					// return alts to default
-					let clearArea = $parent[0].getBoundingClientRect();
-					updateInstances(clearArea, 'default');
+					rectangleCoords.push(rect);
+										
+				});
 
-					// setup as merged as leaf
-					$parent.addClass('leaf');
-				}
+
+				// console.log(sets);
+
+				let mergedRows = [];
+				mergedRows.push(rectangleCoords[0]);
+				let counter = 0;
+				
+				let newRect = {}
+				let sumWidth = rectangleCoords[0]['width'];
+
+				// merge rectangles	in X
+				for( var i = 0; i < rectangleCoords.length-1; i++){
+					// for every row of items
+					thisRect = rectangleCoords[i]; 
+					nextRect = rectangleCoords[i+1];
+
+					if( (thisRect['y'] == nextRect['y']) && (thisRect['height'] == nextRect['height']) ){
+						// if next rectangle is at the same y coord
+						sumWidth = sumWidth + nextRect['width']; // merge widths
+						mergedRows[counter]['width'] = sumWidth;
+					}else{
+						counter++; // don't merge; 
+						sumWidth = rectangleCoords[i]['width']; // reset sumWidth 
+						mergedRows[counter] = nextRect; // store new rect info
+					}
+				};
+
+				// merge rectangles	in Y
+				let merged = [];
+				merged.push(mergedRows[0]);
+				let sumHeight = mergedRows[0]['height'];
+				let counterY = 0;
+
+				for( var j = 0; j<mergedRows.length - 1; j++){
+					thisRow = mergedRows[j];
+					nextRow = mergedRows[j+1];
+
+					if( (thisRow['x'] == nextRow['x']) && (thisRow['width'] == nextRow['width']) ){
+						// if next rectangle is at the same x coord
+						sumHeight = sumHeight + nextRect['height']; // merge heights
+						merged[counterY]['height'] = sumHeight;
+					}else{
+						counterY++;
+						sumHeight = mergedRows[j]['height']; // reset sumWidth 
+						merged[counterY] = nextRow; // store new rect info
+					}
+				};
+				
+				
+
+				console.log(mergedRows);
+				console.log(merged);
+
+
+				// pullUpSubs($(e.target), e.pageX, e.pageY);
+
+				$('#alt-selector').css({
+					'transform': 'translate(' + e.pageX +'px, ' + e.pageY +'px)'
+				});
+				$('#alt-selector').attr('data-status','visible');
+
+				$('.alt').click(function(){
+					let glyphStyle = $(this).attr('id');
+
+					$('.selected').attr('data-glyph', glyphStyle);
+					$('.selected').removeClass('selected');
+					$('#alt-selector').attr('data-status','hidden');
+				});
+				
 			}else{
-				// select substitutions
-				if( $('#alt-selector').attr('data-status') == 'visible' ){
-					// remove modal if click outside of options
-					hideSelector();
-				}else{
-					// pull up alternate substitution menu
-					pullUpSubs( $target, e.pageX, e.pageY);	
-				}
-			}
+				$(this).toggleClass('selected');
 
-			deactivateTool();
-	});
+			}
+			
+		});
+	}
+	
+	leafSegmentation();
+
+	function leafSegmentation(){
+		$('.leaf').on('click', function(e){
+			if( !lasso ) {
+				console.log('leaf');
+				gridToggle = false;
+
+				let $target = $(e.target);
+				let $parent = $target.parent();
+
+				let mouseX = e.pageX - $target.offset().left;
+				let mouseY = e.pageY - $target.offset().top;
+				let segmentWidth = $target.width();
+				let segmentHeight = $target.height();
+
+
+				let glyphState = $(this).attr('data-glyph');
+				// divide up segments at mouse cursor
+
+				if( dragging ){
+					e.stopPropagation();
+					return false;						
+				}else if( $('#x-break').is(':checked') ){
+					// add horizontal breakpoint
+					let breakX = Math.round(100*(mouseX/segmentWidth));
+					addBreakpoint('x', $target, breakX, glyphState);
+
+				}else if( $('#y-break').is(':checked') ){
+					// add vertical breakpoint
+					let breakY = Math.round(100*(mouseY/segmentHeight));
+					addBreakpoint('y', $target, breakY, glyphState);
+
+				}else if( $('#resize').is(':checked')){
+					// update applied areas upon leaf resizing
+
+					// let $resizeLeaf = $('.resizable', $(this));
+					// let resizeGlyphState = $resizeLeaf.attr('data-glyph');
+					// let updateArea = $resizeLeaf[0].getBoundingClientRect();
+					// updateInstances(updateArea, resizeGlyphState);
+
+					// let $nextLeaf = $('.leaf:nth-child(2)', $(this));
+					// let nextGlyphState = $nextLeaf.attr('data-glyph');
+					// let nextUpdateArea = $nextLeaf[0].getBoundingClientRect();
+					// updateInstances(nextUpdateArea, nextGlyphState);
+
+
+				}else if( $('#clear').is(':checked') ){
+					// remove breakpoints
+
+					if($('.segment').length > 1){
+
+						// merge leaves
+						$parent.empty(); 
+						
+						// return alts to default
+						let clearArea = $parent[0].getBoundingClientRect();
+						updateInstances(clearArea, 'default');
+
+						// setup as merged as leaf
+						$parent.addClass('leaf');
+					}
+				}else{
+					// select substitutions
+					if( $('#alt-selector').attr('data-status') == 'visible' ){
+						// remove modal if click outside of options
+						hideSelector();
+					}else{
+						// pull up alternate substitution menu
+						pullUpSubs( $target, e.pageX, e.pageY);	
+					}
+				}
+
+				deactivateTool();
+			}
+		});
+	
+			
+	}
 
 	function addBreakpoint(axis, element, position, glyph){
 		element.removeClass('leaf');
@@ -303,6 +415,7 @@ $(document).ready(function() {
 			element.append( '<div class="segment leaf resizable" style="flex: none; height:' + position + '%" data-glyph="' + glyph +'"><div class="dragbar y"></div></div><div class="segment leaf" data-glyph="' + glyph +'"></div>');
 			breakTo = coordY;
 		}
+
 		// let breakpointHtml =
 		// `<div class="condition axisName">
 		// 	<div class="axisName">` + breakName +`</div>
@@ -383,7 +496,6 @@ $(document).ready(function() {
 	function pullUpSubs(el, x, y){
 		// pull up substitution options at cursor position
 		el.addClass('active');
-		
 		// flag active segment
 
 		// position and show sub-selector
@@ -396,6 +508,7 @@ $(document).ready(function() {
 		// select alternate glyph
 		$('.alt').click(function(){
 			let glyphStyle = $(this).attr('id');
+
 			let leafArea = $('.leaf.active')[0].getBoundingClientRect();
 			updateInstances(leafArea, glyphStyle);
 
@@ -421,9 +534,8 @@ $(document).ready(function() {
 
 		// deactivate and hide elements
 		$('.leaf.active').attr('data-glyph', glyph);
+		$('.leaf.active').removeClass('active');
 		$('#alt-selector').attr('data-status','hidden');
-		setTimeout(function(){
-			$('.active').removeClass('active')}, 100);
 	}
 	
 
