@@ -23,7 +23,7 @@ The breakpoints version allows you to define the design space with gridlines.
 The area selection version allows you to define the design space by selecting the grid areas to substitute.
 
 - Click to begin selecting (mouseover the grid to select), and click to end the selection. 
-- Select the substitution radio button or command + click to pull up the substitution menu and select the alternate glyph.
+- Select the substitution radio button or ⌘ + click to pull up the substitution menu and select the alternate glyph.
 - The numbers under input field indicates the design space coordinates. These fields are not yet editable but will eventually allow direct input and locking X / Y to target specific coordinates.
 - Only one substitution area is currently supported
 - The outputted rules are not yet editable from the box
