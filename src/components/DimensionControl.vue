@@ -32,15 +32,8 @@
           max="20"
           v-bind:default="dimensionDivisions"
           v-bind:value="dimensionDivisions"
+          @change.prevent="changeDivision($event, dimensionName)"
           @input.prevent="updateDivisionCount"/>
-
-        <div class="division-button-stage">
-          <button
-            class="divisions-button button"
-            @click.prevent="updateSubstitutionSubdivisions($event, divisions, dimensionName)">
-            set
-          </button>
-        </div>
 
       </div>
     </div>
@@ -65,6 +58,10 @@ export default {
   methods: {
     updateDivisionCount (e) {
       this.divisions = e.target.value
+    },
+    changeDivision(e, dimensionName) {
+      this.divisions = e.target.value
+      this.updateSubstitutionSubdivisions(e, this.divisions, dimensionName)
     }
   },
   computed: {
@@ -142,7 +139,7 @@ export default {
     .divisions-input {
       font-family: "Dispatch Mono", monospace;
       background-color: var(--ui-attention-color);
-      width: 70%;
+      width: 100%;
       padding:0;
       padding-left:var(--label-padding);
       min-height:var(--substitution-box-min-height);
