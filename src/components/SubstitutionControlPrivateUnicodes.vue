@@ -102,7 +102,7 @@
           </div>
           <div class="submit-buttons">
             <div
-              @click="resetGlyphset"
+              @click="removeSubstitution"
               class="reset-glyphset submit-button">
               <span class="centered">Delete</span>
             </div>
@@ -115,7 +115,7 @@
 <script>
 import {mapGetters, mapActions, mapMutations} from 'vuex'
 import {AXES, GLYPHLIST, CURRENT_SUBSTITUTION, CURRENT_SUBSTITUTION_INDEX, ALL_SUBSTITUTIONS, VALID_STYLISTIC_SETS} from '../store/getters.js'
-import {ADD_NEW_SUBSTITUTION, ACTIVATE_SUBSTITUTION, SET_AXIS_DIMENSION_FOR_SUBSTITUTION, SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION} from '../store/mutations.js'
+import {ADD_NEW_SUBSTITUTION, DELETE_SUBSTITUTION, ACTIVATE_SUBSTITUTION, SET_AXIS_DIMENSION_FOR_SUBSTITUTION, SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION} from '../store/mutations.js'
 import {linear} from '../store/scales.js'
 
 import GlyphAlternatesDisplay from './GlyphAlternatesDisplay.vue'
@@ -139,8 +139,9 @@ export default {
       activateAxis: SET_AXIS_DIMENSION_FOR_SUBSTITUTION,
       addNewSubstitution: ADD_NEW_SUBSTITUTION,
       activateSubstitution: ACTIVATE_SUBSTITUTION,
+      deleteSubstitution: DELETE_SUBSTITUTION,
       setAxisDimensionForCurrentSubstitution: SET_AXIS_DIMENSION_FOR_SUBSTITUTION,
-      setAxisSubdivisionsForCurrentSubstitution: SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION
+      setAxisSubdivisionsForCurrentSubstitution: SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION,
     }),
     selectGlyphAlternates (e, glyph) {
       this.glyphset.push(glyph)
@@ -192,6 +193,11 @@ export default {
     },
     notInList (glyph) {
       return this.glyphset.reduce((a, b) => a && (b.name !== glyph.name), true)
+    },
+    removeSubstitution () {
+      this.deleteSubstitution({
+        substitutionIndex: this.currentSubstitutionIndex
+      })
     }
   },
   computed: {
@@ -350,7 +356,7 @@ export default {
         position: relative;
         float:left;
         width:50%;
-        
+
         &:first-child {
           border-right: 1px solid var(--font-color);
         }

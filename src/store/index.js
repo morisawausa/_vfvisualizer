@@ -239,7 +239,9 @@ export default new Vuex.Store({
      * index from the application.
      */
     [DELETE_SUBSTITUTION] (state, {substitutionIndex}) {
-      return ''
+      let substitutions = state.substitutions
+      substitutions = substitutions.filter((s, i) => i !== substitutionIndex)
+      state.substitutions = substitutions
     },
     /**
      * This action changes the current substitution index to a specified value.
