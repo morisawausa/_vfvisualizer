@@ -93,7 +93,7 @@ export default new Vuex.Store({
 
     [SUBSTITUTION_RECTS] (state, getters) {
       return () => {
-        return state.substititions.map(substitution => {
+        let subs = state.substititions.map(substitution => {
           let hypercube = substitution.state
           let divisions = hypercube.divisions.map(division => division.map(i => i))
 
@@ -103,7 +103,7 @@ export default new Vuex.Store({
           })).toArray()
 
           // Generate all of the bounded regions inside the hypercube.
-          //
+          // This gets all non-default cells.
           let cells = indices.map(index => {
             let bounds = index.map((component, i) => {
               let dimension = divisions[i]
@@ -119,16 +119,21 @@ export default new Vuex.Store({
             let state = hypercube.state.get(...index)
 
             return { bounds, coordinates, state }
-          }).filter(x => x.state !== 0)
+          }).filter(x => x.state !== 0);
 
-          // TODO: At this point, you would want to consolidate
-          // the rectangles into more efficient regions.
+          return substitution.glyphs.slice(1).map((target_glyph, i) => {
 
-          return {
-            substitution,
-            cells
-          }
-        })
+            let target_state = i + 1
+            let cells_for_target = cells.filter(x => x.state === target_state)
+
+            return {
+              substitution: {glyphs: [substitution.glyphs[0], target_glyph]},
+              cells: cells_for_target
+            }
+          })
+        });
+
+        return subs.reduce((a, b) => a.concat(b), [])
       }
     }
   },
