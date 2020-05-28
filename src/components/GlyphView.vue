@@ -157,7 +157,7 @@ export default {
     float:left;
     height: var(--substitution-box-min-height);
     outline:none;
-    width:49%;
+    width:calc(var(--controls-width) / 2 - 2 * var(--component-margin));
     border:0;
     text-align: center;
     font-family: "Dispatch Mono", monospace;
