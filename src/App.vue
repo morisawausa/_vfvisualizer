@@ -112,6 +112,12 @@ export default {
   --syntax-comment-color: gray;
 }
 
+body {
+  width:100vw;
+  height:100vh;
+  overflow: hidden;
+}
+
 #visualizer-controls {
   position: absolute;
   width: var(--controls-width);
