@@ -85,7 +85,15 @@
         v-else
         class="current-substitution-data">
         <SubordinateControl v-bind:active="subordinatesActive" />
-        <div class="current-substitution-alternates">
+
+        <div
+          @click="toggleSubordinatesPane"
+          class="current-substitution-alternates">
+          <div
+            class="subordinate-toggle"
+            v-bind:class="{active: subordinatesActive}">
+            <span class="centered">&#x2630;</span>
+          </div>
           <SubstitutionSet v-bind:glyphset="currentSubstitution.glyphs" />
         </div>
         <div class="dimension-controls">
@@ -322,6 +330,35 @@ export default {
     width:80%;
     height: 100%;
     float: left;
+
+    .current-substitution-data {
+      .current-substitution-alternates {
+        cursor:pointer;
+
+        .subordinate-toggle {
+          position: absolute;
+          display:none;
+          right:-13px;
+          z-index:200;
+          width:20px;
+          height:20px;
+          border-radius: 10px;
+          background-color: var(--font-color);
+          color:var(--background-color);
+          transform: translateY(75%);
+
+          &.active {
+            display: block;
+            background-color: var(--active-color);
+            color:var(--font-color);
+          }
+        }
+
+        &:hover .subordinate-toggle {
+          display: block;
+        }
+      }
+    }
 
     .glyph-selector {
       width: calc(100% - 2 * 0.5em);
