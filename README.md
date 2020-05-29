@@ -1,5 +1,5 @@
 # Variable Font Visualizer
-**Version: 0.9.0, in development.**
+**Current Version: 0.8.8, in development.**
 
 
 This tool provides a design space visualizer and font variation substitution manager for OpenType variable fonts. The tool helps with setting up glyph substitutions that depend on the design space region. It can build substititions for many different glyphs visually. Once you're done setting up substititions, the tool will generate a `<GSUB>` element that you can paste into a `.ttx` file, or a `<rules>` element that you can paste into a `.designspace` file.
@@ -30,38 +30,43 @@ npm run build
 
 # build for production and view the bundle analyzer report
 npm run build --report
-
-# run unit tests
-# No unit tests are implemented for the current version.
-npm run unit
-
-# run e2e tests
-# No end-to-end tests are implemented for the current version.
-npm run e2e
-
-# run all tests
-# No tests are implemented for the current version.
-npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
 ## Roadmap
-	- make grid subdivisions draggable.
-	- add delete button to remove substitutions.
-	- add better keyboard shortcuts for updating divisions
-	- error handling for non-variable .ttf files.
-	- add tutorials and help screens.
-	- documentation!
-	- finesse interactions, and ui.
 
-- Version 1.1
-	- optimize generated rectangles
-	- add the ability to zoom in on the grid?
-	- dark mode?
+*This section outlines our roadmap for future development.*
 
-- Version 1.2
-	- allow for grid re-subdivision
+### Version 1.0.0
+
+| Done | Version | Category | Feature | Description |
+| --- | --- | --- | --- | --- |
+| | 0.9.0 | UI | Button States | Make the Button States more legible with hover, etc.
+| ✅| 0.9.0 | Functionality | Delete Substitutions| Self Explanitory
+| ✅ | 0.9.0 | Functionality | >2 Substitutions | You should be able to apply multiple substitions to the same base glyph in one design space map.  
+| | 0.9.0 | Functionality | >1 Substitution Set per Map | You should be able to assign multiple substitution pairs to the same design space substitution map.
+| | 1.0.0 | Functionality | Drag Subdivisions | You should be able to drag the axis subdivisions freely to resize and reposition the grid.
+| | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
+| | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
+| | 1.0.0 | Functionality | Existing `GSUB` | Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.
+| | 1.0.0 | UI | Testing | Review app at different screen sizes, and number of axes.
+
+### Version 1.1.0
+
+| Done | Version | Category | Feature | Description |
+| --- | --- | --- | --- | --- |
+| | 1.1.0 | Optimization | Generated Cells | Optimize generated cells so as to minimize the total number of cells.
+| | 1.1.0 | Functionality | Zoom the grid | Make it easy to zoom and pan on the visualizer grid for more detail (maybe).
+| | 1.1.0 | UI | Dark Mode | Make an `occupantfonts.com`-esque dark mode toggle.
+
+
+### Version 1.2.0
+
+| Done | Version | Category | Feature | Description |
+| --- | --- | --- | --- | --- |
+| | 1.2.0 | Functionality | Re-subdivision | Allow the number of grid divisions to be changed without destroying the state of the visualizer.
+
 
 ## Known Issues
 
