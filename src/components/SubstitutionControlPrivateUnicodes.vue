@@ -14,6 +14,9 @@
             @click="goToSubstitution($event, index)"
             class="substitution-button glyph-icon visualized-font">
               <span class="centered">{{substitution.glyphs[0] | unicode}}</span>
+              <span v-if="substitution.subordinates.length > 0" class="subordinates-count">
+                <span class="centered">{{substitution.subordinates.length + 1}}</span>
+              </span>
           </span>
         </li>
       </ul>
@@ -298,6 +301,16 @@ export default {
       color:var(--background-color);
       transform:translate(-50%,-50%);
       outline:none;
+
+      .subordinates-count {
+        position: absolute;
+        right:-5px;
+        font-size:.7em;
+        width:12px;
+        height:12px;
+        border-radius: 6px;
+        background-color:var(--font-color);
+      }
 
       &.active {
         background-color: var(--active-color);

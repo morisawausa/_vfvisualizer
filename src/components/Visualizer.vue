@@ -216,16 +216,18 @@ export default {
     getSizeForSequence () {
       let substitution = this.currentSubstitution
       let sequence = substitution.left_sequence + substitution.right_sequence
-      return (4 * Math.pow(0.75, sequence.length)) + 'vw'
+      return (4 * Math.pow(0.8, sequence.length + substitution.active_subordinates.length)) + 'vw'
     },
     alternateStyles () {
       let current = this.currentSubstitution
       if (typeof current !== 'undefined') {
-        let l = current.glyphs.map((glyph, i) => {
-          return `--alternate-${i}: "${ current.left_sequence + this.$options.filters.unicode(glyph) + current.right_sequence }";`
+        return current.glyphs.map((glyph, i) => {
+          const active_runs = current.active_subordinates.map(j => current.subordinates[j])
+          const active_glyphs = [glyph].concat(active_runs.map(run => run[i]))
+          const unicodes = active_glyphs.map(glyph => this.$options.filters.unicode(glyph))
+
+          return `--alternate-${i}: "${ current.left_sequence + unicodes.join('') + current.right_sequence }";`
         }).join(' ')
-        console.log(l)
-        return l
       } else {
         return ''
       }

@@ -29,7 +29,9 @@ import {
   SET_STATE_FOR_CELL,
   ADD_SUBORDINATE_TO_SUBSTITUTION,
   REMOVE_SUBORDINATE_FROM_SUBSTITUTION,
-  SWAP_SUBORDINATE_AND_PRIMARY
+  SWAP_SUBORDINATE_AND_PRIMARY,
+  ACTIVATE_SUBORDINATE_IN_GRID,
+  DEACTIVATE_SUBORDINATE_IN_GRID
 } from './mutations.js'
 
 import {linear} from './scales.js'
@@ -370,6 +372,7 @@ export default new Vuex.Store({
       let substitution = substitutions[substitutionIndex]
 
       substitution.subordinates = substitution.subordinates.filter((s, i) => i !== subordinateIndex)
+      substitution.active_subordinates = substitution.active_subordinates.filter(i => i !== subordinateIndex)
 
       substitutions[substitutionIndex] = substitution
       state.substitutions = [...substitutions]
@@ -390,7 +393,35 @@ export default new Vuex.Store({
 
       substitutions[substitutionIndex] = substitution
       state.substitutions = [...substitutions]
-    }
+    },
+
+    /**
+     *
+     *
+     */
+    [ACTIVATE_SUBORDINATE_IN_GRID] (state, {substitutionIndex, subordinateIndex}) {
+      let substitutions = state.substitutions
+      let substitution = substitutions[substitutionIndex]
+
+      substitution.active_subordinates = substitution.active_subordinates.concat([subordinateIndex])
+
+      substitutions[substitutionIndex] = substitution
+      state.substitutions = [...substitutions]
+    },
+
+    /**
+     *
+     *
+     */
+    [DEACTIVATE_SUBORDINATE_IN_GRID] (state, {substitutionIndex, subordinateIndex}) {
+      let substitutions = state.substitutions
+      let substitution = substitutions[substitutionIndex]
+
+      substitution.active_subordinates = substitution.active_subordinates.filter(i => i !== subordinateIndex)
+
+      substitutions[substitutionIndex] = substitution
+      state.substitutions = [...substitutions]
+    },
   },
   actions: {
     [INITIALIZE] ({commit}, font) {

@@ -89,7 +89,7 @@ export default {
 
       if (typeof current !== 'undefined') {
         let sequence = current.left_sequence + current.right_sequence
-        let length = sequence.length
+        let length = sequence.length + current.active_subordinates.length
         let sf = Math.pow(.85, length)
         return (10 * sf) + 'em';
       }
@@ -101,7 +101,11 @@ export default {
       let current = this.currentSubstitution
       if (typeof current !== 'undefined') {
         return current.glyphs.map((glyph, i) => {
-          return `--alternate-${i}: "${ current.left_sequence + this.$options.filters.unicode(glyph) + current.right_sequence }";`
+          const active_runs = current.active_subordinates.map(j => current.subordinates[j])
+          const active_glyphs = [glyph].concat(active_runs.map(run => run[i]))
+          const unicodes = active_glyphs.map(glyph => this.$options.filters.unicode(glyph))
+
+          return `--alternate-${i}: "${ current.left_sequence + unicodes.join('') + current.right_sequence }";`
         }).join(' ')
       } else {
         return ''

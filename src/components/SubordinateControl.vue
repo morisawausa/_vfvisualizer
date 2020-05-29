@@ -33,19 +33,18 @@
           </div>
 
           <div
-            v-if="true"
-            @click="activateSubordinate(index)"
+            v-if="inactive(index)"
+            @click="activateSubordinateInGrid(index)"
             class="activate-button subordinate-button">
             <span class="centered">&rarr;</span>
           </div>
 
           <div
             v-else
-            @click="deactivateSubordinate(index)"
+            @click="deactivateSubordinateInGrid(index)"
             class="deactivate-button subordinate-button">
             <span class="centered">&larr;</span>
           </div>
-
 
         </div>
       </div>
@@ -55,8 +54,7 @@
       <div class="header">
         new subordinate
       </div>
-      <div
-        >
+      <div>
         <SubstitutionSet v-bind:glyphset="glyphset" />
       </div>
     </div>
@@ -108,7 +106,9 @@ import {
 import {
   ADD_SUBORDINATE_TO_SUBSTITUTION,
   REMOVE_SUBORDINATE_FROM_SUBSTITUTION,
-  SWAP_SUBORDINATE_AND_PRIMARY } from '../store/mutations.js'
+  SWAP_SUBORDINATE_AND_PRIMARY,
+  ACTIVATE_SUBORDINATE_IN_GRID,
+  DEACTIVATE_SUBORDINATE_IN_GRID} from '../store/mutations.js'
 
 import SubstitutionSet from './SubstitutionSet.vue';
 import GlyphAlternatesDisplay from './GlyphAlternatesDisplay.vue';
@@ -130,7 +130,9 @@ export default {
     ...mapMutations({
       addSubordinate: ADD_SUBORDINATE_TO_SUBSTITUTION,
       deleteSubordinate: REMOVE_SUBORDINATE_FROM_SUBSTITUTION,
-      swapSubordinate: SWAP_SUBORDINATE_AND_PRIMARY
+      swapSubordinate: SWAP_SUBORDINATE_AND_PRIMARY,
+      activateSubordinate: ACTIVATE_SUBORDINATE_IN_GRID,
+      deactivateSubordinate: DEACTIVATE_SUBORDINATE_IN_GRID
     }),
     getGlyphs (e) {
       const val = e.target.value
@@ -150,6 +152,10 @@ export default {
       let needsAdditionalGlyphs = (typeof current !== 'undefined') ? this.glyphset.length < current.glyphs.length : true;
 
       return notInList && needsAdditionalGlyphs
+    },
+    inactive (index) {
+      let current = this.currentSubstitution
+      return current.active_subordinates.indexOf(index) === -1;
     },
     addGlyphToGlyphset (glyph) {
       this.glyphset.push(glyph)
@@ -175,7 +181,19 @@ export default {
         substitutionIndex: this.currentSubstitutionIndex,
         subordinateIndex: index
       })
-    }
+    },
+    activateSubordinateInGrid (index) {
+      this.activateSubordinate({
+        substitutionIndex: this.currentSubstitutionIndex,
+        subordinateIndex: index
+      })
+    },
+    deactivateSubordinateInGrid (index) {
+      this.deactivateSubordinate({
+        substitutionIndex: this.currentSubstitutionIndex,
+        subordinateIndex: index
+      })
+    },
   },
   computed: {
     ...mapGetters({
@@ -250,6 +268,11 @@ export default {
 
     &:hover .buttons {
       display: block;
+
+      .deactivate-button {
+        color:vaR(--font-color);
+        background-color: var(--active-color);
+      }
     }
   }
 
