@@ -50,6 +50,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 | | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
 | | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
 | | 1.0.0 | Functionality | Existing `GSUB` | Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.
+| | 1.0.0 | Functionality | Undo button | Self Explaitory
 | | 1.0.0 | UI | Testing | Review app at different screen sizes, and number of axes.
 
 ### Version 1.1.0
