@@ -57,9 +57,11 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 | Done | Version | Category | Feature | Description |
 | --- | --- | --- | --- | --- |
+| | 1.1.0 | UI | Keyboard Shortvuts | Add keyboard shortcuts for new substitution, and toggle subordinates.
 | | 1.1.0 | Optimization | Generated Cells | Optimize generated cells so as to minimize the total number of cells.
 | | 1.1.0 | Functionality | Zoom the grid | Make it easy to zoom and pan on the visualizer grid for more detail (maybe).
 | | 1.1.0 | UI | Dark Mode | Make an `occupantfonts.com`-esque dark mode toggle.
+| | 1.1.0 | Functionality | Show instances | Show where instances are located in the grid as an overlay
 
 
 ### Version 1.2.0
