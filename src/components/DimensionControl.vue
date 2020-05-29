@@ -1,11 +1,11 @@
 <template lang="html">
   <div class="susbtitution-axis-control">
 
-    <div class="dimension-name">{{ dimensionName }} axis</div>
+    <div class="dimension-name">{{ dimensionName }} dimension</div>
 
     <div class="dimension-display-selector dimension-selector">
       <div class="dimension-display-label dimension-label">
-        <span class="centered">Showing</span>
+        <span class="centered">Axis</span>
       </div>
       <ul class="design-axis-selector">
         <li
@@ -150,31 +150,6 @@ export default {
       text-align: center;
       float:left;
     }
-
-    .division-button-stage {
-      position: relative;
-      min-height:var(--substitution-box-min-height);
-      width: 25%;
-      float:left;
-
-      .divisions-button {
-        font-family: "Dispatch Mono", monospace;
-        position: absolute;
-        top:50%;
-        left:50%;
-        border:none;
-        outline:none;
-        background-color: var(--font-color);
-        color:var(--background-color);
-        width:var(--substitution-icon-width);
-        height:var(--substitution-icon-width);
-        transform:translate(-50%,-50%);
-        border-radius:var(--substitution-icon-width);
-      }
-
-    }
-
-
   }
 }
 </style>
