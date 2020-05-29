@@ -19,3 +19,9 @@ export const SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION = 'set_axis_subdivisions_for
 export const UPDATE_SEQUENCE_FOR_SUBSTITUTION = 'update_sequence'
 
 export const SET_STATE_FOR_CELL = 'set_state_for_cell'
+
+export const ADD_SUBORDINATE_TO_SUBSTITUTION = 'add_subordinate_to_substitution'
+
+export const REMOVE_SUBORDINATE_FROM_SUBSTITUTION = 'remove_subordinate_from_substitution'
+
+export const SWAP_SUBORDINATE_AND_PRIMARY = 'swap_subordinate_and_primary'

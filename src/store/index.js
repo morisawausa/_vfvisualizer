@@ -26,7 +26,10 @@ import {
   SET_AXIS_DIMENSION_FOR_SUBSTITUTION,
   SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION,
   UPDATE_SEQUENCE_FOR_SUBSTITUTION,
-  SET_STATE_FOR_CELL
+  SET_STATE_FOR_CELL,
+  ADD_SUBORDINATE_TO_SUBSTITUTION,
+  REMOVE_SUBORDINATE_FROM_SUBSTITUTION,
+  SWAP_SUBORDINATE_AND_PRIMARY
 } from './mutations.js'
 
 import {linear} from './scales.js'
@@ -221,12 +224,32 @@ export default new Vuex.Store({
       const substitutions = state.substitutions
       const divisions = state.axes.map(axis => linear(DEFAULT_SUBDIVISIONS))
       const newSubstitution = {
+        // The primary run of glyphs controlling the substitution
         glyphs: glyphs,
+        // A set of secondary runs of glyphs, which obey the
+        // exact same rules as the primary run.
+        subordinates: [],
+        // A set of indices into the subordinates array,
+        // indicating which of the subordinates should be
+        // visualized in the grid.
+        active_subordinates: [],
+        // A set of grid divisions, equal in length to the number of design axes,
+        // indicating where along the axis it should be divided,
+        // as a percentage of total length.
         divisions: divisions,
+        // the index of the design axis (and division) assigned to the
+        // x dimension on the visualizer.
         x: 0,
+        // the undex of the design axis (and division) assigned to the
+        // y dimension on the visualizer
         y: 1,
+        // A test string to be displayed to the left of the active sequence
         left_sequence: '',
+        // A test string to be displayed to the right of the active sequence
         right_sequence: '',
+        // The design space map which indicates where substitutions are applied
+        // This is a hypercube with the same number of axes as design axes,
+        // and cells equal to the product of lengths of each division array.
         state: new Hypercube(divisions)
       }
       const newLength = substitutions.push(newSubstitution)
@@ -318,6 +341,54 @@ export default new Vuex.Store({
 
       substitutions[substitutionIndex] = substitution
 
+      state.substitutions = [...substitutions]
+    },
+
+    /**
+     * this action adds a new glyphset to the specified substitutions
+     * set of subordinate sequences. `glyphset.length` is assumed to
+     * be equal to substitution.glyphs.length. (IE, all glyphsets in
+     * a substitution must be the same length.)
+     */
+    [ADD_SUBORDINATE_TO_SUBSTITUTION] (state, {substitutionIndex, glyphset}) {
+      let substitutions = state.substitutions
+      let substitution = substitutions[substitutionIndex]
+
+      substitution.subordinates = substitution.subordinates.concat([glyphset])
+
+      substitutions[substitutionIndex] = substitution
+      state.substitutions = [...substitutions]
+    },
+
+    /**
+     * this action removes the subordinate sepcified by the `subordinateIndex`
+     * from the specified substitution's subordinates list. `subordinateIndex` is
+     * assumed to lie in the range [0, substitution.subordinates.length - 1]
+     */
+    [REMOVE_SUBORDINATE_FROM_SUBSTITUTION] (state, {substitutionIndex, subordinateIndex}) {
+      let substitutions = state.substitutions
+      let substitution = substitutions[substitutionIndex]
+
+      substitution.subordinates = substitution.subordinates.filter((s, i) => i !== subordinateIndex)
+
+      substitutions[substitutionIndex] = substitution
+      state.substitutions = [...substitutions]
+    },
+
+    /**
+     * this action swaps the current substititions's primary glyph sequence with
+     * the sequence specified by `subordinateIndex`. `subordinateIndex` is
+     * assumed to lie in the range [0, substitution.subordinates.length - 1]
+     */
+    [SWAP_SUBORDINATE_AND_PRIMARY] (state, {substitutionIndex, subordinateIndex}) {
+      let substitutions = state.substitutions
+      let substitution = substitutions[substitutionIndex]
+
+      let old_primary = [...substitution.glyphs]
+      substitution.glyphs = [...substitution.subordinates[subordinateIndex]]
+      substitution.subordinates[subordinateIndex] = old_primary
+
+      substitutions[substitutionIndex] = substitution
       state.substitutions = [...substitutions]
     }
   },

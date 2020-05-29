@@ -81,6 +81,7 @@
       <div
         v-else
         class="current-substitution-data">
+        <SubordinateControl v-bind:active="subordinatesActive" />
         <div class="current-substitution-alternates">
           <SubstitutionSet v-bind:glyphset="currentSubstitution.glyphs" />
         </div>
@@ -121,6 +122,7 @@ import {linear} from '../store/scales.js'
 import GlyphAlternatesDisplay from './GlyphAlternatesDisplay.vue'
 import DimensionControl from './DimensionControl.vue'
 import SubstitutionSet from './SubstitutionSet.vue'
+import SubordinateControl from './SubordinateControl.vue'
 
 import FuzzySearch from 'fuzzy-search'
 
@@ -128,11 +130,12 @@ export default {
   data () {
     return {
       results: [],
-      glyphset: []
+      glyphset: [],
+      subordinatesActive: true
     }
   },
   components: {
-    GlyphAlternatesDisplay, DimensionControl, SubstitutionSet
+    GlyphAlternatesDisplay, DimensionControl, SubstitutionSet, SubordinateControl
   },
   methods: {
     ...mapMutations({
@@ -146,6 +149,9 @@ export default {
     selectGlyphAlternates (e, glyph) {
       this.glyphset.push(glyph)
     },
+    toggleSubordinatesPane () {
+      this.subordinatesActive = !this.subordinatesActive
+    },
     resetGlyphset () {
       this.glyphset = []
     },
@@ -153,6 +159,7 @@ export default {
       if (this.glyphset.length >= 2) {
         this.addNewSubstitution({glyphs: this.glyphset})
         this.glyphset = []
+        this.results = []
       }
     },
     goToSubstitution (e, index) {
