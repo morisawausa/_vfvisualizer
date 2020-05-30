@@ -1,6 +1,6 @@
 {
   "name": "visualizer",
-  "version": "1.0.0",
+  "version": "0.8.8",
   "description": "Variable font visualizer for Occupant Fonts",
   "author": "Nic Schumann <nic@nicschumann.co>",
   "private": true,
