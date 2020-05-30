@@ -1,7 +1,8 @@
 const { create } = require('xmlbuilder')
 const PRECISION = 4
 /**
- * this function generates the
+ * this function generates a designspace <rules> element that's compatible
+ * with a designspace file.
  *
  */
 export function designspaceTable (axes, cells) {
@@ -35,7 +36,7 @@ export function designspaceTable (axes, cells) {
 }
 
 /**
- *
+ * This function generates a <GSUB> element that's compatible with a .ttx file
  *
  */
 export function ttxTable (axes, cells) {
