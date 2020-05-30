@@ -142,7 +142,7 @@ export default {
     return {
       results: [],
       glyphset: [],
-      subordinatesActive: true
+      subordinatesActive: false
     }
   },
   components: {
@@ -338,7 +338,7 @@ export default {
         .subordinate-toggle {
           position: absolute;
           display:none;
-          right:-13px;
+          right:-10px;
           z-index:200;
           width:20px;
           height:20px;
@@ -346,8 +346,10 @@ export default {
           background-color: var(--font-color);
           color:var(--background-color);
           transform: translateY(75%);
+          transition:right .2s;
 
           &.active {
+            right:-13px;
             display: block;
             background-color: var(--active-color);
             color:var(--font-color);
