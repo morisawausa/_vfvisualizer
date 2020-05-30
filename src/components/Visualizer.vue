@@ -89,7 +89,7 @@ export default {
         }
       } else {
         return {
-          [`--axis-${cell.x_design_axis.tag}-setting`]: x_setting
+          [`--axis-${cell.x_design_axis.tag}-setting`]: y_setting
         }
       }
     },
