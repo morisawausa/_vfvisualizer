@@ -42,33 +42,33 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 | Done | Version | Category | Feature | Description |
 | --- | --- | --- | --- | --- |
-| | 0.9.0 | UI | Button States | Make the Button States more legible with hover, etc.
+|   | 0.9.0 | UI | Button States | Make the Button States more legible with hover, etc.
 | ✅| 0.9.0 | Functionality | Delete Substitutions| Self Explanitory
-| ✅ | 0.9.0 | Functionality | >2 Substitutions | You should be able to apply multiple substitions to the same base glyph in one design space map.  
-| | 0.9.0 | Functionality | >1 Substitution Set per Map | You should be able to assign multiple substitution pairs to the same design space substitution map.
-| | 1.0.0 | Functionality | Drag Subdivisions | You should be able to drag the axis subdivisions freely to resize and reposition the grid.
-| | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
-| | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
-| | 1.0.0 | Functionality | Existing `GSUB` | Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.
-| | 1.0.0 | Functionality | Undo button | Self Explaitory
-| | 1.0.0 | UI | Testing | Review app at different screen sizes, and number of axes.
+| ✅| 0.9.0 | Functionality | >2 Substitutions | You should be able to apply multiple substitions to the same base glyph in one design space map.  
+| ✅| 0.9.0 | Functionality | >1 Substitution Set per Map | You should be able to assign multiple substitution pairs to the same design space substitution map.
+|   | 1.0.0 | Functionality | Drag Subdivisions | You should be able to drag the axis subdivisions freely to resize and reposition the grid.
+|   | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
+|   | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
+|   | 1.0.0 | Functionality | Existing `GSUB` | Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.
+|   | 1.0.0 | Functionality | Undo button | Self Explanitory
+|   | 1.0.0 | UI | Testing | Review app at different screen sizes, and number of axes.
 
 ### Version 1.1.0
 
 | Done | Version | Category | Feature | Description |
 | --- | --- | --- | --- | --- |
-| | 1.1.0 | UI | Keyboard Shortvuts | Add keyboard shortcuts for new substitution, and toggle subordinates.
-| | 1.1.0 | Optimization | Generated Cells | Optimize generated cells so as to minimize the total number of cells.
-| | 1.1.0 | Functionality | Zoom the grid | Make it easy to zoom and pan on the visualizer grid for more detail (maybe).
-| | 1.1.0 | UI | Dark Mode | Make an `occupantfonts.com`-esque dark mode toggle.
-| | 1.1.0 | Functionality | Show instances | Show where instances are located in the grid as an overlay
+|   | 1.1.0 | UI | Keyboard Shortvuts | Add keyboard shortcuts for new substitution, and toggle subordinates.
+|   | 1.1.0 | Optimization | Generated Cells | Optimize generated cells so as to minimize the total number of cells.
+|   | 1.1.0 | Functionality | Zoom the grid | Make it easy to zoom and pan on the visualizer grid for more detail (maybe).
+|   | 1.1.0 | UI | Dark Mode | Make an `occupantfonts.com`-esque dark mode toggle.
+|   | 1.1.0 | Functionality | Show instances | Show where instances are located in the grid as an overlay
 
 
 ### Version 1.2.0
 
 | Done | Version | Category | Feature | Description |
 | --- | --- | --- | --- | --- |
-| | 1.2.0 | Functionality | Re-subdivision | Allow the number of grid divisions to be changed without destroying the state of the visualizer.
+|   | 1.2.0 | Functionality | Re-subdivision | Allow the number of grid divisions to be changed without destroying the state of the visualizer.
 
 
 ## Known Issues
