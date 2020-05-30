@@ -78,6 +78,7 @@ export function ttxTable (axes, cells) {
 
   cells.forEach((group, i) => {
     let substitution = group.substitution
+    console.log(substitution.subordinates);
     let lookup = lookuplist.ele('Lookup', {'index': lookup_offset + i})
 
     lookup.ele('LookupType', {value: 1}).up()
@@ -86,6 +87,11 @@ export function ttxTable (axes, cells) {
     let subst = lookup.ele('SingleSubst', {index: 0, Format: 2})
 
     subst.ele('Substitution', {in: substitution.glyphs[0].name, out: substitution.glyphs[1].name}).up()
+
+    substitution.subordinates.map(group => {
+      subst.ele('Substitution', {in: group[0].name, out: group[1].name}).up()
+    })
+
   });
 
   let rects = {}

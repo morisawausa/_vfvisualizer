@@ -132,7 +132,12 @@ export default new Vuex.Store({
             let cells_for_target = cells.filter(x => x.state === target_state)
 
             return {
-              substitution: {glyphs: [substitution.glyphs[0], target_glyph]},
+              substitution: {
+                glyphs: [substitution.glyphs[0], target_glyph],
+                subordinates: substitution.subordinates.map(glyphset => {
+                  return [glyphset[0], glyphset[i + 1]]
+                })
+              },
               cells: cells_for_target
             }
           })
