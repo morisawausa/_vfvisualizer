@@ -15,13 +15,15 @@
       <div class="button-row">
         <div
           class="design-space-format-button format-button ui-button"
-          v-bind:class="{'active': visible == 'designspace'}">
+          v-bind:class="{'active': visible == 'designspace'}"
+          @click="toDesignspace">
           <span class="centered">.designspace</span>
         </div>
 
         <div
           class="design-space-format-button"
-          v-bind:class="{'active': visible == 'ttx'}">
+          v-bind:class="{'active': visible == 'ttx'}"
+          @click="toTTX">
           <span class="centered">.ttx</span>
         </div>
 
@@ -54,6 +56,9 @@ import {ADD_NEW_SUBSTITUTION, ACTIVATE_SUBSTITUTION, SET_AXIS_DIMENSION_FOR_SUBS
 const hljs = require('highlight.js/lib/core');
 hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'))
 
+const DESIGNSPACE = 'designspace'
+const TTX = 'ttx'
+
 export default {
   data () {
     return {
@@ -66,21 +71,26 @@ export default {
       this.active = !this.active;
     },
     toTTX () {
-      this.visible = 'ttx'
+      this.visible = TTX
     },
     toDesignspace () {
-      this.visible = 'designspace'
+      this.visible = DESIGNSPACE
     },
     table () {
       let axes = this.axes
       let cells = this.substitutionRects()
 
-      // map across all the indices to get the cell state for each one,
-      // and combine with the dimensional bounds to localize the rect
-      let output = ttxTable(axes, cells).join('\n\n')
-      console.log(output);
+      if (this.visible === DESIGNSPACE) {
 
-      return hljs.highlight('xml', output).value
+        let output = designspaceTable(axes, cells).join('\n\n')
+        return hljs.highlight('xml', output).value
+
+      } else if (this.visible === TTX) {
+
+        let output = ttxTable(axes, cells).join('\n\n')
+        return hljs.highlight('xml', output).value
+
+      }
     },
   },
   computed: {
