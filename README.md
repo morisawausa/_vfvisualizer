@@ -57,7 +57,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 | Done | Version | Category | Feature | Description |
 | --- | --- | --- | --- | --- |
-|   | 1.1.0 | UI | Keyboard Shortvuts | Add keyboard shortcuts for new substitution, and toggle subordinates.
+|   | 1.1.0 | UI | Keyboard Shortcuts | Add keyboard shortcuts for new substitution, and toggle subordinates.
 |   | 1.1.0 | Optimization | Generated Cells | Optimize generated cells so as to minimize the total number of cells.
 |   | 1.1.0 | Functionality | Zoom the grid | Make it easy to zoom and pan on the visualizer grid for more detail (maybe).
 |   | 1.1.0 | UI | Dark Mode | Make an `occupantfonts.com`-esque dark mode toggle.
@@ -91,6 +91,9 @@ Math.pow(.75, sequence.length)
 Used by `Visualizer.vue` for the size of the glyphs in the visualizer canvas.
 
 
+### AGL Glyph Name Replacements
+
+The [Adobe Glyph List](https://github.com/adobe-type-tools/agl-specification) specification provides a list of standard glyph names. The Glyphs software automatically [normalizes your glyphnames to this specification](https://glyphsapp.com/tutorials/getting-your-glyph-names-right). This is great for standards compliance, but bad for glyph discovery in the visualizer (which asks you to specify glyphs by name). In general, most of your basic Latin, Greek, and Cyrillic glyph names will be fine, if you're following the spec. However, many symbols get converted to their unicode identifiers. This means that to set up substitutions for these glyphs, you have to search for their unicode identifiers, rather than their internal glyph names. To find `won`, you have to search for `uni20A9`.
 
 ## GSUB
 
