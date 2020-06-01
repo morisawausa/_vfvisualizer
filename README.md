@@ -46,6 +46,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 | ✅| 0.9.0 | Functionality | Delete Substitutions| Self Explanitory
 | ✅| 0.9.0 | Functionality | >2 Substitutions | You should be able to apply multiple substitions to the same base glyph in one design space map.  
 | ✅| 0.9.0 | Functionality | >1 Substitution Set per Map | You should be able to assign multiple substitution pairs to the same design space substitution map.
+|   | 0.9.0 | UI | Output | Add controls to output pane. Finesse styling.
 |   | 1.0.0 | Functionality | Drag Subdivisions | You should be able to drag the axis subdivisions freely to resize and reposition the grid.
 |   | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
 |   | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
