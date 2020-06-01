@@ -1,5 +1,19 @@
 const { create } = require('xmlbuilder')
 const PRECISION = 4
+
+/**
+ * This function un-normalizes a variable font
+ * normalized coordinate back into the user
+ * coordinate system. 
+ */
+const unnormalize = (value, axis) => {
+  if (value <= 0) {
+    return (value + 1) * (axis.default - axis.min) + axis.min
+  } else {
+    return value * (axis.max - axis.default) + axis.default
+  }
+}
+
 /**
  * this function generates a designspace <rules> element that's compatible
  * with a designspace file.
@@ -11,7 +25,10 @@ export function designspaceTable (axes, cells) {
   cells.forEach(group => {
     let substitution = group.substitution
     let cells = group.cells
-    let rule = root.ele('rule', {name: substitution.glyphs.map(g => g.name).join('+')})
+
+    let bases = [substitution.glyphs[0]].concat(substitution.subordinates.map(g => g[0]))
+
+    let rule = root.ele('rule', {name: bases.map(g => g.name).join('+')})
 
     cells.forEach(cell => {
       let conditionset = rule.ele('conditionset')
@@ -19,8 +36,8 @@ export function designspaceTable (axes, cells) {
       cell.coordinates.forEach((pair, i) => {
         conditionset = conditionset.ele('condition', {
           name: axes[i].name,
-          minimum: pair[0], // TODO: Multiply Through to get User Coordinates.
-          maximum: pair[1]  // TODO: Multiply Through to get User Coordinates.
+          minimum: unnormalize(pair[0], axes[i]), // TODO: Multiply Through to get User Coordinates.
+          maximum: unnormalize(pair[1], axes[i])  // TODO: Multiply Through to get User Coordinates.
         }).up()
       })
 
@@ -28,6 +45,10 @@ export function designspaceTable (axes, cells) {
     })
 
     rule = rule.ele('sub', {'name': substitution.glyphs[0].name, 'with': substitution.glyphs[1].name}).up()
+
+    substitution.subordinates.forEach(run => {
+      rule = rule.ele('sub', {'name': run[0].name, 'with': run[1].name}).up()
+    })
 
     root = rule.up()
   })
