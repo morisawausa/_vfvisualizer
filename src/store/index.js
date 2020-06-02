@@ -98,7 +98,7 @@ export default new Vuex.Store({
 
     [SUBSTITUTION_RECTS] (state, getters) {
       return () => {
-        let subs = state.substititions.map(substitution => {
+        let subs = state.substitutions.map(substitution => {
           let hypercube = substitution.state
           let divisions = hypercube.divisions.map(division => division.map(i => i))
 
@@ -261,7 +261,7 @@ export default new Vuex.Store({
       }
       const newLength = substitutions.push(newSubstitution)
 
-      state.substititions = substitutions
+      state.substitutions = substitutions
       state.ui.substitution = newLength - 1
     },
     /**
@@ -275,7 +275,7 @@ export default new Vuex.Store({
     },
     /**
      * This action changes the current substitution index to a specified value.
-     * passing an index of -1 to this action deactivates all substititions
+     * passing an index of -1 to this action deactivates all substitutions
      */
     [ACTIVATE_SUBSTITUTION] (state, {index}) {
       state.ui.substitution = index
@@ -384,7 +384,7 @@ export default new Vuex.Store({
     },
 
     /**
-     * this action swaps the current substititions's primary glyph sequence with
+     * this action swaps the current substitutions's primary glyph sequence with
      * the sequence specified by `subordinateIndex`. `subordinateIndex` is
      * assumed to lie in the range [0, substitution.subordinates.length - 1]
      */
