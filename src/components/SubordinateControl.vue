@@ -236,7 +236,7 @@ export default {
   background-color: var(--background-color);
   left: -200%;
   z-index: 100;
-  max-height: 40vh;
+  max-height: 60vh;
   overflow-y: hidden;
 
   &.active {
@@ -270,7 +270,7 @@ export default {
       display: block;
 
       .deactivate-button {
-        color:vaR(--font-color);
+        color:var(--font-color);
         background-color: var(--active-color);
       }
     }
@@ -295,7 +295,7 @@ export default {
   }
 
   .search-results-list {
-    max-height: 20vh;
+    max-height: 60vh;
     overflow-y: scroll;
   }
 
