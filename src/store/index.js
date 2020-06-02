@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 const Combinatorics = require('js-combinatorics')
 
-const DEFAULT_SUBDIVISIONS = 5
+const DEFAULT_SUBDIVISIONS = 7
 
 import {
   META,
