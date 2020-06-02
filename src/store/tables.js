@@ -1,4 +1,5 @@
 const { create } = require('xmlbuilder')
+import { Mesh } from './mesh.js'
 const PRECISION = 4
 
 /**
@@ -15,6 +16,17 @@ const unnormalize = (value, axis) => {
 }
 
 /**
+ * Generate a unique name for this rule
+ */
+const ruleName = (subst) => {
+  let sequences = subst.glyphs.map((g, i) => {
+    return [g].concat(subst.subordinates.map(s => s[i]))
+  })
+
+  return sequences.map(seq => seq.map(g => g.name).join('+')).join('=>')
+}
+
+/**
  * this function generates a designspace <rules> element that's compatible
  * with a designspace file.
  *
@@ -26,9 +38,7 @@ export function designspaceTable (axes, cells) {
     let substitution = group.substitution
     let cells = group.cells
 
-    let bases = [substitution.glyphs[0]].concat(substitution.subordinates.map(g => g[0]))
-
-    let rule = root.ele('rule', {name: bases.map(g => g.name).join('+')})
+    let rule = root.ele('rule', {name: ruleName(substitution)})
 
     cells.forEach(cell => {
       let conditionset = rule.ele('conditionset')
@@ -36,8 +46,8 @@ export function designspaceTable (axes, cells) {
       cell.coordinates.forEach((pair, i) => {
         conditionset = conditionset.ele('condition', {
           name: axes[i].name,
-          minimum: unnormalize(pair[0], axes[i]), // TODO: Multiply Through to get User Coordinates.
-          maximum: unnormalize(pair[1], axes[i])  // TODO: Multiply Through to get User Coordinates.
+          minimum: unnormalize(pair[0], axes[i]).toFixed(2), // TODO: Multiply Through to get User Coordinates.
+          maximum: unnormalize(pair[1], axes[i]).toFixed(3)  // TODO: Multiply Through to get User Coordinates.
         }).up()
       })
 
@@ -125,6 +135,12 @@ export function ttxTable (axes, cells, options) {
 
   // Unify all of the rectangles across substitutions.
   // Otherwise only the first substitution applies, and the rest are dropped.
+  // NOTE: Actually... for a given coordinate, only the first rectangle that applies
+  // is used. This means, there cannot be overlapping feature lookups, that
+  // look up to different substitutions. In this case, only the first substitution set will be used.
+
+  // let meshes = cells.map((group, lookup_index) => new Mesh(group.cells, [lookup_index]))
+
   cells.forEach((group, lookup_index) => {
     let substitution = group.substitution;
     let cells = group.cells;
