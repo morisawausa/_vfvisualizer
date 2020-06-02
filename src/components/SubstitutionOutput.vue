@@ -21,20 +21,20 @@
         </div>
 
         <div
-          class="design-space-format-button"
+          class="design-space-format-button format-button"
           v-bind:class="{'active': visible == 'ttx'}"
           @click="toTTX">
           <span class="centered">.ttx</span>
         </div>
 
         <div
-          class="design-space-format-button">
+          class="control-button format-button">
           <span class="centered">Copy Table</span>
         </div>
 
         <div
           @click="toggleActive"
-          class="close-button design-space-format-button">
+          class="close-button control-button format-button">
           <span class="centered">Close</span>
         </div>
       </div>
@@ -42,6 +42,56 @@
       <div class="table-output-frame xml">
         <pre><code v-html="(active) ? table() : ''"></code></pre>
         <div class="feather"></div>
+      </div>
+
+      <div class="table-output-options">
+        <div v-if="visible == 'designspace'" class="text-body">
+          <p>
+            This is documentation for the .designspace output.
+          </p>
+        </div>
+        <div v-else class="text-body">
+          <div class="ttx-base-indices">
+            <div class="scripts-offset-index">
+              <input
+                @input="updateScriptsIndex"
+                class="ttx-offset-input"
+                type="number"
+                min="0"
+                v-bind:value="ttx_scripts_index" />
+            </div>
+
+            <div class="features-offset-index">
+              <input
+                @input="updateFeaturesIndex"
+                class="ttx-offset-input"
+                type="number"
+                min="0"
+                v-bind:value="ttx_features_index" />
+            </div>
+
+            <div class="lookups-offset-index">
+              <input
+                @input="updateLookupsIndex"
+                class="ttx-offset-input"
+                type="number"
+                min="0"
+                v-bind:value="ttx_lookups_index" />
+            </div>
+
+            <div class="variations-offset-index">
+              <input
+                @input="updateVariationsIndex"
+                class="ttx-offset-input"
+                type="number"
+                min="0"
+                v-bind:value="ttx_feature_variations_index" />
+            </div>
+          </div>
+          <p>
+            This is documentation for the .ttx output.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -63,10 +113,26 @@ export default {
   data () {
     return {
       active: false,
-      visible: 'designspace'
+      visible: 'ttx',
+      ttx_scripts_index: 0,
+      ttx_features_index: 0,
+      ttx_lookups_index: 0,
+      ttx_feature_variations_index: 0
     }
   },
   methods: {
+    updateScriptsIndex(e) {
+      this.ttx_scripts_index = parseInt(e.target.value)
+    },
+    updateFeaturesIndex(e) {
+      this.ttx_features_index = parseInt(e.target.value)
+    },
+    updateLookupsIndex(e) {
+      this.ttx_lookups_index = parseInt(e.target.value)
+    },
+    updateVariationsIndex(e) {
+      this.ttx_feature_variations_index = parseInt(e.target.value)
+    },
     toggleActive () {
       this.active = !this.active;
     },
@@ -87,7 +153,12 @@ export default {
 
       } else if (this.visible === TTX) {
 
-        let output = ttxTable(axes, cells).join('\n\n')
+        let output = ttxTable(axes, cells, {
+          scripts: this.ttx_scripts_index,
+          features: this.ttx_features_index,
+          lookups: this.ttx_lookups_index,
+          variations: this.ttx_feature_variations_index
+        }).join('\n\n')
         return hljs.highlight('xml', output).value
 
       }
@@ -104,7 +175,14 @@ export default {
       stylisticSets: VALID_STYLISTIC_SETS,
       stateForCell: STATE_FOR_CELL,
       substitutionRects: SUBSTITUTION_RECTS
-    })
+    }),
+    instructions () {
+      if (this.visible == DESIGNSPACE) {
+
+      } else if (this.visible == TTX) {
+
+      }
+    }
   }
 }
 </script>
@@ -146,27 +224,34 @@ export default {
     width: 100%;
     overflow:auto;
 
-    .design-space-format-button {
+    .format-button {
       position: relative;
       float:left;
-      width:25%;
       height:var(--substitution-box-min-height);
       border-right:1px solid var(--font-color);
       border-bottom: 1px solid var(--font-color);
+    }
 
-      &:last-child {
-        border-right:none;
-      }
+    .design-space-format-button {
+      width:32.5%;
 
       &.active {
         border-bottom: none;
       }
     }
+
+    .control-button {
+      width: 17.5%;
+
+      &:last-child {
+        border-right:none;
+      }
+    }
   }
 
   pre {
-    max-width: 80%;
-    max-height: 50vh;
+    max-width: 90%;
+    height: calc(100vh - 2 * var(--substitution-box-min-height) - 4 * var(--component-margin) + 1px);
     padding:1em;
     padding-bottom:5%;
     margin:5% 10% 5% 10%;
@@ -175,8 +260,25 @@ export default {
 
   .table-output-frame {
     position: relative;
-    border-bottom:1px solid var(--font-color);
+    float:left;
+    width: 65%;
+    border-right:1px solid var(--font-color);
     overflow:scroll;
+  }
+
+  .table-output-options {
+    position: relative;
+    float:left;
+    width: 35%;
+    overflow-y:scroll;
+
+    .text-body {
+      max-width: 90%;
+      height: calc(100vh - 2 * var(--substitution-box-min-height) - 4 * var(--component-margin) + 1px);
+      padding:1em;
+      padding-bottom:5%;
+      margin:5% 10% 5% 10%;
+    }
   }
 
   .feather {

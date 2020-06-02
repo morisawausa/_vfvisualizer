@@ -4,7 +4,7 @@ const PRECISION = 4
 /**
  * This function un-normalizes a variable font
  * normalized coordinate back into the user
- * coordinate system. 
+ * coordinate system.
  */
 const unnormalize = (value, axis) => {
   if (value <= 0) {
@@ -60,10 +60,11 @@ export function designspaceTable (axes, cells) {
  * This function generates a <GSUB> element that's compatible with a .ttx file
  *
  */
-export function ttxTable (axes, cells) {
-  let script_offset = 0
-  let feature_offset = 0
-  let lookup_offset = 0
+export function ttxTable (axes, cells, options) {
+  let script_offset = options.scripts || 0
+  let feature_offset = options.features || 0
+  let lookup_offset = options.lookups || 0
+  let variations_offset = options.variations || 0
 
 
   let GSUB = create('GSUB', {headless: true})
@@ -77,7 +78,7 @@ export function ttxTable (axes, cells) {
         .ele('Script')
           .ele('DefaultLangSys')
             .ele('ReqFeatureIndex', {value: '65535'}).up()
-            .ele('FeatureIndex', {index: 0, value: 0}).up()
+            .ele('FeatureIndex', {index: 0, value: feature_offset}).up()
           .up()
         .up()
       .up()
@@ -152,7 +153,7 @@ export function ttxTable (axes, cells) {
   featureVariations.ele('Version', {value: '0x00010000'})
 
   Object.values(rects).forEach((rect, rect_index) => {
-    let record = featureVariations.ele('FeatureVariationRecord', {index: rect_index})
+    let record = featureVariations.ele('FeatureVariationRecord', {index: variations_offset + rect_index})
     let conditionset = record.ele('ConditionSet')
 
     rect.coordinates.forEach((pair, index) => {
@@ -170,7 +171,7 @@ export function ttxTable (axes, cells) {
 
     let features = featureSubstitution
       .ele('SubstitutionRecord', {index: 0})
-      .ele('FeatureIndex', {value: 0}).up()
+      .ele('FeatureIndex', {value: feature_offset}).up()
       .ele('Feature');
 
     rect.lookups.forEach((index, j) => {
