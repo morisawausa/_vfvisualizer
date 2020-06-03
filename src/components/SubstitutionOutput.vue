@@ -113,7 +113,7 @@ export default {
   data () {
     return {
       active: false,
-      visible: 'ttx',
+      visible: 'designspace',
       ttx_scripts_index: 0,
       ttx_features_index: 0,
       ttx_lookups_index: 0,
