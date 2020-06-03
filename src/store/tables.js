@@ -42,11 +42,11 @@ export function designspaceTable (axes, cells) {
     cells.forEach(cell => {
       let conditionset = rule.ele('conditionset')
 
-      cell.coordinates.forEach((pair, i) => {
+      cell.coordinates.user.forEach((pair, i) => {
         conditionset = conditionset.ele('condition', {
           name: axes[i].name,
-          minimum: unnormalize(pair[0], axes[i]).toFixed(2), // TODO: Multiply Through to get User Coordinates.
-          maximum: unnormalize(pair[1], axes[i]).toFixed(3)  // TODO: Multiply Through to get User Coordinates.
+          minimum: pair[0].toFixed(PRECISION), // TODO: Multiply Through to get User Coordinates.
+          maximum: pair[1].toFixed(PRECISION)  // TODO: Multiply Through to get User Coordinates.
         }).up()
       })
 
@@ -129,7 +129,7 @@ export function ttxTable (axes, cells, options) {
   let rects = {}
 
   let getKey = (cell) => {
-    return cell.coordinates.reduce((k, pair) => `${k}:${pair.map(coordinate => coordinate.toFixed(PRECISION)).join(',')}`, '')
+    return cell.coordinates.normal.reduce((k, pair) => `${k}:${pair.map(coordinate => coordinate.toFixed(PRECISION)).join(',')}`, '')
   }
 
   // Unify all of the rectangles across substitutions.
@@ -148,7 +148,7 @@ export function ttxTable (axes, cells, options) {
       if (typeof rects[key] === 'undefined') {
         // we haven't seen this cell yet! Make a new index.
         rects[key] = {
-          coordinates: cell.coordinates,
+          coordinates: cell.coordinates.normal,
           lookups: [lookup_index]
         }
 

@@ -3,6 +3,7 @@ const SortedSet = require('collections/sorted-set')
 // const Combinatorics = require('js-combinatorics')
 // const equal = require('array-equal')
 const ndarray = require('ndarray')
+const DEBUG = false
 
 export function makeRect (divisions) {
   if (divisions.length === 0) {
@@ -17,6 +18,7 @@ export function makeRect (divisions) {
 
 export class Hypercube {
   constructor (divisions) {
+    console.log(divisions)
     this.divisions = divisions.map(division => { return new SortedSet(division) })
     this.state = this.initial()
   }
@@ -33,22 +35,32 @@ export class Hypercube {
   }
 
   set (point, state) {
-    let normalized = this.indices(point)
+    let normalized = this.indices(point, DEBUG)
+
+    if (DEBUG) {console.log(`h input:`, normalized)}
+
     this.state.set(...normalized, state)
 
     return this
   }
 
-  indices (point) {
+  indices (point, debug=false) {
     return point.map((coordinate, i) => {
       let index = this.divisions[i].indexOf(coordinate)
 
+      if (debug) {console.log(`h normalization: passed coordinate (${i}): ${coordinate}`)}
+      if (debug) {console.log(`h normalization: index? (${i}): ${index}`)}
+
       if (index === -1) {
         const guess = this.divisions[i].findLeastGreaterThanOrEqual(coordinate)
+
         if (typeof guess === 'undefined') {
-          index = this.divisions[i].length - 1
+          index = this.divisions[i].length
         } else {
+          if (debug) {console.log(guess)}
+          if (debug) {console.log(`h normalization: guessed index (${i}): ${guess.value}`)}
           index = this.divisions[i].indexOf(guess.value)
+          if (debug) {console.log(`h normalization: found index (${i}): ${index}`)}
         }
         return index
       } else {

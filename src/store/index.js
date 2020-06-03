@@ -34,7 +34,7 @@ import {
   DEACTIVATE_SUBORDINATE_IN_GRID
 } from './mutations.js'
 
-import {linear} from './scales.js'
+import {linear, percent2user, user2norm} from './scales.js'
 
 import {Hypercube} from './hypercube.js'
 
@@ -98,6 +98,7 @@ export default new Vuex.Store({
 
     [SUBSTITUTION_RECTS] (state, getters) {
       return () => {
+        let axes = state.axes
         let subs = state.substitutions.map(substitution => {
           let hypercube = substitution.state
           let divisions = hypercube.divisions.map(division => division.map(i => i))
@@ -117,11 +118,26 @@ export default new Vuex.Store({
               return [lower, upper]
             })
 
-            let coordinates = bounds.map(pair => {
-              return pair.map(bound => bound * 2 - 1)
+
+
+            let user_coordinates = bounds.map((pair, i) => {
+              return percent2user(pair, axes[i])
             })
 
+            let normal_coordinates = user_coordinates.map((pair, i) => {
+              return user2norm(pair, axes[i])
+            })
+
+            let coordinates = {
+              user: user_coordinates,
+              normal: normal_coordinates
+            }
+
             let state = hypercube.state.get(...index)
+
+            if (state) {
+              console.log(coordinates)
+            }
 
             return { bounds, coordinates, state }
           }).filter(x => x.state !== 0);
