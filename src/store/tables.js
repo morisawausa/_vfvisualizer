@@ -1,5 +1,4 @@
 const { create } = require('xmlbuilder')
-import { Mesh } from './mesh.js'
 const PRECISION = 4
 
 /**
@@ -138,8 +137,6 @@ export function ttxTable (axes, cells, options) {
   // NOTE: Actually... for a given coordinate, only the first rectangle that applies
   // is used. This means, there cannot be overlapping feature lookups, that
   // look up to different substitutions. In this case, only the first substitution set will be used.
-
-  // let meshes = cells.map((group, lookup_index) => new Mesh(group.cells, [lookup_index]))
 
   cells.forEach((group, lookup_index) => {
     let substitution = group.substitution;
