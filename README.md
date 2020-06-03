@@ -6,7 +6,7 @@ This tool provides a design space visualizer and font variation substitution man
 
 ## Using the tool
 
-### Getting Set Up
+### Preparing your File
 
 Generating susbtitutions requires making the glyphs you want to substitute visible to the application. To do this, we use `private unicode` ranges.
 
@@ -91,6 +91,11 @@ Math.pow(.75, sequence.length)
 
 Used by `Visualizer.vue` for the size of the glyphs in the visualizer canvas.
 
+## Resources
+
+This is just a list of links to prior work that's been done on the subject.
+
+- [Overview of Feature Variations](https://github.com/irenevl/variable-fonts-with-feature-variations). This is a super useful resource that walks through manually making feature variations with the GSUB table. Basically, it's this process that we're trying to improve a bit.
 
 ### AGL Glyph Name Replacements
 
