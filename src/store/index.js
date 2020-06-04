@@ -2,7 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 const Combinatorics = require('js-combinatorics')
 
-const DEFAULT_SUBDIVISIONS = 7
+const DEFAULT_MAJOR_SUBDIVISIONS = 7
+const DEFAULT_MINOR_SUBDIVISIONS = 2
+
 
 import {
   META,
@@ -245,7 +247,7 @@ export default new Vuex.Store({
      */
     [ADD_NEW_SUBSTITUTION] (state, {glyphs}) {
       const substitutions = state.substitutions
-      const divisions = state.axes.map(axis => linear(DEFAULT_SUBDIVISIONS))
+      const divisions = state.axes.map((axis, i) => linear((i < 2) ? DEFAULT_MAJOR_SUBDIVISIONS : DEFAULT_MINOR_SUBDIVISIONS))
       const newSubstitution = {
         // The primary run of glyphs controlling the substitution
         glyphs: glyphs,
