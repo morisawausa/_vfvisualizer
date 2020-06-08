@@ -1,19 +1,91 @@
 # Variable Font Visualizer
-**Current Version: 0.8.8, in development.**
+**Current Version: 0.8.9, in development.**
 
 
 This tool provides a design space visualizer and font variation substitution manager for OpenType variable fonts. The tool helps with setting up glyph substitutions that depend on the design space region. It can build substititions for many different glyphs visually. Once you're done setting up substititions, the tool will generate a `<GSUB>` element that you can paste into a `.ttx` file, or a `<rules>` element that you can paste into a `.designspace` file.
 
 ## Using the tool
 
-### Preparing your File
+There are two different ways to use this tool to build substitutions for font binaries. One way is to work with a set of `.ufo` files tied together by a `.designspace` file. The other method is to work directly with binary `.ttf` data by using the `ttx` tool. We greatly prefer the `.designspace` method, so that's what we prefer.
 
-Generating susbtitutions requires making the glyphs you want to substitute visible to the application. To do this, we use `private unicode` ranges.
+### The `.glyphs` via `.designspace` Method
 
-Each substitution should have a base glyph that's being substituted. This base glyph should be assigned a unicode value corresponding to the character's code point. So if your base glyph is `Q`, you would assign it unicode `U+0051`, like normal. If you had a substitution for `Q`, say `Q.NO_BAR` for narrower and heavier points in the design space, you would assign this glyph a private unicode value (it doesn't matter which one). Private Unicodes start at `U+E000`. Assigning it a unicode value, makes the substitution visible to the visualizer.
+There are a few steps that you need to take in order to use the visualizer:
 
-Once you've done this for all of the substitions you have, you're ready to move on to the next step.
+1. Preparing your `.glyphs` file with private unicode assignments.
+2. Generating a `.designspace` representation of your `.glyphs` file.
+3. Generating a visualizer-compatible `.ttf` file.
+4. Updating the `.designspace` file with the visualizer output.
+5. Compiling the final, production-ready `.ttf` file.
 
+We'll go through each of these steps in detail here.
+
+#### 1. Preparing your Source file
+
+In order to find the alternate glyphs that you want to use in substitutions, you need to assign them to unicode values. This lets the browser render them, and ensures that they'll be searchable by glyph name in the visualizer interface. Luckily, we can assign these glyphs to "private unicodes" that aren't assigned to key bindings by default. This means you won't be able to type them, but they'll show up in the visualizer, and the web browser will be able to render them.
+
+[Private unicodes](http://www.unicode.org/faq/private_use.html#:~:text=There%20are%20three%20ranges%20of,Private%20Use%20Area%20(PUA).) are just unicode values in the range `E000` to `FF8F`, giving us **6,400** possible substitution glyphs. If you need more than 6,400 substitution glyphs, there are more private unicode ranges further out in "unicode space" – although if you're managing thousands of substitutions, this might not be the best tool for you.
+
+You're free to assign any of these values to each of your substitution glyphs. It doesn't matter which. [(In fact, we have a script in the "Strings" that assignes random, private unicodes to the selected glyphs.)](https://github.com/morisawausa/_GlyphsScripts/blob/master/Strings/Assign%20Private%20Unicodes.py)
+
+Cyrus also recommends a consistent naming convention for your substitution glyphs. He uses `{glyph name}.sub_bar` for most glyphs with this kind of behavior. This also makes it easy to search for substitutions, by searching for "sub" or "bar" in the visualizer.
+
+
+#### 2. Generating a `.designspace`
+
+Next, we need to generate a `.designspace` file with `.ufo` files for each master. This is pretty easy with the `glyphs2ufo` tool, a [command line tool](https://github.com/daltonmaag/glyphs2ufo) which does exactly what it sounds like. To use `glyphs2ufo`, you'll need the package `glyphsLib`. Install it from your terminal like this:
+
+```sh
+# recent versions of macOS
+$ pip3 install glyphsLib
+```
+
+Once you have the tool, run:
+
+```sh
+$ glyphs2ufo GlyphsFile.glyphs -m ufos
+```
+
+This will generate a set of `.ufo` files and a `.designspace` file, and put them into an new folder called `ufos` in your current directory.
+
+*Note: theoretically, it should be possible to roundtrip back to a glyphs file from your designspace file. So, after you paste the `<rules>` output from your designspace file, you might be able to bring those rules back into glyphs, and export from there. However, I have not tested this, and do not know how well this kind of roundtrip works. So, it's best to generate substitutions as the last step in your process.*
+
+
+#### 3. Generating a `.ttf`
+
+The VF visualizer works with font binaries, so we need to generate a variable `.ttf` file. We can do this with the library [`fontmake`](https://github.com/googlefonts/fontmake) from Google. `fontmake` glues together a bunch of different utilities into a single swiss-army knife. You can install it just like we did `glyphsLib`:
+
+```sh
+$ pip3 install fontmake
+```
+
+Once you have `fontmake`, go ahead and build a `.ttf` for the visualizer:
+
+```sh
+$ fontmake -m DesignspaceFile.designspace -o variable --no-production-names
+```
+
+This command eats a `.designspace` file, and tries to compile it into a TrueType variable font. The `--no-production-names` flag specifies that we don't want to rename any of our glyphs to AGL-standards-compliant glyph names. This is important, otherwise the `<rules>` table the visualizer generates will have unicode identifiers, rather than names, for certain glyphs, and the `.designspace` file won't understand these. The final `.ttf` we build will have production names, don't worry.
+
+#### 4. Generating Rules
+
+Use the visualizer to generate rules. (Textual walkthrough coming soon!)
+
+#### 5. Updating the `.designspace`
+
+Once you have a `<rules>` table generated and ready to go, you can copy and paste it into the `.designspace` file. I usually paste the `<rules>` XML element into the file near the top: right below the `</axes>` tag.
+
+#### 6. Generating the production `.ttf`
+
+Now we're ready to compile the final `.ttf` file with all of our feature variations and substitutions. WE can use `fontmake` again:
+
+```sh
+$ fontmake -m UpdatedDesignspaceFile.designspace -o variable
+```
+
+This time, we'll have `fontmake` rename our glyphs to their production names.
+
+At this point, you should be ready to drag the file into a testing tool like FontGoggles and check to see if your feature variations and substitutions are working properly.
 
 
 ## Build Setup
@@ -63,6 +135,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 |   | 1.1.0 | Functionality | Zoom the grid | Make it easy to zoom and pan on the visualizer grid for more detail (maybe).
 |   | 1.1.0 | UI | Dark Mode | Make an `occupantfonts.com`-esque dark mode toggle.
 |   | 1.1.0 | Functionality | Show instances | Show where instances are located in the grid as an overlay
+|   | 1.1.0 | UI | Drag | Click and drag to toggle state on multiple grid cells at once, like the prototype.
 
 
 ### Version 1.2.0
