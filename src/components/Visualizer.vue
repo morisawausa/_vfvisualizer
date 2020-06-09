@@ -296,7 +296,7 @@ export default {
   height: .5vw;
   border-radius: 50%;
   transform: translate(-50%,-50%);
-  background-color: white;
+  background-color: transparent;
 }
 
 .grid-glyph {
