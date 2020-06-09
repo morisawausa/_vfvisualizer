@@ -95,7 +95,8 @@ export default {
       width:10%;
       float:left;
 
-      border: 1px solid var(--font-color);
+      border-top: 1px solid var(--font-color);
+      border-left: 1px solid var(--font-color);
 
       .axis-name-label {
         position: absolute;
@@ -106,6 +107,12 @@ export default {
         width:10%;
         transform:translate(-100%,50%)rotate(-90deg);
       }
+
+
+    }
+
+    &:last-child .axis-name-box {
+      border-bottom: 1px solid var(--font-color);
     }
 
     .axis-data-box {

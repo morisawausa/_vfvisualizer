@@ -153,7 +153,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 |   | 0.9.0 | UI | Subs | Add colored background to the glyphs in the substitution pane to help communicate where different subs apply.
 |   | 0.9.0 | UI | Output | Add controls to output pane. Finesse styling.
 |   | 0.9.0 | UI | Arrows | Make sure the arrows are differentiated. For example, the arrows to send glyphs to the grid could be different from the substitution order.
-|   | 0.9.0 | UI | Borders | Make sure the borders are consistent (review AxisControl component).
+| ✅ | 0.9.0 | UI | Borders | Make sure the borders are consistent (review AxisControl component).
 | ✅ | 0.9.0 | UI | Metadata | Remove Unicode Count from font metadata. Remove extra line from Font Metadata Component.
 |   | 1.0.0 | Functionality | No duplicates | remove assigned glyphs from the searchable glyphs list.
 |   | 1.0.0 | Functionality | Axis Labels | Axes should have a labelling system which shows which axis is assigned to which planar dimension, and also allows for draggable subdivisions.
