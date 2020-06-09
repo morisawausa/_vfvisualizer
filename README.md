@@ -1,5 +1,6 @@
 # Variable Font Visualizer
 **Current Version: 0.8.9, in development.**
+**[Current Deployed Version Available Here.](https://morisawausa.github.io/_vfvisualizer/)**
 
 
 This tool provides a design space visualizer and font variation substitution manager for OpenType variable fonts. The tool helps with setting up glyph substitutions that depend on the design space region. It can build substititions for many different glyphs visually. Once you're done setting up substititions, the tool will generate a `<GSUB>` element that you can paste into a `.ttx` file, or a `<rules>` element that you can paste into a `.designspace` file.
@@ -31,19 +32,38 @@ You're free to assign any of these values to each of your substitution glyphs. I
 Cyrus also recommends a consistent naming convention for your substitution glyphs. He uses `{glyph name}.sub_bar` for most glyphs with this kind of behavior. This also makes it easy to search for substitutions, by searching for "sub" or "bar" in the visualizer.
 
 
-#### 2. Generating a `.designspace`
+#### 2. Installing Tools
 
-Next, we need to generate a `.designspace` file with `.ufo` files for each master. This is pretty easy with the `glyphs2ufo` tool, a [command line tool](https://github.com/daltonmaag/glyphs2ufo) which does exactly what it sounds like. To use `glyphs2ufo`, you'll need the package `glyphsLib`. Install it from your terminal like this:
+You might not have the required commands for building `.ufo` files and font binaries installed right now. You can install all the required tools:
+
+- `glyphs2ufo`
+- `fontmake`
+
+By installing the `fontmake` package. To do this, open your terminal and run:
+
 
 ```sh
-# recent versions of macOS
-$ pip3 install glyphsLib
+pip3 install fontmake
 ```
 
-Once you have the tool, run:
+This will add both of these tools to your system, and make them accessible from your terminal.
+
+#### 2. Generating a `.designspace`
+
+Next, we need to generate a `.designspace` file with `.ufo` files for each master. This is pretty easy with the `glyphs2ufo` tool, a [command line tool](https://github.com/daltonmaag/glyphs2ufo) which does exactly what it sounds like.
+
+To start, you need to navigate to your project folder. To do this, find the folder in Finder. Type `cd ` (with a space after) into your terminal, and then drag the folder icon into the terminal. You should get something like this:
 
 ```sh
-$ glyphs2ufo GlyphsFile.glyphs -m ufos
+cd path/to/my/project/folder
+```
+
+with some long filesystem path to the folder you dragged. Hit enter to go to that folder in your terminal.
+
+Now that you're in the proper folder in your terminal, we can run the `glyphs2ufo` command. Type:
+
+```sh
+glyphs2ufo GlyphsFile.glyphs -m ufos
 ```
 
 This will generate a set of `.ufo` files and a `.designspace` file, and put them into an new folder called `ufos` in your current directory.
@@ -53,19 +73,29 @@ This will generate a set of `.ufo` files and a `.designspace` file, and put them
 
 #### 3. Generating a `.ttf`
 
-The VF visualizer works with font binaries, so we need to generate a variable `.ttf` file. We can do this with the library [`fontmake`](https://github.com/googlefonts/fontmake) from Google. `fontmake` glues together a bunch of different utilities into a single swiss-army knife. You can install it just like we did `glyphsLib`:
+The VF visualizer works with font binaries, so we need to generate a variable `.ttf` file. We can do this with the library [`fontmake`](https://github.com/googlefonts/fontmake) from Google. `fontmake` glues together a bunch of different utilities into a single swiss-army knife.
+
+`glyphs2ufo` generated a new folder called `ufos` for us, with all of our masters and designspace file in it. To move to that new folder, type:
 
 ```sh
-$ pip3 install fontmake
+cd ufos
 ```
 
-Once you have `fontmake`, go ahead and build a `.ttf` for the visualizer:
+Now that you're in the right folder, go ahead and build a `.ttf` for the visualizer:
 
 ```sh
-$ fontmake -m DesignspaceFile.designspace -o variable --no-production-names
+fontmake -m DesignspaceFile.designspace -o variable --no-production-names
 ```
 
 This command eats a `.designspace` file, and tries to compile it into a TrueType variable font. The `--no-production-names` flag specifies that we don't want to rename any of our glyphs to AGL-standards-compliant glyph names. This is important, otherwise the `<rules>` table the visualizer generates will have unicode identifiers, rather than names, for certain glyphs, and the `.designspace` file won't understand these. The final `.ttf` we build will have production names, don't worry.
+
+If everything works properly, this command will create a new folder called `variable_ttf`, which will contain the compiled `.ttf`. That's the file that you can drag into the visualizer. If you want to open the `ufos` folder to see the new files in Finder, you can type:
+
+```sh
+open .
+```
+
+In the terminal. This should open up a finder window with the current folder. From there, you can drag the file into the visualizer: [here](https://morisawausa.github.io/_vfvisualizer).
 
 #### 4. Generating Rules
 
@@ -119,15 +149,17 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 | ✅| 0.9.0 | Functionality | Delete Substitutions| Self Explanitory
 | ✅| 0.9.0 | Functionality | >2 Substitutions | You should be able to apply multiple substitions to the same base glyph in one design space map.  
 | ✅| 0.9.0 | Functionality | >1 Substitution Set per Map | You should be able to assign multiple substitution pairs to the same design space substitution map.
+|   | 0.9.0 | Functionality | Autopopulate | There should be some basic intelligence built in to the substitution system to generate substitutions based on suffixes. For example, a substitution for `{x}` to `{x}.sub_{y}` should automatically be set up in the grid when you load a font.
 |   | 0.9.0 | UI | Subs | Add colored background to the glyphs in the substitution pane to help communicate where different subs apply.
 |   | 0.9.0 | UI | Output | Add controls to output pane. Finesse styling.
 |   | 0.9.0 | UI | Arrows | Make sure the arrows are differentiated. For example, the arrows to send glyphs to the grid could be different from the substitution order.
 |   | 0.9.0 | UI | Borders | Make sure the borders are consistent (review AxisControl component).
 |   | 0.9.0 | UI | Metadata | Remove Unicode Count from font metadata. Remove extra line from Font Metadata Component.
+|   | 1.0.0 | Functionality | No duplicates | remove assigned glyphs from the searchable glyphs list.
 |   | 1.0.0 | Functionality | Axis Labels | Axes should have a labelling system which shows which axis is assigned to which planar dimension, and also allows for draggable subdivisions.
 |   | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
 |   | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
-|   | 1.0.0 | Functionality | Existing `GSUB` | Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.
+|   | ~1.0.0~ | ~Functionality~ | ~Existing `GSUB`~ | ~Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.~
 |   | 1.0.0 | Functionality | Undo button | Self Explanitory
 |   | 1.0.0 | UI | Testing | Review app at different screen sizes, and number of axes.
 |   | 1.0.0 | UI | Color | Use the OCC color palette where relevant. This may require a version of the color pallette that works for tools, rather than brand collateral.
