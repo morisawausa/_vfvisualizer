@@ -121,7 +121,6 @@ export default {
       return [
         {name: 'Font', value: meta.fullName},
         {name: 'Glyphs', value: meta.numGlyphs},
-        {name: 'Unicode', value: glyphs.length},
         {name: 'Axes', value: meta.numAxes},
         {name: 'Instances', value: meta.numInstances}
       ]
@@ -216,6 +215,12 @@ export default {
         }
         .data {
           float: right;
+        }
+
+        &:last-child {
+          border-bottom: none;
+          margin-bottom:0;
+          padding-bottom: calc(var(--control-block-padding) / 2);
         }
       }
     }
