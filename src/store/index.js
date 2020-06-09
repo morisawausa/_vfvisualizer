@@ -37,6 +37,7 @@ import {
 } from './mutations.js'
 
 import {linear, percent2user, user2norm} from './scales.js'
+import {autopopulate} from './autopopulate.js';
 
 import {Hypercube} from './hypercube.js'
 
@@ -229,6 +230,8 @@ export default new Vuex.Store({
           }
         }
       ))
+
+      // TODO: Add substitution autopopulater
     },
     /**
      * This action updates a single axis value to a new value
@@ -447,8 +450,16 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    [INITIALIZE] ({commit}, font) {
+    [INITIALIZE] ({commit, state}, font) {
       commit(INITIALIZE, font)
+      let sequences = autopopulate(font);
+      sequences.forEach(substitution => {
+        commit(ADD_NEW_SUBSTITUTION, {glyphs: substitution.glyphs});
+        let index = state.ui.substitution;
+        substitution.subordinates.forEach(glyphs => {
+          commit(ADD_SUBORDINATE_TO_SUBSTITUTION, {substitutionIndex: index, glyphset: glyphs});
+        })
+      })
     },
     [UPDATE_AXIS_VALUE] ({commit}, payload) {
       commit(UPDATE_AXIS_VALUE, payload)

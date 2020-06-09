@@ -1,5 +1,5 @@
 <template lang="html">
-  <div id="subordinate-control" v-bind:class="{active: active}">
+  <div id="subordinate-control" v-bind:class="{active: active, big: subordinates.length >= 10}">
 
     <div class="primary">
       <div class="header">
@@ -237,7 +237,12 @@ export default {
   left: -200%;
   z-index: 100;
   max-height: 60vh;
-  overflow-y: hidden;
+  overflow-y: scroll;
+
+  &.big {
+    top: 0;
+    max-height: calc(100vh - 2 * var(--component-margin));
+  }
 
   &.active {
     left: calc(100% + var(--component-margin));
@@ -247,15 +252,15 @@ export default {
     position: relative;
 
     .buttons {
-      display: none;
       position: absolute;
       right:0;
       margin-right: 1em;
       transform: translateY(-50%);
+      z-index: 100;
 
       .subordinate-button {
         position: relative;
-        display: inline-block;
+        display: none;
         background-color: var(--font-color);
         color:var(--background-color);
         width:20px;
@@ -263,16 +268,18 @@ export default {
         border-radius: 10px;
 
         cursor: pointer;
+
+        &.deactivate-button {
+          display: inline-block;
+          background-color: var(--active-color);
+          color:var(--font-color);
+        }
       }
     }
 
-    &:hover .buttons {
-      display: block;
-
-      .deactivate-button {
-        color:var(--font-color);
-        background-color: var(--active-color);
-      }
+    &:hover .buttons .subordinate-button {
+      display: inline-block;
+      z-index: 100;
     }
   }
 
@@ -295,7 +302,7 @@ export default {
   }
 
   .search-results-list {
-    max-height: 60vh;
+    max-height: 30vh;
     overflow-y: scroll;
   }
 
