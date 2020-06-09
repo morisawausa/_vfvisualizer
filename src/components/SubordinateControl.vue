@@ -36,14 +36,14 @@
             v-if="inactive(index)"
             @click="activateSubordinateInGrid(index)"
             class="activate-button subordinate-button">
-            <span class="centered">&rarr;</span>
+            <span class="centered">+</span>
           </div>
 
           <div
             v-else
             @click="deactivateSubordinateInGrid(index)"
             class="deactivate-button subordinate-button">
-            <span class="centered">&larr;</span>
+            <span class="centered">-</span>
           </div>
 
         </div>
