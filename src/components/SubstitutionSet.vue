@@ -2,10 +2,14 @@
   <div class="substitution-set-view">
     <div
       class="visualized-font substituted-glyph"
+      v-bind:class="`alternate-${index}`"
       v-for="(glyph, index) in glyphset"
       v-bind:style="{'width': width}"
       v-bind:key="index">
-      <span class="rendered centered">{{ glyph | unicode }}</span>
+      <span
+        class="rendered centered">
+          <span class="centered">{{ glyph | unicode }}</span>
+      </span>
       <span
         v-if="index < glyphset.length - 1"
         class="substitution-arrow centered">
@@ -46,7 +50,15 @@ export default {
     height: var(--substitution-box-min-height);
     border-right: 1px solid var(--font-color);
 
-    font-size: 2rem;
+    font-size: 1.5rem;
+
+    .rendered {
+      --size: calc(var(--substitution-box-min-height) - 15px);
+      height: var(--size);
+      width:var(--size);
+      border-radius: calc(var(--size) / 2);
+      text-align: center;
+    }
 
     &:last-child {
       border-right: none;
@@ -63,5 +75,6 @@ export default {
     left: 100%;
     font-size: .8rem;
     font-family:"Dispatch Mono", monospace;
+    z-index: 100;
   }
 </style>

@@ -86,8 +86,8 @@ export default {
   --control-block-padding-top: 1.5em;
   --control-block-element-spacing: 0.5em;
   --ui-input-color: var(--font-color);
-  --ui-attention-color: lightblue;
-  --ui-attention-background-color: lightblue;
+  --ui-attention-color: lightyellow;
+  --ui-attention-background-color: lightyellow;
   --ui-attention-font-color: darkblue;
   --active-color: magenta;
   --hover-color: pink;
