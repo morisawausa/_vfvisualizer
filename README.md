@@ -14,10 +14,10 @@ A substitution is a group of glyphs that represent the same unicode point. When 
 
 A substitutions has a default glyph and  any number of substitutes, which are swapped in at different regions in designspace. As a table, a substitution looks something like this.
 
-|  | Default | Substitute 1 | ... | Substitute N - 1 |
+|  | Default | Substitute 1 | ... | Substitute N |
 | - | --- | --- | --- | --- |
-| **Glyph** | `won` | `won.sub_bar1` | ... |  `won.sub_bar1`|
-| **Region** | *Region 1* | *Region 2*  | ... | *Region N* |
+| **Glyph** | `won` | `won.sub_bar1` | ... |  `won.sub_barN`|
+| **Region** | *Region 0* | *Region 1*  | ... | *Region N* |
 
 ### Substitutions with Subordinates
 
