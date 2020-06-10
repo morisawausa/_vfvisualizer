@@ -3,7 +3,65 @@
 **[Current Deployed Version Available Here.](https://morisawausa.github.io/_vfvisualizer/)**
 
 
-This tool provides a design space visualizer and font variation substitution manager for OpenType variable fonts. The tool helps with setting up glyph substitutions that depend on the design space region. It can build substititions for many different glyphs visually. Once you're done setting up substititions, the tool will generate a `<GSUB>` element that you can paste into a `.ttx` file, or a `<rules>` element that you can paste into a `.designspace` file.
+This tool provides a design space visualizer and font variation substitution manager for `.ttf` variable fonts. The tool helps with setting up glyph substitutions that depend on the design space region. It can build substititions for many different glyphs visually. Once you're done setting up substititions, the tool will generate a `<rules>` element that you can paste into a `.designspace` file.
+
+## Terminology
+
+The variable font visualizer is intended to help you generate OpenType feature variations. These rules determine how glyphs should be substituted depending on coordinates in designspace.
+
+### Substitutions
+A substitution is a group of glyphs that represent the same unicode point. When that unicode is requested, the glyph that is rendered depends on the current variation settings of the font.
+
+A substitutions has a default glyph and  any number of substitutes, which are swapped in at different regions in designspace. As a table, a substitution looks something like this.
+
+|  | Default | Substitute 1 | ... | Substitute N - 1 |
+| - | --- | --- | --- | --- |
+| **Glyph** | `won` | `won.sub_bar1` | ... |  `won.sub_bar1`|
+| **Region** | *Region 1* | *Region 2*  | ... | *Region N* |
+
+### Substitutions with Subordinates
+
+Oftentimes, we want multiple substitutions to follow the same pattern of regions. The visualizer supports associating multiple substitutions together as "subordinates".
+
+|  | Default | Substitute |
+| - | --- | --- |
+| **Glyph** | `Q` | `Q.sub_bar` |
+| **Glyph** | `Oslash` | `Oslash.sub_bar` |
+| **Glyph** | `oslash` | `oslash.sub_bar` |
+| **Glyph** | `Oslashacute` | `Oslashacute.sub_bar` |
+| **Glyph** | `oslashacute` | `oslashacute.sub_bar` |
+| **Region** | *Region 1* | *Region 2* |
+
+Just like regular substitutions, substitutions with subordinates can have any number of glyphs. The catch is, each subordinate must have **the same** number of glyphs, whatever that number is.
+
+## Glyph Naming Conventions
+
+**NOTE: These naming conventions are suggestions, and are not currently implemented.**
+
+It's possible to set up and manage all your substitutions and subordinates through the visualizer interface.  However, this can be a time consuming process in itself. Because of this, the visualizer provides some naming conventions The variable font visualizer will automatically generate susbtitution and subordinate sets for you, if you name your substitution glyphs in the following parts. Each of the parts is joined together with a separator. We use a period (`.`).
+
+|   | Base Glyph Name | Tag | Substitution Class | Instance |
+| - | - | - | - | - |
+| **Pattern** | *Base Glyph Name* | `sub` | *Class Name* | *Name or Number*
+| **`Q.sub.bar`** | `Q` | `sub` | `bar` |
+| **`Oslash.sub.bar`** | `Oslash` | `sub` | `bar` |
+| **`won.sub.bar.1`** | `won` | `sub` | `bar` | `1`
+| **`won.sub.bar.2`** | `won` | `sub` | `bar` | `2`
+| **Notes** | This is the name of the glyph for which this substitution applies. | This tag identifies this glyph as a substitution. All substitution glyphs have this tag, which makes them easily searchable. | The class name is an arbitrary identifier that groups substitutions that should follow the same pattern together. | The instance identifier is a unique per-base-glyph, and allows for multipls substitutions per base-glyph. If there is only one substitute for the base glyph in the class, no instance id is needed.
+
+Substitutions are grouped together as subordinates under two conditions:
+
+1. The two substitutions have the same Substitution Class (the `bar` in the examples above), and
+2. The two substitions have the same number of substitutes.
+
+If these two conditions hold, then the susbtitutions will be grouped together as subordinates. If either of them does not hold, then the substitutions will not be grouped together.
+
+As a caveat: If you use this notation, then no other glyph names in your project should contain `.sub.` as a substring in their names. Hopefully this isn't too arduous of a restriction 😊.
+
+
+
+
+
 
 ## Using the tool
 
@@ -14,10 +72,11 @@ There are two different ways to use this tool to build substitutions for font bi
 There are a few steps that you need to take in order to use the visualizer:
 
 1. Preparing your `.glyphs` file with private unicode assignments.
-2. Generating a `.designspace` representation of your `.glyphs` file.
-3. Generating a visualizer-compatible `.ttf` file.
-4. Updating the `.designspace` file with the visualizer output.
-5. Compiling the final, production-ready `.ttf` file.
+2. Installing tools (only need to do this once).
+3. Generating a `.designspace` representation of your `.glyphs` file.
+4. Generating a visualizer-compatible `.ttf` file.
+5. Updating the `.designspace` file with the visualizer output.
+6. Compiling the final, production-ready `.ttf` file.
 
 We'll go through each of these steps in detail here.
 
@@ -34,13 +93,7 @@ Cyrus also recommends a consistent naming convention for your substitution glyph
 
 #### 2. Installing Tools
 
-You might not have the required commands for building `.ufo` files and font binaries installed right now. You can install all the required tools:
-
-- `glyphs2ufo`
-- `fontmake`
-
-By installing the `fontmake` package. To do this, open your terminal and run:
-
+You might not have the required commands for building `.ufo` files and font binaries installed right now. You can install all the required tools (`glyphs2ufo` and `fontmake`) by installing the `fontmake` package. To do this, open your terminal and run:
 
 ```sh
 pip3 install fontmake
@@ -48,7 +101,7 @@ pip3 install fontmake
 
 This will add both of these tools to your system, and make them accessible from your terminal.
 
-#### 2. Generating a `.designspace`
+#### 3. Generating a `.designspace`
 
 Next, we need to generate a `.designspace` file with `.ufo` files for each master. This is pretty easy with the `glyphs2ufo` tool, a [command line tool](https://github.com/daltonmaag/glyphs2ufo) which does exactly what it sounds like.
 
@@ -71,7 +124,7 @@ This will generate a set of `.ufo` files and a `.designspace` file, and put them
 *Note: theoretically, it should be possible to roundtrip back to a glyphs file from your designspace file. So, after you paste the `<rules>` output from your designspace file, you might be able to bring those rules back into glyphs, and export from there. However, I have not tested this, and do not know how well this kind of roundtrip works. So, it's best to generate substitutions as the last step in your process.*
 
 
-#### 3. Generating a `.ttf`
+#### 4. Generating a `.ttf`
 
 The VF visualizer works with font binaries, so we need to generate a variable `.ttf` file. We can do this with the library [`fontmake`](https://github.com/googlefonts/fontmake) from Google. `fontmake` glues together a bunch of different utilities into a single swiss-army knife.
 
@@ -97,15 +150,15 @@ open .
 
 In the terminal. This should open up a finder window with the current folder. From there, you can drag the file into the visualizer: [here](https://morisawausa.github.io/_vfvisualizer).
 
-#### 4. Generating Rules
+#### 5. Generating Rules
 
 Use the visualizer to generate rules. (Textual walkthrough coming soon!)
 
-#### 5. Updating the `.designspace`
+#### 6. Updating the `.designspace`
 
 Once you have a `<rules>` table generated and ready to go, you can copy and paste it into the `.designspace` file. I usually paste the `<rules>` XML element into the file near the top: right below the `</axes>` tag.
 
-#### 6. Generating the production `.ttf`
+#### 7. Generating the production `.ttf`
 
 Now we're ready to compile the final `.ttf` file with all of our feature variations and substitutions. WE can use `fontmake` again:
 
@@ -181,6 +234,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 | Done | Version | Category | Feature | Description |
 | --- | --- | --- | --- | --- |
 |   | 1.2.0 | Functionality | Re-subdivision | Allow the number of grid divisions to be changed without destroying the state of the visualizer.
+|   | 1.2.0 | Functionality | Custom Naming Conventions | Build an interface to allow folks to set their own naming conventions for autopopulation of substitutions and subordinates.
 
 
 ## Known Issues
