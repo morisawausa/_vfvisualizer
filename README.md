@@ -42,7 +42,7 @@ It's possible to set up and manage all your substitutions and subordinates throu
 
 |   | Base Glyph Name | Tag | Substitution Class | Instance |
 | - | - | - | - | - |
-| **Pattern** | *Base Glyph Name* | `sub` | *Class Name* | *Name or Number*
+| **Pattern** | `{glyph}` | `sub` | `{class}` | `{id}`
 | **`Q.sub.bar`** | `Q` | `sub` | `bar` |
 | **`Oslash.sub.bar`** | `Oslash` | `sub` | `bar` |
 | **`won.sub.bar.1`** | `won` | `sub` | `bar` | `1`
