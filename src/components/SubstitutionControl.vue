@@ -72,7 +72,7 @@
           </div>
           <div
             @click="generateSubstitution"
-            v-bind:class="{disabled: glyphset.length >= 2}"
+            v-bind:class="{disabled: glyphset.length < 2}"
             class="create-substitution submit-button">
             <span class="centered">Create</span>
           </div>
@@ -376,11 +376,11 @@ export default {
 
     .empty-results {
       width: 100%;
-      min-height: calc(var(--substitution-selector-height) - 2 * var(--substitution-box-min-height) - var(--control-block-padding));
+      min-height: calc(var(--substitution-selector-height) - 2 * var(--substitution-box-min-height) - var(--control-block-padding) - 2px);
       position: relative;
 
       &.unpopulated {
-        min-height: calc(var(--substitution-selector-height) - var(--substitution-box-min-height) - var(--control-block-padding));
+        min-height: calc(var(--substitution-selector-height) - var(--substitution-box-min-height) - var(--control-block-padding) - 2px);
       }
 
       .empty-message {
@@ -395,11 +395,11 @@ export default {
     }
 
     .search-results-list {
-      height: calc(var(--substitution-selector-height) - 2 * var(--substitution-box-min-height) - var(--control-block-padding));
+      height: calc(var(--substitution-selector-height) - 2 * var(--substitution-box-min-height) - var(--control-block-padding) - 2px);
       overflow-y: scroll;
 
       &.unpopulated {
-        height: calc(var(--substitution-selector-height) - var(--substitution-box-min-height) - var(--control-block-padding));
+        height: calc(var(--substitution-selector-height) - var(--substitution-box-min-height) - var(--control-block-padding) - 2px);
       }
 
     }
@@ -412,12 +412,27 @@ export default {
 
       .submit-button {
         height: var(--substitution-box-min-height);
+        cursor: pointer;
         position: relative;
         float:left;
         width:50%;
 
+        &:hover {
+          color:var(--ui-attention-font-color);
+          background-color: var(--ui-attention-background-color);
+        }
+
         &:first-child {
           border-right: 1px solid var(--font-color);
+        }
+      }
+
+      .disabled {
+        color:var(--ui-disabled-color);
+
+        &:hover {
+          cursor:auto;
+          background-color: inherit;
         }
       }
     }

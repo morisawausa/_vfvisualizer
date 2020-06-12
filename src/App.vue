@@ -27,7 +27,7 @@ import {mapGetters} from 'vuex'
 import {AXES, CURRENT_AXIS_SETTINGS} from './store/getters.js'
 import FontUpload from './components/FontUpload'
 import AxisControl from './components/AxisControl'
-import SubstitutionControl from './components/SubstitutionControlPrivateUnicodes'
+import SubstitutionControl from './components/SubstitutionControl'
 import GlyphView from './components/GlyphView'
 import Visualizer from './components/Visualizer'
 import SubstitutionOutput from './components/SubstitutionOutput'
@@ -87,6 +87,9 @@ export default {
   --control-block-element-spacing: 0.5em;
   --ui-input-color: var(--font-color);
   --ui-attention-color: lightyellow;
+  --ui-disabled-color:lightgray;
+  --ui-create-color:lightgreen;
+  --ui-delete-color:pink;
   --ui-attention-background-color: lightyellow;
   --ui-attention-font-color: darkblue;
   --active-color: magenta;
