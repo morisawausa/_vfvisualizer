@@ -212,6 +212,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 |   | 1.0.0 | Functionality | Axis Labels | Axes should have a labelling system which shows which axis is assigned to which planar dimension, and also allows for draggable subdivisions.
 |   | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
 |   | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
+|   | 1.0.0 | Documentation | Landing Screen | Redesign landing screen so it makes a bit more sense with the rest of the application.
 |   | ~1.0.0~ | ~Functionality~ | ~Existing `GSUB`~ | ~Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.~
 |   | 1.0.0 | Functionality | Undo button | Self Explanitory
 |   | 1.0.0 | UI | Testing | Review app at different screen sizes, and number of axes.
