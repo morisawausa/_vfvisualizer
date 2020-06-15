@@ -405,7 +405,6 @@ export default {
     }
 
     .submit-buttons {
-      // position: relative;
       height: var(--substitution-box-min-height);
       border-top:1px solid var(--font-color);
       overflow:auto;
@@ -433,6 +432,7 @@ export default {
         &:hover {
           cursor:auto;
           background-color: inherit;
+          color:var(--ui-disabled-color);
         }
       }
     }

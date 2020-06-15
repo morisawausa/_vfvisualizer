@@ -14,18 +14,20 @@
       <input
         id="prefix-input"
         class="proof-string-input"
-        placeholder="Prefix..."
         type="text"
         name=""
         @input="updatePrefix"
+        v-bind:placeholder="(hasActiveSubstutution) ? 'Before...' : ''"
+        v-bind:disabled="!hasActiveSubstutution"
         v-bind:value="leftSequence">
       <input
         id="suffix-input"
         class="proof-string-input"
-        placeholder="Suffix..."
         type="text"
         name=""
         @input="updateSuffix"
+        v-bind:placeholder="(hasActiveSubstutution) ? 'After...' : ''"
+        v-bind:disabled="!hasActiveSubstutution"
         v-bind:value="rightSequence">
     </div>
   </div>
@@ -161,7 +163,8 @@ export default {
     float:left;
     height: var(--substitution-box-min-height);
     outline:none;
-    width:calc(var(--controls-width) / 2 - 2 * var(--component-margin));
+    padding:0;
+    width:calc(var(--controls-width) / 2 - 2px);
     border:0;
     text-align: center;
     font-family: "Dispatch Mono", monospace;

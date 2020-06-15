@@ -209,7 +209,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 | ✅ | 0.9.0 | UI | Borders | Make sure the borders are consistent (review AxisControl component).
 | ✅ | 0.9.0 | UI | Metadata | Remove Unicode Count from font metadata. Remove extra line from Font Metadata Component.
 |   | 1.0.0 | Functionality | No duplicates | remove assigned glyphs from the searchable glyphs list.
-|   | 1.0.0 | Functionality | Axis Labels | Axes should have a labelling system which shows which axis is assigned to which planar dimension, and also allows for draggable subdivisions.
+|   | 1.0.0 | Functionality | Saved States | As you work, your progress should be serialized and saved to any available persistance layer, like `LocalStorage`. When you drop a font you were previously working on into the visualizer, the same state should be loaded.
 |   | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
 |   | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
 |   | 1.0.0 | Documentation | Landing Screen | Redesign landing screen so it makes a bit more sense with the rest of the application.
@@ -222,6 +222,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 | Done | Version | Category | Feature | Description |
 | --- | --- | --- | --- | --- |
+|   | 1.1.0 | Functionality | Axis Labels | Axes should have a labelling system which shows which axis is assigned to which planar dimension, and also allows for draggable subdivisions.
 |   | 1.1.0 | UI | Keyboard Shortcuts | Add keyboard shortcuts for new substitution, and toggle subordinates.
 |   | 1.1.0 | Optimization | Generated Cells | Optimize generated cells so as to minimize the total number of cells.
 |   | 1.1.0 | Functionality | Zoom the grid | Make it easy to zoom and pan on the visualizer grid for more detail (maybe).
