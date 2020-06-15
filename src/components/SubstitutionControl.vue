@@ -408,6 +408,7 @@ export default {
       height: var(--substitution-box-min-height);
       border-top:1px solid var(--font-color);
       overflow:auto;
+      background-color: var(--background-color);
 
       .submit-button {
         height: var(--substitution-box-min-height);
