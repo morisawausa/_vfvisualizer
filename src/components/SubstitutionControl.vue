@@ -287,6 +287,13 @@ export default {
       background-color: var(--font-color);
       transform:translate(-50%,-50%);
       outline:none;
+      border:none;
+      cursor:pointer;
+
+      &:hover{
+        background-color: var(--active-color);
+      }
+
       &:before {
         content: "+";
         position: absolute;
@@ -309,6 +316,7 @@ export default {
       color:var(--background-color);
       transform:translate(-50%,-50%);
       outline:none;
+      cursor:pointer;
 
       .subordinates-count {
         position: absolute;
@@ -320,7 +328,7 @@ export default {
         background-color:var(--font-color);
       }
 
-      &.active {
+      &.active, &:hover {
         background-color: var(--active-color);
       }
     }
