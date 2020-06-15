@@ -168,6 +168,7 @@ export default {
     border:0;
     text-align: center;
     font-family: "Dispatch Mono", monospace;
+    background-color:var(--background-color);
   }
 
   #prefix-input {
