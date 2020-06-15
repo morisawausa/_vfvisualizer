@@ -100,10 +100,9 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters} from 'vuex'
 import {ttxTable, designspaceTable} from '../store/tables'
 import {AXES, GLYPHLIST, CURRENT_AXIS_SETTINGS, CURRENT_SUBSTITUTION, CURRENT_SUBSTITUTION_INDEX, ALL_SUBSTITUTIONS, VALID_STYLISTIC_SETS, STATE_FOR_CELL, SUBSTITUTION_RECTS} from '../store/getters.js'
-import {ADD_NEW_SUBSTITUTION, ACTIVATE_SUBSTITUTION, SET_AXIS_DIMENSION_FOR_SUBSTITUTION, SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION, SET_STATE_FOR_CELL} from '../store/mutations.js'
 
 const hljs = require('highlight.js/lib/core');
 hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'))
@@ -123,20 +122,20 @@ export default {
     }
   },
   methods: {
-    updateScriptsIndex(e) {
+    updateScriptsIndex (e) {
       this.ttx_scripts_index = parseInt(e.target.value)
     },
-    updateFeaturesIndex(e) {
+    updateFeaturesIndex (e) {
       this.ttx_features_index = parseInt(e.target.value)
     },
-    updateLookupsIndex(e) {
+    updateLookupsIndex (e) {
       this.ttx_lookups_index = parseInt(e.target.value)
     },
-    updateVariationsIndex(e) {
+    updateVariationsIndex (e) {
       this.ttx_feature_variations_index = parseInt(e.target.value)
     },
     toggleActive () {
-      this.active = !this.active;
+      this.active = !this.active
     },
     toTTX () {
       this.visible = TTX
@@ -149,12 +148,9 @@ export default {
       let cells = this.substitutionRects()
 
       if (this.visible === DESIGNSPACE) {
-
         let output = designspaceTable(axes, cells).join('\n\n')
         return hljs.highlight('xml', output).value
-
       } else if (this.visible === TTX) {
-
         let output = ttxTable(axes, cells, {
           scripts: this.ttx_scripts_index,
           features: this.ttx_features_index,
@@ -162,44 +158,29 @@ export default {
           variations: this.ttx_feature_variations_index
         }).join('\n\n')
         return hljs.highlight('xml', output).value
-
       }
     },
     copyTable () {
-      const copyElement = document.getElementById('copy-table-text');
-      const output = document.getElementById('table-output-code').textContent;
-      const textarea = document.getElementById('clipboard-proxy');
+      const copyElement = document.getElementById('copy-table-text')
+      const output = document.getElementById('table-output-code').textContent
+      const textarea = document.getElementById('clipboard-proxy')
 
-      textarea.textContent = output;
+      textarea.textContent = output
       textarea.select()
-      document.execCommand('copy');
+      document.execCommand('copy')
 
       copyElement.textContent = 'Copied!'
 
       setTimeout(function() {
-        copyElement.textContent = 'Copy Table';
+        copyElement.textContent = 'Copy Table'
       }, 750);
     }
   },
   computed: {
     ...mapGetters({
       axes: AXES,
-      substitutions: ALL_SUBSTITUTIONS,
-      currentSubstitution: CURRENT_SUBSTITUTION,
-      currentSubstitutionIndex: CURRENT_SUBSTITUTION_INDEX,
-      currentAxisSetting: CURRENT_AXIS_SETTINGS,
-      glyphlist: GLYPHLIST,
-      stylisticSets: VALID_STYLISTIC_SETS,
-      stateForCell: STATE_FOR_CELL,
       substitutionRects: SUBSTITUTION_RECTS
-    }),
-    instructions () {
-      if (this.visible == DESIGNSPACE) {
-
-      } else if (this.visible == TTX) {
-
-      }
-    }
+    })
   }
 }
 </script>

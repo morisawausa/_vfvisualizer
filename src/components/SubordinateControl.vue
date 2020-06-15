@@ -16,7 +16,7 @@
       </div>
       <div
         v-for="(sequence, index) in subordinates"
-        v-bind:index="index"
+        v-bind:key="index"
         class="subordinate">
         <SubstitutionSet v-bind:glyphset="sequence" />
         <div class="buttons">
@@ -92,16 +92,13 @@
 </template>
 
 <script>
-import {mapGetters, mapActions, mapMutations} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 import FuzzySearch from 'fuzzy-search'
 
 import {
-  AXES,
   GLYPHLIST,
   CURRENT_SUBSTITUTION,
-  CURRENT_SUBSTITUTION_INDEX,
-  ALL_SUBSTITUTIONS,
-  VALID_STYLISTIC_SETS } from '../store/getters.js'
+  CURRENT_SUBSTITUTION_INDEX } from '../store/getters.js'
 
 import {
   ADD_SUBORDINATE_TO_SUBSTITUTION,
@@ -110,8 +107,8 @@ import {
   ACTIVATE_SUBORDINATE_IN_GRID,
   DEACTIVATE_SUBORDINATE_IN_GRID} from '../store/mutations.js'
 
-import SubstitutionSet from './SubstitutionSet.vue';
-import GlyphAlternatesDisplay from './GlyphAlternatesDisplay.vue';
+import SubstitutionSet from './SubstitutionSet.vue'
+import GlyphAlternatesDisplay from './GlyphAlternatesDisplay.vue'
 
 export default {
   props: {
@@ -123,7 +120,7 @@ export default {
   data () {
     return {
       results: [],
-      glyphset: [],
+      glyphset: []
     }
   },
   methods: {
@@ -149,13 +146,13 @@ export default {
       let current = this.currentSubstitution
       let notInList = this.glyphset.reduce((a, b) => a && (b.name !== glyph.name), true)
 
-      let needsAdditionalGlyphs = (typeof current !== 'undefined') ? this.glyphset.length < current.glyphs.length : true;
+      let needsAdditionalGlyphs = (typeof current !== 'undefined') ? this.glyphset.length < current.glyphs.length : true
 
       return notInList && needsAdditionalGlyphs
     },
     inactive (index) {
       let current = this.currentSubstitution
-      return current.active_subordinates.indexOf(index) === -1;
+      return current.active_subordinates.indexOf(index) === -1
     },
     addGlyphToGlyphset (glyph) {
       this.glyphset.push(glyph)
@@ -193,7 +190,7 @@ export default {
         substitutionIndex: this.currentSubstitutionIndex,
         subordinateIndex: index
       })
-    },
+    }
   },
   computed: {
     ...mapGetters({
@@ -202,7 +199,7 @@ export default {
       glyphlist: GLYPHLIST
     }),
     primary () {
-      let current = this.currentSubstitution;
+      let current = this.currentSubstitution
 
       if (typeof current !== 'undefined') {
         return current.glyphs
@@ -211,7 +208,7 @@ export default {
       return []
     },
     subordinates () {
-      let current = this.currentSubstitution;
+      let current = this.currentSubstitution
 
       if (typeof current !== 'undefined') {
         return current.subordinates

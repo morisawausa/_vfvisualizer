@@ -199,18 +199,18 @@ export default {
           y_pos = next_y_pos
         }
       }
-      return cells;
+      return cells
     },
     textSequence () {
       let substitution = this.currentSubstitution
-      if (typeof substitution !== "undefined") {
-        return '\"' +
+      if (typeof substitution !== 'undefined') {
+        return '"' +
                 substitution.left_sequence +
                 this.$options.filters.unicode(substitution.default) +
                 substitution.right_sequence +
-                '\"'
+                '"'
       } else {
-        return ""
+        return ''
       }
     },
     getSizeForSequence () {
@@ -222,11 +222,11 @@ export default {
       let current = this.currentSubstitution
       if (typeof current !== 'undefined') {
         return current.glyphs.map((glyph, i) => {
-          const active_runs = current.active_subordinates.map(j => current.subordinates[j])
-          const active_glyphs = [glyph].concat(active_runs.map(run => run[i]))
-          const unicodes = active_glyphs.map(glyph => this.$options.filters.unicode(glyph))
+          const activeRuns = current.active_subordinates.map(j => current.subordinates[j])
+          const activeGlyphs = [glyph].concat(activeRuns.map(run => run[i]))
+          const unicodes = activeGlyphs.map(glyph => this.$options.filters.unicode(glyph))
 
-          return `--alternate-${i}: "${ current.left_sequence + unicodes.join('') + current.right_sequence }";`
+          return `--alternate-${i}: "${current.left_sequence + unicodes.join('') + current.right_sequence}";`
         }).join(' ')
       } else {
         return ''
@@ -249,7 +249,6 @@ export default {
 
   font-family: "visualized-font", sans-serif;
 }
-
 
 #visualizer-canvas {
   --base-offset-vh: 20vh;
