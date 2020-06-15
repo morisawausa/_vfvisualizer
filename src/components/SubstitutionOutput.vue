@@ -21,15 +21,16 @@
         </div>
 
         <div
-          class="design-space-format-button format-button"
+          class="design-space-format-button format-button disabled"
           v-bind:class="{'active': visible == 'ttx'}"
-          @click="toTTX">
-          <span class="centered">.ttx</span>
+          >
+          <span class="centered">.ttx (disabled)</span>
         </div>
 
         <div
+          @click="copyTable"
           class="control-button format-button">
-          <span class="centered">Copy Table</span>
+          <span id="copy-table-text" class="centered">Copy Table</span>
         </div>
 
         <div
@@ -40,7 +41,8 @@
       </div>
 
       <div class="table-output-frame xml">
-        <pre><code v-html="(active) ? table() : ''"></code></pre>
+        <pre id="table-output-code"><code v-html="(active) ? table() : ''"></code></pre>
+        <textarea id="clipboard-proxy"></textarea>
         <div class="feather"></div>
       </div>
 
@@ -163,6 +165,21 @@ export default {
 
       }
     },
+    copyTable () {
+      const copyElement = document.getElementById('copy-table-text');
+      const output = document.getElementById('table-output-code').textContent;
+      const textarea = document.getElementById('clipboard-proxy');
+
+      textarea.textContent = output;
+      textarea.select()
+      document.execCommand('copy');
+
+      copyElement.textContent = 'Copied!'
+
+      setTimeout(function() {
+        copyElement.textContent = 'Copy Table';
+      }, 750);
+    }
   },
   computed: {
     ...mapGetters({
@@ -193,11 +210,20 @@ export default {
     position: absolute;
     top:var(--component-margin);
     right:var(--component-margin);
-    background-color: var(--font-color);
-    color:var(--background-color);
+    cursor:pointer;
+
     min-width: var(--substitution-icon-width);
-    padding: var(--component-margin);
+    padding: var(--control-block-padding);
+    border:1px solid var(--font-color);
+
+    background-color: var(--background-color);
+    color:var(--font-color);
     font-family: "Dispatch Mono", monospace;
+
+    &:hover {
+      background-color:var(--ui-attention-background-color);
+      color:var(--ui-attention-font-color);
+    }
   }
 
   #table-output {
@@ -230,10 +256,19 @@ export default {
       height:var(--substitution-box-min-height);
       border-right:1px solid var(--font-color);
       border-bottom: 1px solid var(--font-color);
+
+      &:not(.active):not(.disabled):hover {
+        background-color: var(--ui-attention-background-color);
+        color:var(--ui-attention-font-color);
+      }
     }
 
     .design-space-format-button {
       width:32.5%;
+
+      &.disabled {
+        color:lightgray;
+      }
 
       &.active {
         border-bottom: none;
@@ -242,6 +277,12 @@ export default {
 
     .control-button {
       width: 17.5%;
+      cursor:pointer;
+
+      &:hover {
+        background-color: var(--ui-attention-background-color);
+        color:var(--ui-attention-font-color);
+      }
 
       &:last-child {
         border-right:none;
@@ -256,6 +297,11 @@ export default {
     padding-bottom:5%;
     margin:5% 10% 5% 10%;
 
+  }
+
+  textarea#clipboard-proxy {
+    position:absolute;
+    left:-100%;
   }
 
   .table-output-frame {
