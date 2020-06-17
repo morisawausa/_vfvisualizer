@@ -1,6 +1,6 @@
 import FuzzySearch from 'fuzzy-search'
 
-const SUBSTITUTION_PATTERN = '.sub_bar';
+const SUBSTITUTION_PATTERN = '.sub_';
 
 function getBaseGlyph(glyphname, glyphs) {
   for (let i = 0; i < glyphs.length; i += 1) {
