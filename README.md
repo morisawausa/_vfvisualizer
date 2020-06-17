@@ -38,15 +38,15 @@ Just like regular substitutions, substitutions with subordinates can have any nu
 
 **NOTE: These naming conventions are suggestions, and are not currently implemented.**
 
-It's possible to set up and manage all your substitutions and subordinates through the visualizer interface.  However, this can be a time consuming process in itself. Because of this, the visualizer provides some naming conventions The variable font visualizer will automatically generate susbtitution and subordinate sets for you, if you name your substitution glyphs in the following parts. Each of the parts is joined together with a separator. We use a period (`.`).
+It's possible to set up and manage all your substitutions and subordinates through the visualizer interface.  However, this can be a time consuming process in itself. Because of this, the visualizer provides some naming conventions The variable font visualizer will automatically generate susbtitution and subordinate sets for you, if you name your substitution glyphs in the following parts. Each of the parts is joined together with a separator. We use a period (`.`) to start off the string, and then underscores (`_`) inside it.
 
-|   | Base Glyph Name | Tag | Substitution Class | Instance |
+|   | Base Glyph Name | Tag | Substitution Class | Instance (optional) |
 | - | - | - | - | - |
 | **Pattern** | `{glyph}` | `sub` | `{class}` | `{id}`
-| **`Q.sub.bar`** | `Q` | `sub` | `bar` |
-| **`Oslash.sub.bar`** | `Oslash` | `sub` | `bar` |
-| **`won.sub.bar.1`** | `won` | `sub` | `bar` | `1`
-| **`won.sub.bar.2`** | `won` | `sub` | `bar` | `2`
+| **`Q.sub_bar`** | `Q` | `sub` | `bar` |
+| **`Oslash.sub_bar`** | `Oslash` | `sub` | `bar` |
+| **`won.sub_bar_1`** | `won` | `sub` | `bar` | `1`
+| **`won.sub_bar_2`** | `won` | `sub` | `bar` | `2`
 | **Notes** | This is the name of the glyph for which this substitution applies. | This tag identifies this glyph as a substitution. All substitution glyphs have this tag, which makes them easily searchable. | The class name is an arbitrary identifier that groups substitutions that should follow the same pattern together. | The instance identifier is a unique per-base-glyph, and allows for multipls substitutions per base-glyph. If there is only one substitute for the base glyph in the class, no instance id is needed.
 
 Substitutions are grouped together as subordinates under two conditions:
@@ -56,7 +56,7 @@ Substitutions are grouped together as subordinates under two conditions:
 
 If these two conditions hold, then the susbtitutions will be grouped together as subordinates. If either of them does not hold, then the substitutions will not be grouped together.
 
-As a caveat: If you use this notation, then no other glyph names in your project should contain `.sub.` as a substring in their names. Hopefully this isn't too arduous of a restriction 😊.
+As a caveat: If you use this notation, then no other glyph names in your project should contain `.sub_` (this is the string our preprocessor uses to identify substitutions) as a substring in their names. Hopefully this isn't too arduous of a restriction 😊.
 
 
 
@@ -213,7 +213,7 @@ Used by `Visualizer.vue` for the size of the glyphs in the visualizer canvas.
 
 **Update:** This is irrellevant if you're using the designspace method discussed above. Using the `--no-production-names` flag with `fontmake` will avoid converting your glyph names to production names, which is essential for using the designspace method..
 
-The [Adobe Glyph List](https://github.com/adobe-type-tools/agl-specification) specification provides a list of standard glyph names. The Glyphs software automatically [normalizes your glyphnames to this specification](https://glyphsapp.com/tutorials/getting-your-glyph-names-right). This is great for standards compliance, but bad for glyph discovery in the visualizer (which asks you to specify glyphs by name). In general, most of your basic Latin, Greek, and Cyrillic glyph names will be fine, if you're following the spec. However, many symbols get converted to their unicode identifiers. This means that to set up substitutions for these glyphs, you have to search for their unicode identifiers, rather than their internal glyph names. To find `won`, you have to search for `uni20A9`.
+~The [Adobe Glyph List](https://github.com/adobe-type-tools/agl-specification) specification provides a list of standard glyph names. The Glyphs software automatically [normalizes your glyphnames to this specification](https://glyphsapp.com/tutorials/getting-your-glyph-names-right). This is great for standards compliance, but bad for glyph discovery in the visualizer (which asks you to specify glyphs by name). In general, most of your basic Latin, Greek, and Cyrillic glyph names will be fine, if you're following the spec. However, many symbols get converted to their unicode identifiers. This means that to set up substitutions for these glyphs, you have to search for their unicode identifiers, rather than their internal glyph names. To find `won`, you have to search for `uni20A9`.~
 
 
 ## Resources
