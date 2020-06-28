@@ -14,21 +14,21 @@
 | ✅| 0.9.0 | Functionality | >1 Substitution Set per Map | You should be able to assign multiple substitution pairs to the same design space substitution map.
 | ✅ | 0.9.0 | Functionality | Autopopulate | There should be some basic intelligence built in to the substitution system to generate substitutions based on suffixes. For example, a substitution for `{x}` to `{x}.sub_{y}` should automatically be set up in the grid when you load a font. **Note:** Naming conventions must be determined ahead of time and thought through for this feature to be anything other than annoying.
 | ✅ | 0.9.0 | UI | Subs | Add colored background to the glyphs in the substitution pane to help communicate where different subs apply.
-| ✅  | 0.9.0 | UI | Output | Add controls to output pane. Finesse styling.
+| ✅ | 0.9.0 | UI | Output | Add controls to output pane. Finesse styling.
 | ✅ | 0.9.0 | UI | Arrows | Make sure the arrows are differentiated. For example, the arrows to send glyphs to the grid could be different from the substitution order.
 | ✅ | 0.9.0 | UI | Borders | Make sure the borders are consistent (review AxisControl component).
 | ✅ | 0.9.0 | UI | Metadata | Remove Unicode Count from font metadata. Remove extra line from Font Metadata Component.
 | ✅ | 1.0.0 | UI | Glyph Selection | Refine the UI for the glyph selections. Make is smaller, and get rid of the dumb 'choose' thing.
-| ✅| 1.0.0 | UI | Axis Location Input | Add a UI Input Field for manual input into the axis positions sliders, to make it easier to jump to a location.
-| ✅| 1.0.0 | UI | Disable Active Axis Sliders  | Make sure axes that are assigend to grid dimensions have their axis controls sliders disabled or grayed out.
-|   | 1.0.0 | Functionality | Show instances | Show where instances are located in the grid as an overlay
+| ✅ | 1.0.0 | UI | Axis Location Input | Add a UI Input Field for manual input into the axis positions sliders, to make it easier to jump to a location.
+| ✅ | 1.0.0 | UI | Disable Active Axis Sliders  | Make sure axes that are assigend to grid dimensions have their axis controls sliders disabled or grayed out.
+|    | 1.0.0 | Functionality | Show instances | Show where instances are located in the grid as an overlay
 | ✅ | 1.0.0 | Functionality | No duplicates | remove assigned glyphs from the searchable glyphs list.
-|   | 1.0.0 | Functionality | Saved States | As you work, your progress should be serialized and saved to any available persistance layer, like `LocalStorage`. When you drop a font you were previously working on into the visualizer, the same state should be loaded.
-|   | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
-|   | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
-|   | 1.0.0 | Documentation | Landing Screen | Redesign landing screen so it makes a bit more sense with the rest of the application.
-|   | 1.0.0 | Refactor | Stylistic Sets | Remove dangling references to stylistic sets implementation (this was an implementation of subs that placed the substitutes into stylistic sets, ugh.)
-|   | ~1.0.0~ | ~Functionality~ | ~Existing `GSUB`~ | ~Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.~
+| ✅ | 1.0.0 | Functionality | Saved States | As you work, your progress should be serialized and saved to any available persistance layer, like `LocalStorage`. When you drop a font you were previously working on into the visualizer, the same state should be loaded.
+|    | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.
+|    | 1.0.0 | Documentation | Walkthrough | Descriptions of how to use each feature, embedded into the application as tuturial text or help screens.
+|    | 1.0.0 | Documentation | Landing Screen | Redesign landing screen so it makes a bit more sense with the rest of the application.
+|    | 1.0.0 | Refactor | Stylistic Sets | Remove dangling references to stylistic sets implementation (this was an implementation of subs that placed the substitutes into stylistic sets, ugh.)
+|    | ~1.0.0~ | ~Functionality~ | ~Existing `GSUB`~ | ~Make it easier to add a generated `GSUB` table to a pre-existing GSUB table.~
 
 ## Version 1.1.0
 
