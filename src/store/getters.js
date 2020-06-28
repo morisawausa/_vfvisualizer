@@ -17,3 +17,5 @@ export const VALID_STYLISTIC_SETS = 'valid_sylistic_sets'
 export const STATE_FOR_CELL = 'state_for_cell'
 
 export const SUBSTITUTION_RECTS = 'substitution_rects'
+
+export const ASSIGNED_GLYPHS = 'assigned_glyphs';

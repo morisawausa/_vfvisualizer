@@ -16,7 +16,8 @@ import {
   CURRENT_AXIS_SETTINGS,
   VALID_STYLISTIC_SETS,
   STATE_FOR_CELL,
-  SUBSTITUTION_RECTS
+  SUBSTITUTION_RECTS,
+  ASSIGNED_GLYPHS
 } from './getters.js'
 
 import {
@@ -71,6 +72,15 @@ export default new Vuex.Store({
     },
     [GLYPHLIST] (state, getters) {
       return state.glyphs
+    },
+    [ASSIGNED_GLYPHS] (state, getters) {
+      let assigned_glyphs = state.substitutions.map(sub => {
+        let master_set = sub.glyphs;
+        let subordinates = sub.subordinates.reduce((a,b) => a.concat(b), []);
+        return master_set.concat(subordinates);
+      });
+
+      return assigned_glyphs.reduce((a,b) => a.concat(b), []);
     },
     [AXES] (state, getters) {
       return state.axes

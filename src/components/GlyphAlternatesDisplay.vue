@@ -3,13 +3,8 @@
     <span v-bind:style="{'width': previewBoxWidth}" class="standard visualized-font">
       {{ glyph | unicode }}
     </span>
-    <span
-      class="alternate visualized-font"
-      v-for="(set, index) in stylisticSets"
-      v-bind:key="index"
-      v-bind:class="set"
-      v-bind:style="{'width': previewBoxWidth}">
-      {{ glyph | unicode }}
+    <span class="name">
+      {{ glyph.name }}
     </span>
   </div>
 </template>
@@ -30,17 +25,29 @@ export default {
   overflow: auto;
   background-color: var(--darker-background-color);
   border-bottom:1px solid vaR(--font-color);
+  cursor:pointer;
 
-  .standard, .alternate {
+  .standard, .alternate, .name {
+    width:25%;
     display: inline-block;
     font-size: 1.5em;
     float:left;
     text-align: center;
     border-right: 1px solid var(--font-color);
     padding:var(--control-block-padding);
+    padding-right: 1.5em;
     &:last-child {
       border:none;
     }
+  }
+
+  .name {
+    padding-top:1.4em;
+    font-size: 1.2em;
+  }
+
+  &:hover {
+    background-color: var(--active-color);
   }
 }
 </style>

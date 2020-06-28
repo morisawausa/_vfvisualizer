@@ -77,8 +77,6 @@
           v-if="valid(glyph)"
           v-bind:key="index"
           @click="addGlyphToGlyphset(glyph)">
-
-          <div class="glyph-name">{{glyph.name}}<span class="indicator">choose &rarr;</span></div>
           <GlyphAlternatesDisplay v-bind:glyph="glyph" v-bind:stylisticSets="[]" previewBoxWidth="10%"/>
         </li>
       </ul>
@@ -97,6 +95,7 @@ import FuzzySearch from 'fuzzy-search'
 
 import {
   GLYPHLIST,
+  ASSIGNED_GLYPHS,
   CURRENT_SUBSTITUTION,
   CURRENT_SUBSTITUTION_INDEX } from '../store/getters.js'
 
@@ -135,8 +134,9 @@ export default {
       const val = e.target.value
       if (val !== '') {
         const results = this.fuzzyFinder.search(val)
-        const sorted = results.sort((a, b) => a.name.length - b.name.length).slice(0, 10)
-        this.results = sorted
+        const sorted = results.sort((a, b) => a.name.length - b.name.length);
+        const filtered = sorted.filter(g => typeof this.activeIndex[g.name] === 'undefined');
+        this.results = filtered.slice(0, 10);
       } else {
         this.results = []
       }
@@ -196,7 +196,8 @@ export default {
     ...mapGetters({
       currentSubstitution: CURRENT_SUBSTITUTION,
       currentSubstitutionIndex: CURRENT_SUBSTITUTION_INDEX,
-      glyphlist: GLYPHLIST
+      glyphlist: GLYPHLIST,
+      assignedGlyphs: ASSIGNED_GLYPHS
     }),
     primary () {
       let current = this.currentSubstitution
@@ -219,8 +220,12 @@ export default {
     fuzzyFinder () {
       const glyphs = this.glyphlist
       return new FuzzySearch(glyphs, ['name'], {caseSensitive: true})
+    },
+    activeIndex () {
+      let active = {};
+      this.assignedGlyphs.forEach(glyph => { active[glyph.name] = true; })
+      return active;
     }
-
   }
 }
 </script>
@@ -329,7 +334,6 @@ export default {
     .glyph-alternates {
       width: 100%;
       overflow: auto;
-      background-color: var(--darker-background-color);
       border-bottom:1px solid var(--font-color);
 
       .standard, .alternate {

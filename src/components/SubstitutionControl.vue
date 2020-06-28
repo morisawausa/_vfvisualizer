@@ -56,7 +56,6 @@
             v-bind:key="index"
             @click="selectGlyphAlternates($event, glyph)">
 
-            <div class="glyph-name">{{glyph.name}}<span class="indicator">choose &rarr;</span></div>
             <GlyphAlternatesDisplay v-bind:glyph="glyph" v-bind:stylisticSets="stylisticSets" v-bind:previewBoxWidth="previewBoxWidth"/>
           </li>
         </ul>
@@ -126,7 +125,7 @@
 
 <script>
 import {mapGetters, mapActions, mapMutations} from 'vuex'
-import {AXES, GLYPHLIST, CURRENT_SUBSTITUTION, CURRENT_SUBSTITUTION_INDEX, ALL_SUBSTITUTIONS, VALID_STYLISTIC_SETS} from '../store/getters.js'
+import {AXES, GLYPHLIST, ASSIGNED_GLYPHS, CURRENT_SUBSTITUTION, CURRENT_SUBSTITUTION_INDEX, ALL_SUBSTITUTIONS, VALID_STYLISTIC_SETS} from '../store/getters.js'
 import {ADD_NEW_SUBSTITUTION, DELETE_SUBSTITUTION, ACTIVATE_SUBSTITUTION, SET_AXIS_DIMENSION_FOR_SUBSTITUTION, SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION} from '../store/mutations.js'
 import {linear} from '../store/scales.js'
 
@@ -185,8 +184,9 @@ export default {
       const val = e.target.value
       if (val !== '') {
         const results = this.fuzzyFinder.search(val)
-        const sorted = results.sort((a, b) => a.name.length - b.name.length).slice(0, 10)
-        this.results = sorted
+        const sorted = results.sort((a, b) => a.name.length - b.name.length);
+        const filtered = sorted.filter(g => typeof this.activeIndex[g.name] === 'undefined');
+        this.results = filtered.slice(0, 10)
       } else {
         this.results = []
       }
@@ -225,6 +225,7 @@ export default {
       currentSubstitution: CURRENT_SUBSTITUTION,
       currentSubstitutionIndex: CURRENT_SUBSTITUTION_INDEX,
       glyphlist: GLYPHLIST,
+      assignedGlyphs: ASSIGNED_GLYPHS,
       stylisticSets: VALID_STYLISTIC_SETS
     }),
     currentSubstitutionExists () {
@@ -242,6 +243,11 @@ export default {
     },
     previewBoxWidth () {
       return `width: ${(100 / (this.totalAvailableSets + 1)) + '%'};`
+    },
+    activeIndex () {
+      let active = {};
+      this.assignedGlyphs.forEach(glyph => { active[glyph.name] = true; })
+      return active;
     }
   }
 }
@@ -473,7 +479,6 @@ export default {
       .glyph-alternates {
         width: 100%;
         overflow: auto;
-        background-color: var(--darker-background-color);
         border-bottom:1px solid var(--font-color);
 
         .standard, .alternate {
