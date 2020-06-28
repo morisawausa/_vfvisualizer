@@ -1,7 +1,4 @@
 const SortedSet = require('collections/sorted-set')
-// const FastMap = require('collections/fast-map')
-// const Combinatorics = require('js-combinatorics')
-// const equal = require('array-equal')
 const ndarray = require('ndarray')
 const DEBUG = false
 
@@ -17,16 +14,21 @@ export function makeRect (divisions) {
 }
 
 export class Hypercube {
-  constructor (divisions) {
-    console.log(divisions)
+  constructor (divisions, array=null, shape=null) {
     this.divisions = divisions.map(division => { return new SortedSet(division) })
-    this.state = this.initial()
+    this.state = this.initial(array, shape)
   }
 
-  initial () {
-    let dimensions = this.divisions.map(x => x.length + 1)
-    let locations = dimensions.reduce((a, b) => a * b, 1)
-    return ndarray(new Int32Array([...Array(locations).keys()].map(x => 0)), dimensions)
+  initial (array, shape) {
+    console.log(array, shape);
+    if (array == null || shape == null) {
+      let dimensions = this.divisions.map(x => x.length + 1)
+      let locations = dimensions.reduce((a, b) => a * b, 1)
+      return ndarray(new Int32Array([...Array(locations).keys()].map(x => 0)), dimensions)
+    } else {
+      return ndarray(new Int32Array(array), shape)
+    }
+
   }
 
   get (point) {

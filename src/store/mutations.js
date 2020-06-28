@@ -3,6 +3,10 @@
  */
 export const INITIALIZE = 'initialize'
 
+export const LOAD_STATE = 'load_state'
+
+export const CLEAR_STATE = 'clear_state'
+
 export const UPDATE_AXIS_VALUE = 'update_axis_value'
 
 export const ADD_NEW_SUBSTITUTION = 'new_substitution'

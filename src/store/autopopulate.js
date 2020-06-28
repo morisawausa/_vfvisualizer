@@ -13,7 +13,14 @@ function getBaseGlyph(glyphname, glyphs) {
 }
 
 export function autopopulate(font) {
-  let glyphs = font.characterSet.map(pt => font.glyphForCodePoint(pt));
+  let glyphs = font.characterSet.map(pt => {
+    let g = font.glyphForCodePoint(pt);
+    return {
+      name: g.name,
+      codePoints: g.codePoints
+    };
+  });
+
   let searcher = new FuzzySearch(glyphs, ['name'], {caseSensitive: true})
   let candidates = searcher.search(SUBSTITUTION_PATTERN);
   // NOTE: Probably sort the candidates for reproducability

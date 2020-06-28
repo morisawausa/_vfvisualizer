@@ -21,6 +21,7 @@
     "fitty": "^2.3.0",
     "fontkit": "^1.8.1",
     "fuzzy-search": "^3.2.1",
+    "hasha": "^5.2.0",
     "he": "^1.2.0",
     "highlight.js": "^10.0.3",
     "js-combinatorics": "^0.5.5",

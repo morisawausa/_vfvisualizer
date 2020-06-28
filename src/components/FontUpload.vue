@@ -69,7 +69,7 @@ export default {
             this.font = fontkit.create(buffer)
             this.node.textContent = this.fontstyles()
             this.hovering = false
-            this[INITIALIZE](this.font)
+            this[INITIALIZE]({font: this.font, buffer: buffer})
           } catch (err) {
             this.errored = true
           }

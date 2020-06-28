@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 const Combinatorics = require('js-combinatorics')
+const hasha = require('hasha');
+const ndarray = require('ndarray');
 
 const DEFAULT_MAJOR_SUBDIVISIONS = 7
 const DEFAULT_MINOR_SUBDIVISIONS = 2
-
 
 import {
   META,
@@ -22,6 +23,8 @@ import {
 
 import {
   INITIALIZE,
+  LOAD_STATE,
+  CLEAR_STATE,
   UPDATE_AXIS_VALUE,
   ADD_NEW_SUBSTITUTION,
   DELETE_SUBSTITUTION,
@@ -37,6 +40,18 @@ import {
   DEACTIVATE_SUBORDINATE_IN_GRID
 } from './mutations.js'
 
+
+const saveableActions = [
+  ADD_NEW_SUBSTITUTION,
+  DELETE_SUBSTITUTION,
+
+  ADD_SUBORDINATE_TO_SUBSTITUTION,
+  REMOVE_SUBORDINATE_FROM_SUBSTITUTION,
+
+  SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION,
+  SET_STATE_FOR_CELL
+];
+
 import {linear, percent2user, user2norm} from './scales.js'
 import {autopopulate} from './autopopulate.js';
 
@@ -44,8 +59,9 @@ import {Hypercube} from './hypercube.js'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+let store = new Vuex.Store({
   state: {
+    savename: '',
     ui: {
       substitution: -1,
       axisValues: []
@@ -182,15 +198,21 @@ export default new Vuex.Store({
      * font into the application. It extracts the relevant glyph and
      * variations data from the typeface, and sets it up for rendering.
      */
-    [INITIALIZE] (state, font) {
+    [INITIALIZE] (state, {font, hash}) {
       /**
        * To initialize, we start by mapping across the available
        * Unicode points on the font, and getting Glyph objects for
        * each one. We match that  with the glyph name, which is something
        * We're goint to want the user to search for later.
        */
+      state.savename = hash;
+
       state.glyphs = font.characterSet.map(pt => {
-        return font.glyphForCodePoint(pt)
+        let g = font.glyphForCodePoint(pt)
+        return {
+          name: g.name,
+          codePoints: g.codePoints
+        }
       })
 
       let axesData = []
@@ -240,8 +262,50 @@ export default new Vuex.Store({
           }
         }
       ))
+    },
+    /**
+     * This action reads a state saved in localStorage into
+     * application memory.
+     */
+    [LOAD_STATE] (state, {saved}) {
+      let substitutions = [];
 
-      // TODO: Add substitution autopopulater
+      saved.substitutions.forEach(sub => {
+        let newSubstitution = {
+          // The primary run of glyphs controlling the substitution
+          glyphs: sub.glyphs,
+          // A set of secondary runs of glyphs, which obey the
+          // exact same rules as the primary run.
+          subordinates: sub.subordinates,
+          // A set of indices into the subordinates array,
+          // indicating which of the subordinates should be
+          // visualized in the grid.
+          active_subordinates: [],
+          // A set of grid divisions, equal in length to the number of design axes,
+          // indicating where along the axis it should be divided,
+          // as a percentage of total length.
+          divisions: sub.divs,
+          // the index of the design axis (and division) assigned to the
+          // x dimension on the visualizer.
+          x: 0,
+          // the undex of the design axis (and division) assigned to the
+          // y dimension on the visualizer
+          y: 1,
+          // A test string to be displayed to the left of the active sequence
+          left_sequence: '',
+          // A test string to be displayed to the right of the active sequence
+          right_sequence: '',
+          // The design space map which indicates where substitutions are applied
+          // This is a hypercube with the same number of axes as design axes,
+          // and cells equal to the product of lengths of each division array.
+          state: new Hypercube(sub.divs, Object.values(sub.rects), sub.shape)
+        }
+
+        substitutions.push(newSubstitution);
+      });
+
+      state.substitutions = substitutions;
+      state.ui.substitution = substitutions.length - 1;
     },
     /**
      * This action updates a single axis value to a new value
@@ -460,16 +524,31 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    [INITIALIZE] ({commit, state}, font) {
-      commit(INITIALIZE, font)
-      let sequences = autopopulate(font);
-      sequences.forEach(substitution => {
-        commit(ADD_NEW_SUBSTITUTION, {glyphs: substitution.glyphs});
-        let index = state.ui.substitution;
-        substitution.subordinates.forEach(glyphs => {
-          commit(ADD_SUBORDINATE_TO_SUBSTITUTION, {substitutionIndex: index, glyphset: glyphs});
+    [INITIALIZE] ({commit, state}, {font, buffer}) {
+      let hash = hasha(buffer.toString(), {algorithm: 'md5'});
+      commit(INITIALIZE, {font, hash})
+
+      if (
+        typeof localStorage !== 'undefined' && // localStorage exists, and
+        localStorage.getItem(hash) !== null // we've seen this file before.
+      ) {
+        let savedState = localStorage.getItem(hash);
+        let parsed = JSON.parse(savedState);
+
+        commit(LOAD_STATE, {saved: parsed});
+
+      } else {
+
+        let sequences = autopopulate(font);
+        sequences.forEach(substitution => {
+          commit(ADD_NEW_SUBSTITUTION, {glyphs: substitution.glyphs});
+          let index = state.ui.substitution;
+          substitution.subordinates.forEach(glyphs => {
+            commit(ADD_SUBORDINATE_TO_SUBSTITUTION, {substitutionIndex: index, glyphset: glyphs});
+          })
         })
-      })
+
+      }
     },
     [UPDATE_AXIS_VALUE] ({commit}, payload) {
       commit(UPDATE_AXIS_VALUE, payload)
@@ -482,3 +561,30 @@ export default new Vuex.Store({
     }
   }
 })
+
+if (typeof localStorage !== 'undefined') {
+  store.subscribe((mutation, state) => {
+    if (saveableActions.indexOf(mutation.type) !== -1) {
+
+      let savestate = { substitutions: [] };
+
+      for (var key in state.substitutions) {
+        savestate.substitutions.push({
+          glyphs: state.substitutions[key].glyphs,
+          subordinates: state.substitutions[key].subordinates,
+          divs: state.substitutions[key].state.divisions.map(a => a.toArray()),
+          rects: state.substitutions[key].state.state.data,
+          shape: state.substitutions[key].state.state.shape
+        });
+      }
+
+      console.log(savestate);
+
+      localStorage.setItem(state.savename, JSON.stringify(savestate));
+    }
+  });
+}
+
+
+
+export default store;
