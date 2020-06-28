@@ -94,7 +94,7 @@ export default {
   --ui-attention-font-color: darkblue;
   --active-color: magenta;
   --hover-color: pink;
-  --slider-width: 60%;
+  --slider-width: 40%;
   --component-margin: 0.5em;
   --grid-lines-color: transparent;
   --grid-hover-color: lightblue;

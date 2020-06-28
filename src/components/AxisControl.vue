@@ -20,8 +20,17 @@
               v-bind:for="axis.tag"
               v-bind:min="axis.min"
               v-bind:max="axis.max"
-              v-bind:value="axis.default"
+              v-bind:value="axisSettings[index]"
               @input="axisChange($event, axis, index)"
+            />
+            <input
+              class="axis-value-input"
+              type="number"
+              v-bind:for="axis.tag"
+              v-bind:min="axis.min"
+              v-bind:max="axis.max"
+              v-bind:value="axisSettings[index]"
+              @change="axisChange($event, axis, index)"
             />
             <span class="axis-max-label">{{axis.max}}</span>
           </div>
@@ -31,7 +40,6 @@
               class="axis-demo-box-value visualized-font"
               v-bind:key="index"
               v-bind:style="data">
-              a
             </span>
           </div>
         </div>
@@ -41,7 +49,7 @@
 
 <script>
 import {mapGetters, mapActions} from 'vuex'
-import {AXES} from '../store/getters.js'
+import {AXES, CURRENT_AXIS_SETTINGS} from '../store/getters.js'
 import {UPDATE_AXIS_VALUE} from '../store/mutations.js'
 
 export default {
@@ -70,7 +78,10 @@ export default {
 
   },
   computed: {
-    ...mapGetters({axes: AXES})
+    ...mapGetters({
+      axes: AXES,
+      axisSettings: CURRENT_AXIS_SETTINGS
+    })
   }
 }
 </script>
@@ -135,15 +146,19 @@ export default {
     }
 
     .axis-min-label {
+      position: relative;
+      left:0px;
+      top:2%;
+      width:10%;
       text-align: left;
-      margin-right: 20px;
-      float:left;
     }
 
     .axis-max-label {
+      position: relative;
+      left:5%;
+      top:2%;
+      width:10%;
       text-align: right;
-      margin-left: 20px;
-      float:right;
     }
 
     .axis-selector {
@@ -151,7 +166,9 @@ export default {
       width:var(--slider-width);
       background: transparent;
       cursor:pointer;
-      margin-top: 6px;
+      margin-top: 0px;
+      position: relative;
+      top:-12%;
 
       &:focus { outline:none; }
       &::-ms-track {
@@ -177,6 +194,19 @@ export default {
         background-color: var(--font-color);
         height: 2px;
       }
+    }
+
+    .axis-value-input {
+      position: relative;
+      left:-7px;
+
+      width: 18%;
+      font-family: "Dispatch Mono", monospace;
+      color:black;
+      border:1px solid var(--font-color);
+      border-radius: 2.5px;
+      outline:none;
+      background-color: var(--ui-attention-color);
     }
   }
 
