@@ -5,14 +5,17 @@
     <div
       class="axis"
       v-for="(axis, index) in axes"
+      v-bind:class="{assigned: !axisIsUnassigned(axis, index)}"
       v-bind:id="axis.tag"
       v-bind:data-axis-control-for="axis.tag"
       v-bind:key="index">
         <div class="axis-name-box">
-          <span class='axis-name-label'>{{axis.tag}}</span>
+          <span class='axis-name-label'>
+          {{axis.tag}}
+          </span>
         </div>
         <div class="axis-data-box">
-          <div class="axis-input-box">
+          <div v-if="axisIsUnassigned(axis, index)" class="axis-input-box">
             <span class="axis-min-label">{{axis.min}}</span>
             <input
               class="axis-selector"
@@ -40,6 +43,7 @@
               class="axis-demo-box-value visualized-font"
               v-bind:key="index"
               v-bind:style="data">
+              a <!-- change to active substitution primary glyph -->
             </span>
           </div>
         </div>
@@ -49,7 +53,7 @@
 
 <script>
 import {mapGetters, mapActions} from 'vuex'
-import {AXES, CURRENT_AXIS_SETTINGS} from '../store/getters.js'
+import {AXES, CURRENT_AXIS_SETTINGS, CURRENT_SUBSTITUTION} from '../store/getters.js'
 import {UPDATE_AXIS_VALUE} from '../store/mutations.js'
 
 export default {
@@ -74,13 +78,24 @@ export default {
           'width': (100 / examples) + '%'
         }
       })
+    },
+    axisIsUnassigned (axis, index) {
+      let substitution = this.currentSubstitution;
+      return (typeof substitution !== 'undefined') && substitution.x != index && substitution.y != index
+    },
+    getAssignedAxis (axis, index) {
+      let sub = this.currentSubstitution;
+      if (typeof sub === 'undefined') { return ''; }
+      if (index == sub.x && index == sub.y) { return 'x,y'; }
+      if (index == sub.x ) { return 'x'; }
+      if (index == sub.y ) { return 'y'; }
     }
-
   },
   computed: {
     ...mapGetters({
       axes: AXES,
-      axisSettings: CURRENT_AXIS_SETTINGS
+      axisSettings: CURRENT_AXIS_SETTINGS,
+      currentSubstitution: CURRENT_SUBSTITUTION
     })
   }
 }
@@ -117,9 +132,8 @@ export default {
         text-align: center;
         width:10%;
         transform:translate(-100%,50%)rotate(-90deg);
+        white-space: nowrap;
       }
-
-
     }
 
     &:last-child .axis-name-box {
@@ -131,6 +145,25 @@ export default {
       width: 90%;
       border: 1px solid var(--font-color);
       float:left;
+    }
+
+    &.assigned {
+      --size: 55px;
+      height:var(--size);
+
+      .axis-name-box {
+        height:var(--size);
+        .axis-name-label {
+          transform:translate(-100%,60%)rotate(-90deg);
+        }
+      }
+
+      .axis-demo-box {
+        padding-top:1.2em;
+        height: var(--size);
+        border-bottom: 1px solid var(--background-color);
+      }
+
     }
 
     .axis-input-box {
