@@ -17,15 +17,18 @@
         <div class="axis-data-box">
           <div v-if="axisIsUnassigned(axis, index)" class="axis-input-box">
             <span class="axis-min-label">{{axis.min}}</span>
-            <input
-              class="axis-selector"
-              type="range"
-              v-bind:for="axis.tag"
-              v-bind:min="axis.min"
-              v-bind:max="axis.max"
-              v-bind:value="axisSettings[index]"
-              @input="axisChange($event, axis, index)"
-            />
+
+              <input
+                class="axis-selector"
+                type="range"
+                v-bind:for="axis.tag"
+                v-bind:min="axis.min"
+                v-bind:max="axis.max"
+                v-bind:value="axisSettings[index]"
+                @input="axisChange($event, axis, index)"
+              />
+
+
             <input
               class="axis-value-input"
               type="number"
@@ -36,6 +39,14 @@
               @change="axisChange($event, axis, index)"
             />
             <span class="axis-max-label">{{axis.max}}</span>
+            <span class="axis-selector-box">
+              <span
+                v-for="(percentage, index) in divisions(axis, index)"
+                v-bind:style="{left: (percentage * 100) + '%'}"
+                v-bind:key="index"
+                class="division-marker">
+              </span>
+            </span>
           </div>
           <div class="axis-demo-box">
             <span
@@ -92,6 +103,11 @@ export default {
       if (index == sub.x && index == sub.y) { return 'x,y'; }
       if (index == sub.x ) { return 'x'; }
       if (index == sub.y ) { return 'y'; }
+    },
+    divisions (axis, index) {
+      return (typeof this.currentSubstitution !== 'undefined')
+           ? [0].concat(this.currentSubstitution.divisions[index]).concat([1])
+           : [];
     }
   },
   computed: {
@@ -205,6 +221,7 @@ export default {
       margin-top: 0px;
       position: relative;
       top:-12%;
+      z-index: 100;
 
       &:focus { outline:none; }
       &::-ms-track {
@@ -224,6 +241,7 @@ export default {
         border: 2px solid var(--background-color);
         transform:translateY(-50%);
         margin-top: 1px;
+        z-index:100;
       }
 
       &::-webkit-slider-runnable-track {
@@ -243,6 +261,25 @@ export default {
       border-radius: 2.5px;
       outline:none;
       background-color: var(--ui-attention-color);
+    }
+
+    .axis-selector-box {
+      position: absolute;
+      left:calc(25%);
+      height:40px;
+      width:32%;
+    }
+
+    .division-marker {
+      position: absolute;
+      top:50%;
+      background-color:gray;
+      width:2px;
+      height:4px;
+      transform:translate(-50%, -100%);
+      &:first-child, &:last-child {
+        display: none;
+      }
     }
   }
 
