@@ -28,7 +28,7 @@
           type="number"
           v-bind:name="dimensionName + '-divisions-input'"
           class="divisions-input"
-          min="2"
+          min="1"
           max="20"
           v-bind:default="dimensionDivisions"
           v-bind:value="dimensionDivisions"

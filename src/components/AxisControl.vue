@@ -81,7 +81,10 @@ export default {
     },
     axisIsUnassigned (axis, index) {
       let substitution = this.currentSubstitution;
-      return (typeof substitution !== 'undefined') && substitution.x != index && substitution.y != index
+      return (typeof substitution !== 'undefined')
+        && substitution.x != index
+        && substitution.y != index
+        && substitution.divisions[index].length > 0
     },
     getAssignedAxis (axis, index) {
       let sub = this.currentSubstitution;
