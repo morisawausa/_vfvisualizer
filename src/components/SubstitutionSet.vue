@@ -41,7 +41,7 @@ export default {
   .substitution-set-view {
     height: var(--substitution-box-min-height);
     border-bottom: 1px solid var(--font-color);
-    overflow: auto;
+    overflow: hidden;
   }
   .substituted-glyph {
     position: relative;

@@ -271,6 +271,7 @@ export default {
     .substitutions-list {
       width:100%;
       height: var(--substitution-selector-height);
+      overflow-y: scroll;
     }
 
     .add-substitution-button-box, .substutition-icon {
