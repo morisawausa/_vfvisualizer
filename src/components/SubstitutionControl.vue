@@ -326,6 +326,7 @@ export default {
       cursor:pointer;
 
       .subordinates-count {
+        font-family: "Dispatch Mono", monospace;
         position: absolute;
         right:-5px;
         font-size:.7em;
