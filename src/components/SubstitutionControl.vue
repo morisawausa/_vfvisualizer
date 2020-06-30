@@ -329,14 +329,22 @@ export default {
         position: absolute;
         right:-5px;
         font-size:.7em;
-        width:12px;
-        height:12px;
-        border-radius: 6px;
-        background-color:var(--font-color);
+        width:15px;
+        height:15px;
+        border:1px solid var(--font-color);
+        border-radius: 7px;
+        background-color:var(--background-color);
+        color:var(--font-color);
+
       }
 
       &.active, &:hover {
         background-color: var(--active-color);
+        .subordinates-count {
+          background-color: var(--active-color);
+          color:var(--background-color);
+          border-color:var(--background-color);
+        }
       }
     }
   }
