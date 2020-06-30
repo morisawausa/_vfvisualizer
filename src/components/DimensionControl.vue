@@ -122,8 +122,10 @@ export default {
         &:hover {
           background-color: var(--hover-color);
         }
+
         &.active {
           background-color: var(--active-color);
+          color:var(--background-color);
           cursor:auto;
         }
       }
