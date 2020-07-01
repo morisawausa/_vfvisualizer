@@ -124,7 +124,61 @@ This will generate a set of `.ufo` files and a `.designspace` file, and put them
 *Note: theoretically, it should be possible to roundtrip back to a glyphs file from your designspace file. So, after you paste the `<rules>` output from your designspace file, you might be able to bring those rules back into glyphs, and export from there. However, I have not tested this, and do not know how well this kind of roundtrip works. So, it's best to generate substitutions as the last step in your process.*
 
 
-#### 4. Generating a `.ttf`
+#### 4. Preparing and Cleaning your `.designspace`
+
+When your `.designspace` file comes out of `glyphs2ufo`, it's not always 100% ready for the visualizer. Depending on the settings of your Glyphs file, the `glyph2ufo` tool will attempt to remap your axis coordinates to standard coordinates specified by the OpenType spec.
+
+For example, if you have a `wght` axis ranging from `0` to `1000`, the tool will attempt to remap this axes to `[100, 900]`.
+
+This is a problem for us, since we need to specify our substitituions in terms of the coordinate system we defined (`0` to `1000`), not some other one. To make sure of this, we'll need to modify the `<axes>` element in the `.designspace` file.
+
+When we generates a three axis variable font (containing Weight masters, Width masters, and virtual X-height masters) from Glyphs, we got a `.designspace` file with the following axis tag:
+
+```xml
+<axes>
+  <axis tag="wght" name="Weight" minimum="100" maximum="900" default="492.307692">
+    <map input="100" output="0"/>
+    <map input="200" output="125"/>
+    <map input="300" output="250"/>
+    <map input="500" output="510"/>
+    <map input="700" output="825"/>
+    <map input="900" output="1000"/>
+  </axis>
+  <axis tag="wdth" name="Width" minimum="50" maximum="200" default="100">
+    <map input="50" output="0"/>
+    <map input="75" output="250"/>
+    <map input="100" output="500"/>
+    <map input="125" output="750"/>
+    <map input="200" output="1000"/>
+  </axis>
+  <axis tag="xhgt" name="Xheight" minimum="0" maximum="0" default="0"/>
+</axes>
+```
+
+Notice that our range for the weight and width axes, both `0` to `1000`, have been replaced by the OpenType Spec recommended values. These recommended values are specified in the minimum and maximum of each `<axis>` tag, and the mapping from our range to the recommended range is implemented with `<map>` tags.
+
+The key thing to know here is that these `<map>` elements are applied only after all other data in the `.designspace` file has been specified. The positions of masters and instances, as well as the location of feature variations, are specified in the **original range**, `0` to `1000`, not the mapped range of `100` to `900` (in the case of weight). The visualizer needs to produce features in the original range, not the mapped range.
+
+To do this, we can just delete the `<map>` elements and make sure the `<axis>` tags have the original ranges. If you like, you can keep the mapped table for later, and paste it back in after you've generated the sequence. To prepare for the visualizer, we updated the table above to the following one:
+
+```xml
+<axes>
+  <axis tag="wght" name="Weight" minimum="0" maximum="1000" default="500" />
+  <axis tag="wdth" name="Width" minimum="0" maximum="1000" default="500"/>
+  <axis tag="xhgt" name="Xheight" minimum="0" maximum="100" default="0"/>
+</axes>
+```
+
+Now that the mapping is removed, the visualizer will generate features using the correct, original coordinate system for the axes.
+
+##### A Note About Virtual Masters
+
+While you're doing this, it's a good idea to check the ranges on your axis tags, too. If you're using virtual masters to implement axes in Glyphs, the export process can sometimes collapse these axes onto *no* range, which causes `.ttf` compilation to fail.
+
+When we generated an `xhgt` axis using virtual masters the result axis in the `.designspace` file was specified as going from `0` to `0`, when we wanted `0` to `100`. A quick change in the `<axis>` tag for that axis solved the problem.
+
+
+#### 5. Generating a `.ttf`
 
 The VF visualizer works with font binaries, so we need to generate a variable `.ttf` file. We can do this with the library [`fontmake`](https://github.com/googlefonts/fontmake) from Google. `fontmake` glues together a bunch of different utilities into a single swiss-army knife.
 
@@ -150,15 +204,15 @@ open .
 
 In the terminal. This should open up a finder window with the current folder. From there, you can drag the file into the visualizer: [here](https://morisawausa.github.io/_vfvisualizer).
 
-#### 5. Generating Rules
+#### 6. Generating Rules
 
 Use the visualizer to generate rules. (Textual walkthrough coming soon!)
 
-#### 6. Updating the `.designspace`
+#### 7. Updating the `.designspace`
 
 Once you have a `<rules>` table generated and ready to go, you can copy and paste it into the `.designspace` file. I usually paste the `<rules>` XML element into the file near the top: right below the `</axes>` tag.
 
-#### 7. Generating the production `.ttf`
+#### 8. Generating the production `.ttf`
 
 Now we're ready to compile the final `.ttf` file with all of our feature variations and substitutions. WE can use `fontmake` again:
 
