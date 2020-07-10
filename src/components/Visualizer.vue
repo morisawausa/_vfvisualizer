@@ -2,12 +2,20 @@
   <section id="visualizer" class="layout-region">
     <div
       id="visualizer-canvas"
-      v-bind:style="alternateStyles">
+      v-bind:class=""
+      v-bind:style="alternateStyles"
+      @mouseover.prevent="showCursor"
+      @mouseout.prevent="hideCursor">
+      <div id="cursor" class="visualized-font"></div>
+      <!-- this section renders the cells defined by the grid divisions -->
       <div
         v-for="(row, index) in visualizerCells"
         v-bind:key="index"
-        v-bind:style="{height: (row.height * 100) + '%', fontSize: getSizeForSequence}"
+        v-bind:style="{
+          height: (row.height * 100) + '%',
+          fontSize: getSizeForSequence}"
         class="visualizer-row">
+
         <div class="items">
             <div
               v-for="(cell, index) in row.cells"
@@ -25,30 +33,39 @@
               }"
               @mousemove="coordinates($event, cell)"
               @click="toggleCellState($event, cell)">
-              <span v-bind:style="{top: '0%', left: '0%'}" class="grid-glyph-background">
+              <span v-if="showLattice" v-bind:style="{top: '0%', left: '0%'}" class="grid-glyph-background">
                 <span v-bind:style="designSpacePoint(cell, cell.x_variation_setting, cell.y_variation_setting)" class="visualized-font grid-glyph"></span>
               </span>
 
               <span
-                v-if="cell.x_pos + cell.width == 1"
+                v-if="cell.x_pos + cell.width == 1 && showLattice"
                 v-bind:style="{top: '0%', left: '100%'}" class="grid-glyph-background">
                 <span v-bind:style="designSpacePoint(cell, cell.x_design_axis.max, cell.y_variation_setting)" class="visualized-font grid-glyph"></span>
               </span>
 
               <span
-                v-if="cell.y_pos + cell.height == 1"
+                v-if="cell.y_pos + cell.height == 1 && showLattice"
                 v-bind:style="{top: '100%', left: '0%'}" class="grid-glyph-background">
                 <span v-bind:style="designSpacePoint(cell, cell.x_variation_setting, cell.y_design_axis.max)" class="visualized-font grid-glyph"></span>
               </span>
 
               <span
-                v-if="cell.x_pos + cell.width == 1 && cell.y_pos + cell.height == 1"
+                v-if="cell.x_pos + cell.width == 1 && cell.y_pos + cell.height == 1 && showLattice"
                 v-bind:style="{top: '100%', left: '100%'}" class="grid-glyph-background">
                 <span v-bind:style="designSpacePoint(cell, cell.x_design_axis.max, cell.y_design_axis.max)" class="visualized-font grid-glyph"></span>
               </span>
             </div>
           </div>
         </div>
+
+        <!-- this section renders instances, if instance rendering is enabled -->
+          <div
+            v-for="(instance, index) in instances"
+            v-bind:key="`instance-${index}`"
+            v-bind:style="getInstanceCoordinates(instance)"
+            class="instance-location">
+            <span class="location-dot">&nbsp;</span>{{ instance.name }}
+          </div>
       </div>
     </div>
   </section>
@@ -56,22 +73,25 @@
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
-import {AXES, GLYPHLIST, CURRENT_AXIS_SETTINGS, CURRENT_SUBSTITUTION, CURRENT_SUBSTITUTION_INDEX, ALL_SUBSTITUTIONS, VALID_STYLISTIC_SETS, STATE_FOR_CELL} from '../store/getters.js'
+import {AXES, INSTANCES, GLYPHLIST, CURRENT_AXIS_SETTINGS, CURRENT_SUBSTITUTION, CURRENT_SUBSTITUTION_INDEX, ALL_SUBSTITUTIONS, VALID_STYLISTIC_SETS, STATE_FOR_CELL} from '../store/getters.js'
 import {ADD_NEW_SUBSTITUTION, ACTIVATE_SUBSTITUTION, SET_AXIS_DIMENSION_FOR_SUBSTITUTION, SET_AXIS_SUBDIVISIONS_FOR_SUBSTITUTION, SET_STATE_FOR_CELL} from '../store/mutations.js'
 
 export default {
   data () {
     return {
-
+      showInstances: true,
+      showLattice: true,
+      maxInstanceDistance: 0.1 // this should be a percentage of the total axis
     }
   },
   methods: {
     ...mapMutations({
-      setCellState: SET_STATE_FOR_CELL
+      setCellState: SET_STATE_FOR_CELL,
     }),
     toggleCellState (event, cell) {
       let newState = (cell.state + 1) % this.currentSubstitution.glyphs.length
       let preview = document.getElementById('GlyphView-preview-visualization')
+      let cursor = document.getElementById('cursor')
 
       this.setCellState({
         substitutionIndex: this.currentSubstitutionIndex,
@@ -80,6 +100,7 @@ export default {
       })
 
       preview.style.setProperty('--sequence', `var(--alternate-${newState})`)
+      cursor.style.setProperty('--sequence', `var(--alternate-${newState})`)
     },
     designSpacePoint (cell, x_setting, y_setting) {
       if (cell.x_design_axis.tag !== cell.y_design_axis.tag) {
@@ -101,6 +122,51 @@ export default {
 
       return local
     },
+    getInstanceCoordinates(instance) {
+      let axes = this.axes;
+      let substitution = this.currentSubstitution
+      let currentSubstitutionIndex = this.currentSubstitutionIndex
+      let currentSettings = this.currentAxisSetting
+      let onPlane = true;
+      let style = {};
+      let point = [];
+
+      if (typeof substitution !== 'undefined') {
+        axes.forEach((axis, i) => {
+          if (typeof instance[axis.tag] === 'undefined') { console.error(`missing axis location for ${axis.tag} on ${instance.name}`); }
+
+          const normalized = (instance[axis.tag] - axis.min) / (axis.max - axis.min)
+          point.push(normalized);
+
+          if (substitution.x === i) { // dimension is attached to the x axis.
+            style.left = 100 * normalized + '%';
+          }
+
+          if (substitution.y === i) { // dimension is attached to the y axis.
+            style.top = 100 * normalized + '%';
+          }
+
+          if (substitution.x !== i && substitution.y !== i) { // dimension is not assigned
+            const percentageDifference = Math.abs(currentSettings[i] - instance[axis.tag]) / (axis.max - axis.min)
+            onPlane = onPlane && percentageDifference <= this.maxInstanceDistance
+          }
+
+          style[`--axis-${axis.tag}-setting`] = instance[axis.tag];
+
+        });
+
+        style.color = onPlane ? 'black' : 'red';
+      }
+      return style;
+    },
+    showCursor() {
+      let cursor = document.getElementById('cursor');
+      cursor.style.setProperty('display', 'block');
+    },
+    hideCursor() {
+      let cursor = document.getElementById('cursor');
+      cursor.style.setProperty('display', 'none');
+    },
     coordinates(event, cell) {
       // NOTE: Crappy DOM State Modifications are not the way to go with VUE,
       // But since we're not depending on this for state, it seems okay for now.
@@ -110,6 +176,7 @@ export default {
 
       let bounding = document.getElementById('visualizer-canvas').getBoundingClientRect()
       let preview = document.getElementById('GlyphView-preview-visualization')
+      let cursor = document.getElementById('cursor');
 
       axes.forEach(axis => {
         preview.style.removeProperty(`--axis-${axis.tag}-setting`)
@@ -124,11 +191,18 @@ export default {
       preview.style.setProperty(`--axis-${xAxis.tag}-setting`, Math.floor((x * (xAxis.max - xAxis.min)) + xAxis.min))
       preview.style.setProperty(`--axis-${yAxis.tag}-setting`, Math.floor((y * (yAxis.max - yAxis.min)) + yAxis.min))
       preview.style.setProperty(`--sequence`, `var(--alternate-${cell.state})`)
+
+      cursor.style.setProperty('left', (event.clientX - bounding.x) + 'px');
+      cursor.style.setProperty('top', (event.clientY - bounding.y) + 'px');
+      cursor.style.setProperty(`--axis-${xAxis.tag}-setting`, Math.floor((x * (xAxis.max - xAxis.min)) + xAxis.min))
+      cursor.style.setProperty(`--axis-${yAxis.tag}-setting`, Math.floor((y * (yAxis.max - yAxis.min)) + yAxis.min))
+      cursor.style.setProperty(`--sequence`, `var(--alternate-${cell.state})`)
     }
   },
   computed: {
     ...mapGetters({
       axes: AXES,
+      instances: INSTANCES,
       substitutions: ALL_SUBSTITUTIONS,
       currentSubstitution: CURRENT_SUBSTITUTION,
       currentSubstitutionIndex: CURRENT_SUBSTITUTION_INDEX,
@@ -265,8 +339,45 @@ export default {
   height: var(--size);
 }
 
+#cursor {
+  pointer-events: none;
+  cursor:none;
+
+  position: fixed;
+  top:0%;
+  left:0%;
+
+  font-size: 2em;
+
+  display:none;
+  z-index:1000;
+
+  &:before {
+    content: var(--sequence);
+  }
+}
+
+.instance-location {
+  position: absolute;
+  pointer-events: none;
+  font-family: "Dispatch Mono", monospace;
+  font-size:0.7em;
+  width:14px;
+
+  .location-dot {
+    --dot-size: 10px;
+    display: inline-block;
+    width:var(--dot-size);
+    height:var(--dot-size);
+    border-radius:calc(var(--dot-size) / 2);
+    transform: translate(-50%,-50%);
+    background-color: red;
+  }
+}
+
 .visualizer-row {
   display: flex;
+  cursor:none;
 }
 
 .items {
@@ -277,7 +388,7 @@ export default {
 .grid-division {
   border-top: 1px solid var(--grid-lines-color);
   border-left: 1px solid var(--grid-lines-color);
-  cursor:pointer;
+  cursor:none;
 
   &:hover {
     border: 1px solid var(--grid-hover-color);
@@ -303,7 +414,7 @@ export default {
   top:50%;
   left:50%;
   transform: translate(-50%,-50%);
-  // font-size: 4vw;
+  pointer-events: none;
 
   &:before {
     content: var(--sequence);

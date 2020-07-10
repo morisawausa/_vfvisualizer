@@ -1,5 +1,7 @@
 export const META = 'meta'
 
+export const INSTANCES = 'instances'
+
 export const GLYPHLIST = 'glyphlist'
 
 export const AXES = 'axes'

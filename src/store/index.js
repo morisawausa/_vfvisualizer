@@ -10,6 +10,7 @@ const DEFAULT_MINOR_SUBDIVISIONS = 2
 import {
   META,
   GLYPHLIST,
+  INSTANCES,
   AXES,
   ALL_SUBSTITUTIONS,
   CURRENT_SUBSTITUTION,
@@ -66,6 +67,7 @@ let store = new Vuex.Store({
       substitution: -1,
       axisValues: []
     },
+    instances: [],
     meta: {
       fullName: '',
       familyName: '',
@@ -85,6 +87,9 @@ let store = new Vuex.Store({
     // Constant Getters
     [META] (state, getters) {
       return state.meta
+    },
+    [INSTANCES] (state, getters) {
+      return state.instances
     },
     [GLYPHLIST] (state, getters) {
       return state.glyphs
@@ -121,6 +126,7 @@ let store = new Vuex.Store({
       return (substitutionIndex, point) => {
         let substitution = state.substitutions[substitutionIndex]
         if (typeof substitution === 'undefined') { return 0 }
+
         return substitution.state.get(point)
       }
     },
