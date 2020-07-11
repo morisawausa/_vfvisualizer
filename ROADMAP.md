@@ -21,7 +21,7 @@
 | ✅ | 1.0.0 | UI | Glyph Selection | Refine the UI for the glyph selections. Make is smaller, and get rid of the dumb 'choose' thing.
 | ✅ | 1.0.0 | UI | Axis Location Input | Add a UI Input Field for manual input into the axis positions sliders, to make it easier to jump to a location.
 | ✅ | 1.0.0 | UI | Disable Active Axis Sliders  | Make sure axes that are assigend to grid dimensions have their axis controls sliders disabled or grayed out.
-|    | 1.0.0 | Functionality | Show instances | Show where instances are located in the grid as an overlay
+| ✅ | 1.0.0 | Functionality | Show instances | Show where instances are located in the grid as an overlay
 | ✅ | 1.0.0 | Functionality | No duplicates | remove assigned glyphs from the searchable glyphs list.
 | ✅ | 1.0.0 | Functionality | Saved States | As you work, your progress should be serialized and saved to any available persistance layer, like `LocalStorage`. When you drop a font you were previously working on into the visualizer, the same state should be loaded.
 |    | 1.0.0 | Functionality | Error Handling | You should get a nice error message if you drag a non-variable, non-`.ttf` file into the visualizer.

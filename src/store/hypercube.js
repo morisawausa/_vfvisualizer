@@ -20,7 +20,6 @@ export class Hypercube {
   }
 
   initial (array, shape) {
-    console.log(array, shape);
     if (array == null || shape == null) {
       let dimensions = this.divisions.map(x => x.length + 1)
       let locations = dimensions.reduce((a, b) => a * b, 1)

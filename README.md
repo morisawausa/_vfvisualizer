@@ -1,5 +1,5 @@
 # Variable Font Visualizer
-**Current Version: 0.9.0, in development.**
+**Current Version: 0.9.6, in development.**
 **[Current Deployed Version Available Here.](https://morisawausa.github.io/_vfvisualizer/)**
 
 

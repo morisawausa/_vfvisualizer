@@ -1,19 +1,37 @@
 <template lang="html">
   <section id="visualizer" class="layout-region">
+    <div id="visualizer-grid-controls">
+      <div
+        v-bind:class="{active: showInstances}"
+        @click="toggleInstanceVisibility"
+        class="instances-toggle visualizer-toggle">I
+      </div>
+      <div
+        v-bind:class="{active: showLattice}"
+        @click="toggleGridVisibility"
+        class="grid-toggle visualizer-toggle">G
+      </div>
+    </div>
     <div
       id="visualizer-canvas"
-      v-bind:class=""
+      v-bind:class="{
+        'instances': showInstances,
+        'grid': showLattice
+      }"
       v-bind:style="alternateStyles"
       @mouseover.prevent="showCursor"
       @mouseout.prevent="hideCursor">
-      <div id="cursor" class="visualized-font"></div>
+
+      <!-- custom cursor element -->
+      <div id="cursor" v-bind:class="{huge: !showInstances && !showLattice}" class="visualized-font"></div>
       <!-- this section renders the cells defined by the grid divisions -->
       <div
-        v-for="(row, index) in visualizerCells"
+        v-for="(row, index) in visualizer.cells"
         v-bind:key="index"
         v-bind:style="{
           height: (row.height * 100) + '%',
-          fontSize: getSizeForSequence}"
+          fontSize: getSizeForSequence.grid
+        }"
         class="visualizer-row">
 
         <div class="items">
@@ -57,15 +75,17 @@
             </div>
           </div>
         </div>
-
         <!-- this section renders instances, if instance rendering is enabled -->
+        <div class="instances" v-if="showInstances" v-bind:style="{fontSize: getSizeForSequence.instances}">
           <div
-            v-for="(instance, index) in instances"
-            v-bind:key="`instance-${index}`"
-            v-bind:style="getInstanceCoordinates(instance)"
-            class="instance-location">
-            <span class="location-dot">&nbsp;</span>{{ instance.name }}
+            v-for="(instance, i) in visualizer.instances"
+            v-bind:key="`instance-${i}`"
+            v-bind:style="instance.style"
+            class="instance-location visualized-font">
+            <span class="location-dot">&nbsp;</span>
+            <span class="instance-label">{{ instance.name }}</span>
           </div>
+        </div>
       </div>
     </div>
   </section>
@@ -79,7 +99,7 @@ import {ADD_NEW_SUBSTITUTION, ACTIVATE_SUBSTITUTION, SET_AXIS_DIMENSION_FOR_SUBS
 export default {
   data () {
     return {
-      showInstances: true,
+      showInstances: false,
       showLattice: true,
       maxInstanceDistance: 0.1 // this should be a percentage of the total axis
     }
@@ -88,6 +108,12 @@ export default {
     ...mapMutations({
       setCellState: SET_STATE_FOR_CELL,
     }),
+    toggleGridVisibility () {
+      this.showLattice = !this.showLattice;
+    },
+    toggleInstanceVisibility () {
+      this.showInstances = !this.showInstances;
+    },
     toggleCellState (event, cell) {
       let newState = (cell.state + 1) % this.currentSubstitution.glyphs.length
       let preview = document.getElementById('GlyphView-preview-visualization')
@@ -123,41 +149,7 @@ export default {
       return local
     },
     getInstanceCoordinates(instance) {
-      let axes = this.axes;
-      let substitution = this.currentSubstitution
-      let currentSubstitutionIndex = this.currentSubstitutionIndex
-      let currentSettings = this.currentAxisSetting
-      let onPlane = true;
-      let style = {};
-      let point = [];
 
-      if (typeof substitution !== 'undefined') {
-        axes.forEach((axis, i) => {
-          if (typeof instance[axis.tag] === 'undefined') { console.error(`missing axis location for ${axis.tag} on ${instance.name}`); }
-
-          const normalized = (instance[axis.tag] - axis.min) / (axis.max - axis.min)
-          point.push(normalized);
-
-          if (substitution.x === i) { // dimension is attached to the x axis.
-            style.left = 100 * normalized + '%';
-          }
-
-          if (substitution.y === i) { // dimension is attached to the y axis.
-            style.top = 100 * normalized + '%';
-          }
-
-          if (substitution.x !== i && substitution.y !== i) { // dimension is not assigned
-            const percentageDifference = Math.abs(currentSettings[i] - instance[axis.tag]) / (axis.max - axis.min)
-            onPlane = onPlane && percentageDifference <= this.maxInstanceDistance
-          }
-
-          style[`--axis-${axis.tag}-setting`] = instance[axis.tag];
-
-        });
-
-        style.color = onPlane ? 'black' : 'red';
-      }
-      return style;
     },
     showCursor() {
       let cursor = document.getElementById('cursor');
@@ -219,11 +211,14 @@ export default {
         return (a - axes[i].min) / (axes[i].max - axes[i].min)
       });
     },
-    visualizerCells () {
+    visualizer () {
       let cells = []
       let substitution = this.currentSubstitution
       let axes = this.axes
       let setting = this.normalizedAxisSetting
+      let currentSettings = this.currentAxisSetting
+      let instances_set = this.instances;
+      let currentSubstitutionIndex = this.currentSubstitutionIndex
 
       if (typeof substitution !== 'undefined' && typeof axes !== 'undefined') {
         let ys = substitution.divisions[substitution.y]
@@ -273,7 +268,57 @@ export default {
           y_pos = next_y_pos
         }
       }
-      return cells
+
+      // Build set of instances
+      let instances = instances_set.map(instance => {
+        let onPlane = true;
+        let style = {};
+        let point = [];
+        let opacity = 1.0;
+
+        if (typeof substitution !== 'undefined') {
+          axes.forEach((axis, i) => {
+            if (typeof instance[axis.tag] === 'undefined') { console.error(`missing axis location for ${axis.tag} on ${instance.name}`); }
+
+            const normalized = (instance[axis.tag] - axis.min) / (axis.max - axis.min)
+            point.push(normalized);
+
+            if (substitution.x === i) { // dimension is attached to the x axis.
+              style.left = 100 * normalized + '%';
+            }
+
+            if (substitution.y === i) { // dimension is attached to the y axis.
+              style.top = 100 * normalized + '%';
+            }
+
+            if (substitution.x !== i && substitution.y !== i) { // dimension is not assigned
+              const percentageDifference = Math.abs(currentSettings[i] - instance[axis.tag]) / (axis.max - axis.min)
+              onPlane = onPlane && percentageDifference <= this.maxInstanceDistance
+              opacity = 1 - percentageDifference;
+            }
+
+            style[`--axis-${axis.tag}-setting`] = instance[axis.tag];
+
+          });
+
+          // console.log(point);
+          let state = this.stateForCell(currentSubstitutionIndex, point);
+          style['--sequence'] = `var(--alternate-${state})`;
+          style.color = onPlane ? 'var(--instance-foreground-color)' : 'var(--instance-background-color)';
+          style.zIndex = onPlane ? 1000 : 100;
+          style.opacity = onPlane ? 1 : opacity;
+        }
+
+        return {
+          name: instance.name,
+          style
+        };
+      })
+
+      return {
+        cells,
+        instances
+      }
     },
     textSequence () {
       let substitution = this.currentSubstitution
@@ -290,7 +335,23 @@ export default {
     getSizeForSequence () {
       let substitution = this.currentSubstitution
       let sequence = substitution.left_sequence + substitution.right_sequence
-      return (4 * Math.pow(0.8, sequence.length + substitution.active_subordinates.length)) + 'vw'
+
+      let primarySize = (4 * Math.pow(0.8, sequence.length + substitution.active_subordinates.length)) + 'vw';
+      let secondarySize = (2 * Math.pow(0.8, sequence.length + substitution.active_subordinates.length)) + 'vw';
+
+      if (this.showInstances) {
+        // If the isntances are active, the grid is secondary.
+        return {
+          grid: secondarySize,
+          instances: primarySize
+        }
+      } else {
+        // otherwise, the grid is primary
+        return {
+          grid: primarySize,
+          instances: secondarySize
+        }
+      }
     },
     alternateStyles () {
       let current = this.currentSubstitution
@@ -351,22 +412,40 @@ export default {
 
   display:none;
   z-index:1000;
+  transform:translate(-50%,-50%);
 
   &:before {
     content: var(--sequence);
   }
+
+  &.huge {
+    font-size:4em;
+  }
 }
 
 .instance-location {
+  --instance-foreground-color:black;
+  --instance-background-color:lightblue;
+
   position: absolute;
   pointer-events: none;
-  font-family: "Dispatch Mono", monospace;
-  font-size:0.7em;
-  width:14px;
+  transform:translate(-50%,-50%);
+
+  &:before {
+    content:var(--sequence);
+  }
+
+  .instance-label {
+    position: absolute;
+    font-size:0.6rem;
+    font-family: "Dispatch Mono", monospace;
+    display: block;
+    color:gray;
+  }
 
   .location-dot {
     --dot-size: 10px;
-    display: inline-block;
+    display: none;
     width:var(--dot-size);
     height:var(--dot-size);
     border-radius:calc(var(--dot-size) / 2);
@@ -385,6 +464,11 @@ export default {
   flex: 1;
 }
 
+#visualizer-canvas.instances .grid-division, #visualizer-canvas:not(.grid) .grid-division {
+  --grid-lines-color: lightgray;
+  color:lightgray;
+}
+
 .grid-division {
   border-top: 1px solid var(--grid-lines-color);
   border-left: 1px solid var(--grid-lines-color);
@@ -392,9 +476,6 @@ export default {
 
   &:hover {
     border: 1px solid var(--grid-hover-color);
-  }
-  &.ss20 {
-    background-color: var(--grid-hover-color);
   }
 }
 
@@ -455,4 +536,31 @@ export default {
   width: var(--length);
   height: 10px;
 }
+
+// Grid Global Settings
+
+#visualizer-grid-controls {
+  position:absolute;
+  top:var(--component-margin);
+  font-family: "Dispatch Mono", monospace;
+
+  .visualizer-toggle {
+    display: inline-block;
+    cursor:pointer;
+
+    width: var(--substitution-icon-width);
+    border-radius:calc(var(--substitution-icon-width) / 2);
+    padding: var(--control-block-padding);
+    border:1px solid var(--font-color);
+    background-color:var(--background-color);
+
+    &.active, &:hover {
+      background-color:var(--active-color);
+      color:var(--background-color);
+    }
+  }
+
+
+}
+
 </style>
