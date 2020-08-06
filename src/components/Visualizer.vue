@@ -1,6 +1,8 @@
 <template lang="html">
   <section id="visualizer" class="layout-region">
-    <div id="visualizer-grid-controls">
+    <div
+      v-show="typeof currentSubstitution !== 'undefined'"
+      id="visualizer-grid-controls">
       <div
         v-bind:class="{active: showInstances}"
         @click="toggleInstanceVisibility"
@@ -16,16 +18,26 @@
       id="visualizer-canvas"
       v-bind:class="{
         'instances': showInstances,
-        'grid': showLattice
+        'grid': showLattice,
+        'empty': typeof currentSubstitution === 'undefined'
       }"
       v-bind:style="alternateStyles"
       @mouseover.prevent="showCursor"
       @mouseout.prevent="hideCursor">
 
       <!-- custom cursor element -->
-      <div id="cursor" v-bind:class="{huge: !showInstances && !showLattice}" class="visualized-font"></div>
+      <div id="cursor"
+        v-if="typeof currentSubstitution !== 'undefined'"
+        v-bind:class="{huge: !showInstances && !showLattice}"
+        class="visualized-font"></div>
+
+      <!-- this section renders a blank canvas if there are no subs -->
+      <div v-show="typeof currentSubstitution === 'undefined'" class="empty-visualizer">
+        No Substitutions Yet!
+      </div>
       <!-- this section renders the cells defined by the grid divisions -->
       <div
+        v-if="typeof currentSubstitution !== 'undefined'"
         v-for="(row, index) in visualizer.cells"
         v-bind:key="index"
         v-bind:style="{
@@ -125,8 +137,10 @@ export default {
         cellState: newState
       })
 
-      preview.style.setProperty('--sequence', `var(--alternate-${newState})`)
-      cursor.style.setProperty('--sequence', `var(--alternate-${newState})`)
+      if (preview != null && cursor != null) {
+        preview.style.setProperty('--sequence', `var(--alternate-${newState})`)
+        cursor.style.setProperty('--sequence', `var(--alternate-${newState})`)
+      }
     },
     designSpacePoint (cell, x_setting, y_setting) {
       if (cell.x_design_axis.tag !== cell.y_design_axis.tag) {
@@ -153,11 +167,16 @@ export default {
     },
     showCursor() {
       let cursor = document.getElementById('cursor');
-      cursor.style.setProperty('display', 'block');
+      if (cursor) {
+        cursor.style.setProperty('display', 'block');
+      }
+
     },
     hideCursor() {
       let cursor = document.getElementById('cursor');
-      cursor.style.setProperty('display', 'none');
+      if (cursor) {
+        cursor.style.setProperty('display', 'none');
+      }
     },
     coordinates(event, cell) {
       // NOTE: Crappy DOM State Modifications are not the way to go with VUE,
@@ -467,6 +486,21 @@ export default {
 #visualizer-canvas.instances .grid-division, #visualizer-canvas:not(.grid) .grid-division {
   --grid-lines-color: lightgray;
   color:lightgray;
+}
+
+#visualizer-canvas.empty {
+  --grid-lines-color: lightgray;
+  border: 1px solid var(--grid-lines-color);
+  font-family: "Dispatch Mono", monospace;
+
+  .empty-visualizer{
+    color:var(--darker-background-color);
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    font-size:1em;
+  }
 }
 
 .grid-division {
