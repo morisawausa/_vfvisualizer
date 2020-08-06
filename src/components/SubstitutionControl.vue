@@ -39,11 +39,12 @@
           v-if="glyphset.length > 0"
           v-bind:glyphset="glyphset" />
         <input
+          id="glyphs-search-input"
           class="glyph-selector"
           type="text"
           name=""
           value=""
-          placeholder="Enter Glyph Name Here"
+          placeholder="Search Glyphs..."
           @input.prevent="getGlyphs" />
         <ul
           v-if="hasSearchResults"
@@ -158,6 +159,12 @@ export default {
     }),
     selectGlyphAlternates (e, glyph) {
       this.glyphset.push(glyph)
+      this.results = [];
+      let search = document.getElementById('glyphs-search-input');
+      if (search != null) {
+        search.value = '';
+        document.getElementById('glyphs-search-input').focus();
+      }
     },
     toggleSubordinatesPane () {
       this.subordinatesActive = !this.subordinatesActive
