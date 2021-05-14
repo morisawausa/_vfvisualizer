@@ -3,6 +3,7 @@
   "version": "0.9.7",
   "description": "Variable font visualizer for Occupant Fonts",
   "author": "Nic Schumann <nic@nicschumann.co>",
+  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
