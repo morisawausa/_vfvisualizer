@@ -18,14 +18,21 @@
       class="opener-message"
       v-if="inactive">
       <div class="intro-text">
-        <h1 class="heading">This is a Glyph Substition Visualizer <br/> for Variable Fonts.</h1>
-        <p>To get started, drag a variable font .ttf file over this this window.</p>
+        <h1 class="heading">Drag a variable font over this window.</h1>
+        <h3 class="heading">The Variable Font Substitution Mapper</h3>
+        <p>
+          To get started, drag a variable font .ttf over this this window.
+          This tool will try to parse the file and give you a visual interface for designing glyph substitution patterns (also known as OpenType <a target="_blank" href="https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-rvrn">Required Variation Alternates</a>).
+          Think about the dollar sign with and without the vertical bar.
+          For more extensive documentation on using this tool check out <a target="_blank" href="https://github.com/morisawausa/_vfvisualizer">our repo on Github</a>.
+        </p>
       </div>
       <div class="loading-icon">
 
       </div>
       <div class="credits-text tiny">
-        <p>This tool was developed by Marie Otsuka and Nic Schumann for <a href="https://occupantfonts.com">Occupant Fonts.</a></p>
+        <p>This tool was designed and developed by Marie Otsuka and Nic Schumann for <a target="_blank" href="https://occupantfonts.com">Occupant Fonts</a>.
+          It is available for you to use under an Apache 2.0 license.</p>
       </div>
     </div>
     <div v-else>
@@ -139,28 +146,63 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .file-opener, #font-file-opener  {
+
   position: absolute;
-  width: 100vw;
-  height: 100vh;
+  left: var(--component-margin);
+  top:var(--component-margin);
+  width: calc(100vw - 2.0 * var(--component-margin));
+  height: calc(100vh - 2.0 * var(--component-margin));
+
   background-color: var(--background-color);
   color: var(--font-color);
   margin-bottom: var(--component-margin);
-  border: 1px solid var(--font-color);
+  border: 1px solid black;
+
+  a {
+    color:var(--active-color);
+  }
 
   &.inactive {
     z-index: 10;
     // compensate for margin on the parent component.
     // This margin is only relevant when the component is active
     margin:calc(-1 * var(--component-margin));
-    border: none;
 
     .opener-message {
+      margin: 10vw;
         .intro-text {
-          max-width: calc(min(400px, 100vw));
-          margin: var(--component-margin);
-          display: none;
+          max-width: calc(min(500px, 100vw));
+
+          // display: none;
+          h1 {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 1em;
+            line-height: 1.15em;
+          }
+
+          h3 {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 1em;
+          }
+
+          p {
+            font-size: 1em;
+            margin-bottom: 1em;
+            line-height: 1.25em;
+          }
+
+          margin-bottom: 4em;
 
         }
+
+        .credits-text {
+          max-width: calc(min(500px, 100vw));
+          line-height: 1.35em;
+          // display: none;
+        }
+
         .loading-icon {
           position: absolute;
           top:50%;
@@ -172,16 +214,15 @@ export default {
 
           border-radius: 2.5vw;
           background-color: var(--font-color);
-        }
-        .credits-text {
-          display: none;
+
+          display:none;
         }
 
     }
   }
 
-  &.hovering .opener-message .loading-icon {
-    background-color: pink;
+  &.hovering {
+    border: 1px solid var(--active-color);
   }
 
   &.loading .opener-message .loading-icon {
@@ -226,7 +267,8 @@ export default {
     }
 
     .opener-message {
-      display: none;
+      border:1px solid red;
+      // display: none;
     }
 
   }
