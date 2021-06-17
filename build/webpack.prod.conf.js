@@ -15,12 +15,12 @@ const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : require('../config/prod.env')
 
-if (process.env.GH_PAGES) {
-  console.log('Build Target: gh-pages')
-  config.build.assetsPublicPath = '/_vfvisualizer/';
-} else {
-  console.log('Build Target: main')
-}
+// if (process.env.GH_PAGES) {
+//   console.log('Build Target: gh-pages')
+//   config.build.assetsPublicPath = '/_vfvisualizer/';
+// } else {
+//   console.log('Build Target: main')
+// }
 
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
