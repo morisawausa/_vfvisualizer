@@ -1,10 +1,16 @@
 {
-  "name": "visualizer",
+  "name": "variable-font-substitution-mapper",
   "version": "0.9.7",
   "description": "Variable font visualizer for Occupant Fonts",
   "contributors": [
-    {"name": "Nic Schumann", "email": "nic@occupantfonts.com"},
-    {"name": "Marie Otsuka", "email": "marie@occupantfonts.com"}
+    {
+      "name": "Nic Schumann",
+      "email": "nic@occupantfonts.com"
+    },
+    {
+      "name": "Marie Otsuka",
+      "email": "marie@occupantfonts.com"
+    }
   ],
   "license": "Apache-2.0",
   "private": true,

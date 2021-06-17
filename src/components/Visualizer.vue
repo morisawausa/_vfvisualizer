@@ -231,6 +231,7 @@ export default {
       });
     },
     visualizer () {
+
       let cells = []
       let substitution = this.currentSubstitution
       let axes = this.axes
