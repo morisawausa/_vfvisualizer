@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="susbtitution-axis-control">
+  <div class="susbtitution-axis-control flex-height-container">
 
     <div class="dimension-name">{{ dimensionName }} dimension</div>
 
@@ -7,7 +7,7 @@
       <div class="dimension-display-label dimension-label">
         <span class="centered">Axis</span>
       </div>
-      <ul class="design-axis-selector">
+      <ul class="design-axis-selector flex-height-container">
         <li
           v-for="(axis, index) in axes"
           class="axis-label"
@@ -77,16 +77,21 @@ export default {
 <style lang="scss" scoped>
 .susbtitution-axis-control {
   overflow: auto;
+  flex: 1;
 
   .dimension-name {
     position: relative;
+    font-family: "Dispatch";
+    // font-weight: 700;
     background-color:var(--dimension-control-background-color);
     padding:var(--label-padding);
     width: 100%;
     float: left;
     border-bottom: 1px solid var(--font-color);
   }
-
+  .dimension-display-selector{
+    flex: 1;
+  }
   .dimension-selector {
     display:block;
     border-bottom: 1px solid var(--font-color);
@@ -95,9 +100,10 @@ export default {
 
     .dimension-label {
       position: relative;
-      height:var(--substitution-box-min-height);
+      height: 100%;
+      // height:var(--substitution-box-min-height);
       display: block;
-      width: 40%;
+      width: 50%;
       float:left;
       text-align: center;
       border-right:1px solid var(--font-color);
@@ -105,15 +111,16 @@ export default {
 
     .design-axis-selector {
       position: relative;
-      display: block;
-      width: 60%;
+      width: 50%;
       float: left;
+      // display: block;
       min-height:var(--substitution-box-min-height);
       z-index:0;
 
       .axis-label {
+        flex: 1;
         position: relative;
-        height:calc(var(--substitution-box-min-height) / 3);
+        // height:calc(var(--substitution-box-min-height) / 3);
         padding:var(--label-padding);
         background-color: var(--background-color);
         text-align: center;
@@ -135,7 +142,7 @@ export default {
   .divisions-input-field {
     position: relative;
     display: block;
-    width:60%;
+    width: 50%;
     overflow:auto;
 
     .divisions-input {
@@ -148,7 +155,7 @@ export default {
       outline:none;
       border:none;
       border-right:1px solid var(--font-color);
-      height:50px;
+      height: var(--substitution-box-min-height);
       text-align: center;
       float:left;
     }

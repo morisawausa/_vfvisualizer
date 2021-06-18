@@ -578,18 +578,23 @@ export default {
   position:absolute;
   top:var(--component-margin);
   font-family: "Dispatch Mono", monospace;
+  font-weight: 700;
 
   .visualizer-toggle {
     display: inline-block;
     cursor:pointer;
 
-    width: var(--substitution-icon-width);
-    border-radius:calc(var(--substitution-icon-width) / 2);
+    // width: var(--substitution-icon-width);
+    width: 36px;
+    height: 31px;
+    text-align: center;
+    border-radius: 3px;
     padding: var(--control-block-padding);
     border:1px solid var(--font-color);
     background-color:var(--background-color);
 
     &.active, &:hover {
+
       background-color:var(--active-color);
       color:var(--background-color);
     }

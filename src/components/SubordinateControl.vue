@@ -298,6 +298,7 @@ export default {
   }
 
   .header {
+    font-family: "Dispatch";
     padding: 0.5em;
     border-bottom:1px solid var(--font-color);
     background-color: var(--dimension-control-background-color)

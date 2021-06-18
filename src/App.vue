@@ -5,11 +5,11 @@
     <!-- This module displays all of the controls
     for interacting with the visualization
     directly. -->
-    <section id="visualizer-controls" class="layout-region">
+    <section id="visualizer-controls" class="layout-region flex-height-container">
 
       <FontUpload/>
 
-      <div id="control-panel" class="control-panel">
+      <div id="control-panel" class="control-panel flex-height-container">
         <AxisControl />
         <SubstitutionControl />
         <GlyphView />
@@ -64,6 +64,13 @@ export default {
   transform:translate(-50%,-50%);
 }
 
+.flex-height-container{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+
 .button {
   color: var(--background-color);
   background-color: var(--font-color);
@@ -82,28 +89,28 @@ export default {
   // --font-color:rgb(235,235,235);
 
   --controls-width: 25vw;
-  --control-block-padding: 1em;
+  --control-block-padding: 0.7em;
   --control-block-padding-top: 1.5em;
   --control-block-element-spacing: 0.5em;
   --ui-input-color: var(--font-color);
   --ui-attention-color: lightyellow;
   --ui-disabled-color:lightgray;
   --ui-create-color:lightgreen;
-  --ui-delete-color:pink;
+  --ui-delete-color: rgb(248 203 255);
   --ui-attention-background-color: lightyellow;
   --ui-attention-font-color: darkblue;
-  --active-color: magenta;
-  --hover-color: pink;
+  --active-color: #ff00c8; //magenta;
+  --hover-color: rgb(248 203 255); //pink;
   --slider-width: 40%;
   --component-margin: 0.5em;
   --grid-lines-color: transparent;
   --grid-hover-color: lightblue;
   --label-padding: 0.4em;
 
-  --substitution-selector-height: 35vh;
+  --substitution-selector-height: 100%; //35vh
   --substitution-icon-height: 30px;
   --substitution-icon-width: var(--substitution-icon-height);
-  --substitution-box-min-height: 50px;
+  --substitution-box-min-height: 40px;
   --glyph-view-height: 14vh;
 
   --dimension-control-background-color: lightcyan;
@@ -122,19 +129,21 @@ body {
 }
 
 #visualizer-controls {
+
   position: absolute;
   width: var(--controls-width);
   margin: var(--component-margin);
   height: calc(100vh - 2 * var(--component-margin));
   font-family: "Dispatch Mono", monospace;
-  color: var(--font-color);
+  color: var(--font-color);  
 }
 
 #control-panel {
+  flex: 1;
   position: static;
-  display: block;
+  // display: block;
   width: 100%;
-  height:auto;
+  
 }
 
 </style>

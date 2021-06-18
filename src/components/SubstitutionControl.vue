@@ -3,7 +3,7 @@
   displaying all of the substitutions that are available
   for the typeface. -->
   <div class="substitutions-interface">
-    <div class="substitution-selector">
+    <div class="substitution-selector flex-height-container">
       <ul class="substitutions-list">
         <li
           v-for="(substitution, index) in substitutions"
@@ -83,7 +83,7 @@
       <!-- Shows if a substitition is currently active -->
       <div
         v-else
-        class="current-substitution-data">
+        class="current-substitution-data flex-height-container">
         <SubordinateControl v-bind:active="subordinatesActive" />
 
         <div
@@ -96,7 +96,7 @@
           </div>
           <SubstitutionSet v-bind:glyphset="currentSubstitution.glyphs" />
         </div>
-        <div class="dimension-controls">
+        <div class="dimension-controls  flex-height-container">
           <DimensionControl
             dimensionName="x"
             v-bind:substitution="currentSubstitution"
@@ -268,16 +268,20 @@ export default {
   border: 1px solid var(--font-color);
   margin-bottom: var(--component-margin);
   overflow: hidden;
+  flex: 1;
 
   .substitution-selector {
+
     width: 20%;
-    min-height: calc(var(--substitution-selector-height) + var(--substitution-box-min-height));
+    // min-height: calc(var(--substitution-selector-height) + var(--substitution-box-min-height));
+
     border-right: 1px solid var(--font-color);
     float:left;
 
     .substitutions-list {
-      width:100%;
-      height: var(--substitution-selector-height);
+      width: 100%;
+      // height: var(--substitution-selector-height);
+      flex: 1;
       overflow-y: scroll;
     }
 
@@ -314,7 +318,7 @@ export default {
         top:50%;
         left:50%;
         transform:translate(-50%,-50%);
-        font-size: 2em;
+        font-size: 1.5em;
         color:var(--background-color);
       }
     }
@@ -334,6 +338,7 @@ export default {
 
       .subordinates-count {
         font-family: "Dispatch Mono", monospace;
+        font-weight: 700;
         position: absolute;
         right:-5px;
         font-size:.7em;
@@ -363,6 +368,8 @@ export default {
     float: left;
 
     .current-substitution-data {
+      margin-right: -1px;
+
       .current-substitution-alternates {
         cursor:pointer;
 
@@ -525,8 +532,9 @@ export default {
   }
 
   .dimension-controls {
-    height: calc(var(--substitution-selector-height)  - var(--substitution-box-min-height));
-
+    // height: calc(var(--substitution-selector-height)  - var(--substitution-box-min-height));
+    flex: 1;
+    overflow: scroll;
   }
 }
 </style>

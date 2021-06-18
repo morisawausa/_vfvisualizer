@@ -93,7 +93,7 @@ export default {
         let sequence = current.left_sequence + current.right_sequence
         let length = sequence.length + current.active_subordinates.length
         let sf = Math.pow(.85, length)
-        return (10 * sf) + 'em';
+        return (9 * sf) + 'em';
       }
 
       return '1em';
@@ -131,6 +131,7 @@ export default {
 
   .glyph-view {
     border: 1px solid var(--font-color);
+    height: auto;
   }
 
   .sequence-for-point {

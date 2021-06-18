@@ -21,16 +21,16 @@
         <h1 class="heading">Drag a variable font over this window.</h1>
         <h3 class="heading">The Variable Font Substitution Mapper</h3>
         <p>
-          To get started, drag a variable font .ttf over this this window.
+          To get started, drag a variable font <strong>.ttf</strong> over this this window.
           This tool will try to parse the file and give you a visual interface for designing glyph substitution patterns (also known as OpenType <a target="_blank" href="https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-rvrn">Required Variation Alternates</a>).
-          Think about the dollar sign with and without the vertical bar.
-          For more extensive documentation on using this tool check out <a target="_blank" href="https://github.com/morisawausa/_vfvisualizer">our repo on Github</a>.
+          Think about the dollar sign with ($) and without (<strong>$</strong>) the vertical bar.
+          For more extensive documentation on using this tool, check out <a target="_blank" href="https://github.com/morisawausa/_vfvisualizer">our repo on Github</a>.
         </p>
       </div>
       <div class="loading-icon">
 
       </div>
-      <div class="credits-text tiny">
+      <div class="credits-text">
         <p>This tool was designed and developed by Marie Otsuka and Nic Schumann for <a target="_blank" href="https://occupantfonts.com">Occupant Fonts</a>.
           It is available for you to use under an Apache 2.0 license.</p>
       </div>
@@ -156,10 +156,13 @@ export default {
   background-color: var(--background-color);
   color: var(--font-color);
   margin-bottom: var(--component-margin);
-  border: 1px solid black;
+  // border: 1px solid black;
 
   a {
     color:var(--active-color);
+    &:hover{
+      text-decoration: none;
+    }
   }
 
   &.inactive {
@@ -171,35 +174,47 @@ export default {
     .opener-message {
       margin: 10vw;
         .intro-text {
-          max-width: calc(min(500px, 100vw));
+          max-width: calc(min(630px, 100vw));
 
           // display: none;
           h1 {
             font-size: 4em;
-            font-weight: bold;
+            font-weight: 700;
             margin-bottom: 1em;
-            line-height: 1.15em;
+            line-height: 1.15;
           }
 
           h3 {
-            font-size: 1.2em;
-            font-weight: bold;
+            font-family: "Dispatch";
+            font-size: 1.3em;
+            font-weight: 700;
             margin-bottom: 1em;
+            letter-spacing: 0.02em;
           }
 
           p {
-            font-size: 1em;
+            font-family: "Dispatch";
+            font-weight: 300;
+            font-size: 1.3em;
             margin-bottom: 1em;
-            line-height: 1.25em;
+            line-height: 1.5;
+            letter-spacing: 0.02em;
           }
 
           margin-bottom: 4em;
 
         }
 
+        strong{
+          font-weight: 700;
+        }
+
         .credits-text {
+          font-family: "Dispatch";
+          letter-spacing: 0.05em;
           max-width: calc(min(500px, 100vw));
-          line-height: 1.35em;
+          line-height: 1.5;
+          font-size: .7rem;
           // display: none;
         }
 
@@ -222,7 +237,8 @@ export default {
   }
 
   &.hovering {
-    border: 1px solid var(--active-color);
+    // border: 2px solid var(--active-color);
+    background-color: var(--hover-color);
   }
 
   &.loading .opener-message .loading-icon {
@@ -240,6 +256,10 @@ export default {
     height: auto;
 
     .font-meta {
+      font-family: "Dispatch";
+      font-weight: 400;
+      letter-spacing: 0.03em;
+
       display: block;
       color: var(--font-color);
       padding: var(--control-block-padding);

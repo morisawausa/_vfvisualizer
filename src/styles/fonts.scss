@@ -1,6 +1,58 @@
 @font-face {
    font-family: 'Dispatch Mono';
+   font-weight: normal;
    src: url('fonts/DispatchMono-Regular.woff2?#iefix') format('woff2'),
         url('fonts/DispatchMono-Regular.woff') format('woff'),
         url('fonts/DispatchMono-Regular.eot?#iefix') format('embedded-opentype');
 }
+
+@font-face {
+   font-family: 'Dispatch Mono';
+   font-weight: 700;
+   src: url('fonts/DispatchMono-Bold.woff2?#iefix') format('woff2'),
+        url('fonts/DispatchMono-Bold.woff') format('woff'),
+        url('fonts/DispatchMono-Bold.eot?#iefix') format('embedded-opentype');
+}
+
+@font-face {
+   font-family: 'Dispatch';
+   font-weight: 300;
+   src: url('fonts/Dispatch-Light.woff2?#iefix') format('woff2'),
+        url('fonts/Dispatch-Light.woff') format('woff'),
+        url('fonts/Dispatch-Light.eot?#iefix') format('embedded-opentype');
+}
+
+@font-face {
+   font-family: 'Dispatch';
+   font-weight: 400;
+   src: url('fonts/Dispatch-Regular.woff2?#iefix') format('woff2'),
+        url('fonts/Dispatch-Regular.woff') format('woff'),
+        url('fonts/Dispatch-Regular.eot?#iefix') format('embedded-opentype');
+}
+
+@font-face {
+   font-family: 'Dispatch';
+   font-weight: 700;
+   src: url('fonts/Dispatch-Bold.woff2?#iefix') format('woff2'),
+        url('fonts/Dispatch-Bold.woff') format('woff'),
+        url('fonts/Dispatch-Bold.eot?#iefix') format('embedded-opentype');
+}
+
+@font-face {
+   font-family: 'Dispatch Condensed';
+   font-weight: 400;
+   src: url('fonts/Dispatch-Condensed-Regular.woff2?#iefix') format('woff2'),
+        url('fonts/Dispatch-Condensed-Regular.woff') format('woff'),
+        url('fonts/Dispatch-Condensed-Regular.eot?#iefix') format('embedded-opentype');
+}
+
+@font-face {
+   font-family: 'Dispatch Condensed';
+   font-weight: 700;
+   src: url('fonts/Dispatch-Condensed-Bold.woff2?#iefix') format('woff2'),
+        url('fonts/Dispatch-Condensed-Bold.woff') format('woff'),
+        url('fonts/Dispatch-Condensed-Bold.eot?#iefix') format('embedded-opentype');
+}
+
+
+
