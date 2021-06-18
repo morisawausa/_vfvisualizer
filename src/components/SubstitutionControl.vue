@@ -443,8 +443,7 @@ export default {
     }
 
     .submit-buttons {
-      height: var(--substitution-box-min-height);
-      border-top:1px solid var(--font-color);
+      height: calc( var(--substitution-box-min-height) - 1px);
       overflow:auto;
       background-color: var(--background-color);
 
