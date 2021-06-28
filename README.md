@@ -1,6 +1,7 @@
 # Variable Font Substitution Mapper
 **Current Version: 0.9.6, in development.**
 
+🎥 Watch our 2021 Typographics TypeLab talk [here](https://vimeo.com/568482316)
 
 This tool provides a visualizer and font variation substitution manager for `.ttf` variable fonts. The tool helps with setting up glyph substitutions (also called OpenType [Required Variation Alternates](https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-rvrn), or `rvrn`) that depend on the design space region. It can build substititions for many different glyphs visually. Once you're done setting up substititions, the tool will generate a `<rules>` element that you can paste into a `.designspace` file. With this updated file, you can rebuild your `.ttf` using fontmake and get a variable font with complex substitution patterns.
 
