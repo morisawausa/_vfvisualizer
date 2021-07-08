@@ -21,10 +21,11 @@
         </div>
 
         <div
-          class="design-space-format-button format-button disabled"
-          v-bind:class="{'active': visible == 'ttx'}"
+          class="design-space-format-button format-button"
+          v-bind:class="{'active': visible == 'glyphs3'}"
+          @click="toGlyphs3"
           >
-          <span class="centered">.ttx (disabled)</span>
+          <span class="centered">.glyphs</span>
         </div>
 
         <div
@@ -50,6 +51,11 @@
         <div v-if="visible == 'designspace'" class="text-body">
           <p>
             This is documentation for the .designspace output.
+          </p>
+        </div>
+        <div v-else-if="visible == 'glyphs3'" class="text-body">
+          <p>
+            This output can be pasted into a Glyphs 3 file's "rlig" feature directly.
           </p>
         </div>
         <div v-else class="text-body">
@@ -101,7 +107,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import {ttxTable, designspaceTable} from '../store/tables'
+import {ttxTable, designspaceTable, glyphs3Features} from '../store/tables'
 import {AXES, GLYPHLIST, CURRENT_AXIS_SETTINGS, CURRENT_SUBSTITUTION, CURRENT_SUBSTITUTION_INDEX, ALL_SUBSTITUTIONS, VALID_STYLISTIC_SETS, STATE_FOR_CELL, SUBSTITUTION_RECTS} from '../store/getters.js'
 
 const hljs = require('highlight.js/lib/core');
@@ -109,6 +115,7 @@ hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'))
 
 const DESIGNSPACE = 'designspace'
 const TTX = 'ttx'
+const GLYPHS3 = 'glyphs3'
 
 export default {
   data () {
@@ -143,6 +150,9 @@ export default {
     toDesignspace () {
       this.visible = DESIGNSPACE
     },
+    toGlyphs3 () {
+      this.visible = GLYPHS3
+    },
     table () {
       let axes = this.axes
       let cells = this.substitutionRects()
@@ -158,6 +168,9 @@ export default {
           variations: this.ttx_feature_variations_index
         }).join('\n\n')
         return hljs.highlight('xml', output).value
+      } else if (this.visible === GLYPHS3) {
+        let output = glyphs3Features(axes, cells).join('\n\n');
+        return output
       }
     },
     copyTable () {

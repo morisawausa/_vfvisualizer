@@ -195,3 +195,27 @@ export function ttxTable (axes, cells, options) {
   return [GSUB.end({pretty:true})]
 
 }
+
+
+/**
+ * This function generates glyphs 3 features that can be copy-pasted
+ * directly into glyphs 3.
+ *
+ * As parameters, it takes two arrays: an array of variable axes that the font contains,
+ * and an array of cells that should be rendered. Consult the Developing section of the
+ * readme for more information on the shape of these parameters.
+ *
+ * Note that these parameters are READ ONLY. you should not mutate them in any way
+ * in this function.
+ *
+ * Using this information, this function should construct an array of strings that can be
+ * copy-pasted into a glyphs3 rlig feature. Each string in this array will be interpreted
+ * as a line of output. These strings will be joined by newlines and displayed
+ * in an element for the user to select.
+ */
+export function glyphs3Features(axes, cells) {
+  console.log(axes)
+  console.log(cells)
+
+  return ['not implemented yet: line 1', 'not implemented yet: line 2']
+}

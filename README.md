@@ -344,6 +344,134 @@ Once these have been installed correctly, you're ready to begin development. To 
 
 You should be able to browse to `http://localhost:8080` and see the application running there.
 
+### Contributing New Code Generators
+
+The Variable Font Visualizer can target multiple output formats. Currently, it can generate code that can be pasted into a `.designspace` file, however, other formats may be possible.
+
+To contribute a code generator, your job is to take a list of variable font axes, and a list of grid cells in the design space to apply substitutions to, and from this info, compile a string that can be pasted into your target platform.
+
+All code generators live in the `src/store/tables.js` file. This file exports our `.designspace` generator, as well as a semi-working prototype `.ttx` generator (currently disable). These functions are then hooked into the view in the `src/components/SubstitutionOutput.vue` file in a fairly straightforward way. For now, this process is manual, and we can assist with it. If there's interest in a variety of code generators, we can make it more automatic in the future.
+
+For now, if you want to implement a code generator, focus on implementing a function:
+
+```js
+export function myCodeGenerator(axes, cells) {
+  return ['line1', 'line2' , ...]
+}
+```
+
+#### Code Generator Function: Axis Parameter
+
+The axis parameter to the code generator is a list of variable font axes on the current font. Each axis is a javascript object that looks like the following:
+
+```js
+{
+  default: Number,   // the default value of the axis range
+  max: Number,       // the upper bound of the axis range
+  min: Number,       // the lower bound of the axis range
+  name: String,      // the readable name of the axis
+  tag: String        // the four letter axis tag
+}
+```
+
+You'll get an array of these as the first parameter to the code generator. The array will be in the order in which the axes were read out of the typeface file you dropped in.
+
+
+#### Code Generator Function: Cells Parameter
+
+The second parameter to the code generator is an array of substitutions to create. Each substitution is a complex object that carries all the data needed to create your output. Each substitution will look like the following:
+
+```js
+{
+  /**
+   * The substitution key details which sets of glyphs
+   * are being substituted. the `glyphs` key carries an array of the primary glyphs
+   * which appears in the interface when you click the substitution. The 0th glyph in the
+   * array will be the default form, the 1st will be the 1st substitution, and so on.
+   * In general, there can be any number of glyphs in this array, corresponding to
+   * the number of different forms the base glyph can take on across the designspace.
+   */
+  substitution: {
+    /* This key will be an array of length equal to the number of different
+     * forms this glyph has across the designspace.
+     */
+    glyphs: [{
+      name: String, // the name of the glyph as specified in the file
+      codePoints: [Number] // the glyph's unicode assignments
+    }, ...],
+
+    /* This key will contain all other glyphs that should follow
+     * the same substutition pattern as the glyphs in the `glyphs` key.
+     * it will be an array of arrays of glyphs. Each array inside of this key
+     * will have the same structure as the array in the `glyphs` key. So, if
+     * the array in `glyphs` has two glyphs in it, then this array will be an array
+     * of arrays, each of which contains two glyphs.
+     */
+    subordinates: [
+      [{name: String, codePoints: [Number]}, {name: String, codePoints: [Number], ...}],
+      [{name: String, codePoints: [Number]}, {name: String, codePoints: [Number], ...}],
+      ...
+    ]
+  },
+  /**
+   * The cells key is a list of all of the rectangles that you see highlighted in
+   * the substitution grid. If there are 4 highlighted grid squares, this array will contain
+   * four cells.
+   */
+  cells: [
+    /**
+     * the bounds key is an array of pairs of numbers. Each pair represents the minimum
+     * and maximum of the rectangle along the corresponding axis in the Axis parameter.
+     * In other words, if the first axis in your axis parameter is `wght`, then the first
+     * element in this array is the min and max of this rectangle along the `wght` axis.
+     *
+     * Note: the coordinate system here is interpreted as a percentage of the total
+     * axis length, so it ranges from 0 to 1. If you had a rectangle going from 0 to 250
+     * along an axis with a min of 0 and max of 1000, then the bounds pair for this
+     * rectangle and axis would be [0, 0.25]
+     */
+             // [axis 0 min, axis 0 max], [axis 1 min, axis 1 max], ...
+    bounds: [[Number, Number], [Number, Number], ...],
+
+    /* the coordinates object precomputes bounds in a few other useful coordinate systems:
+     * the user coordinate system that was read in off of the variable font file
+     * and the normalized coordinate system used by the variable font internally,
+     * ranging from [-1, 1], with 0 at the default value.
+     *
+     * Otherwise, it has the same general structure as the `bounds` key.
+     */
+    coordinates: {
+
+      normal: [[Number, Number], [Number, Number], ...],
+      user: [[Number, Number], [Number, Number], ...],
+    },
+
+    /* The state number is interpreted as an array index into the `substitution.glyphs` key.
+     * it picks out exactly which glyph should be substituted in in this design space rectangle.
+     * a state of 1 means that the second glyph in the glyphs array should replace
+     * the first glyph in the array here. A state of 2 means that the 3rd glyph should replace
+     * the first glyph.
+     *
+     * Note that you'll never see a state of 0. 0 correspondes to the default glyph in the
+     * substitution, and no replacement at all.
+     */
+    state: Number
+  ]
+  /**
+   * NOTE(1): the rectangles are not optimized at all. For example, we don't try to unify
+   * neighboring rectangles at the moment. So far, this hasn't been an issue for us,
+   * but if performance becomes a noticable problem, this will change. This optimization
+   * will be done before getting to the code generation step, so your generator shouldn't
+   * worry about dealing with this. Just process the rectangles c:
+   *
+   * NOTE(2): In the UI, there is a hierarchy between the data in the  glyphs key
+   * and the subordinates key. For code generation, that hierarchy probably does
+   * not matter. You can probably safely append the glyphs array to the subordinates
+   * array and process the whole batch in one go.
+   */
+}
+```
+
 ---
 
 ## Resources
