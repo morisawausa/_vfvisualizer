@@ -324,24 +324,27 @@ This time, we'll have `fontmake` rename our glyphs to their production names.
 
 At this point, you should be ready to drag the file into a testing tool like FontGoggles and check to see if your feature variations and substitutions are working properly.
 
+---
 
-## Build Setup
+## Developing and Contributing
 
-``` bash
-# install dependencies
-npm install
+This section is for developers interested in contributing to the VFV.
 
-# serve with hot reload at localhost:8080
-npm run dev
+### The Development Environment
 
-# build for production with minification
-npm run build
+To develop on this repository, you'll need to get a local development environment set up first. The javascript source code you see in this repository is compiled into a web-app by `webpack`, and it depends on a variety of node modules and packages off of `npm`. Consult our `package.json` for the full list.
 
-# build for production and view the bundle analyzer report
-npm run build --report
-```
+To start with, you'll need to have `node.js` installed. We develop with `node` version `v14.17.3`. Any version below version `v16` should work. Node versions `16` and up currently don't work because `libsass`, the C++ library we use to compile our stylesheets, does not support any version above `v15`.
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+Once you've cloned this repository into a local directory, open the directory in your terminal and run `npm install` to download and install all of the dependencies.
+
+Once these have been installed correctly, you're ready to begin development. To start a local server, run `npm start`. If everything is installed correctly and working, you should see a terminal window that looks somehting like this.
+
+![Image of a terminal with the development server running.](img/vfsm-developing-1.png)
+
+You should be able to browse to `http://localhost:8080` and see the application running there.
+
+---
 
 ## Resources
 
