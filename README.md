@@ -317,7 +317,7 @@ Once you have a `<rules>` table generated and ready to go, you can copy and past
 Now we're ready to compile the final `.ttf` file with all of our feature variations and substitutions. WE can use `fontmake` again:
 
 ```sh
-$ fontmake -m UpdatedDesignspaceFile.designspace -o variable
+fontmake -m UpdatedDesignspaceFile.designspace -o variable --production-names
 ```
 
 This time, we'll have `fontmake` rename our glyphs to their production names.
